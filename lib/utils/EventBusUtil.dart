@@ -1,5 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 
+import '../common/TaskInfo.dart';
+
 class EventBusUtil {
   // 私有静态变量，用于保存单例实例
   static final EventBusUtil _instance = EventBusUtil._internal();
@@ -23,4 +25,9 @@ class Aria2ServerEvent {
 
 class AddTaskEvent {
   AddTaskEvent();
+}
+
+class TaskInfoEvent {
+  TaskInfo? taskInfo;
+  TaskInfoEvent(this.taskInfo);
 }

@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
 import '../DB/server/M3u8TaskServer.dart';
 import '../DB/entity/M3u8Task.dart';
+import '../common/TaskInfo.dart';
 import '../common/const.dart';
 import '../utils/Aria2Util.dart';
 import '../utils/EventBusUtil.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final TabController _tabController;
   final logger = Logger();
   late List<M3u8Task> taskList = [];
+  late TaskInfo? taskInfo = TaskInfo();
 
   @override
   void initState() {
@@ -33,6 +35,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     EventBusUtil().eventBus.on<AddTaskEvent>().listen((event) {
       updateList();
     });
+    EventBusUtil().eventBus.on<TaskInfoEvent>().listen((event) {
+      setState(() {
+        taskInfo = event.taskInfo;
+      });
+    });
     _tabController = TabController(length: 2, vsync: this);
     updateList();
   }
@@ -42,12 +49,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       EasyLoading.showInfo('列表中没有任务');
       return;
     }
-    for (M3u8Task task in taskList) {
-      if (task.status == 2) {
-        EasyLoading.showInfo('已经在下载中');
-        return;
-      }
-    }
+    // for (M3u8Task task in taskList) {
+    //   if (task.status == 2) {
+    //     EasyLoading.showInfo('已经在下载中');
+    //     return;
+    //   }
+    // }
     await startAria2Task(taskList[0]);
     updateList();
   }
@@ -132,7 +139,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                // ...
+                // Aria2Util().addUrl('https://7-zip.org/a/7z2301-x64.exe',
+                //     '222.exe', 'D:/Aria2-M3u8/download');
               },
             ),
           ),
@@ -213,10 +221,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: const Text('速    度：8M/S'),
+                              child: Text('速    度：${taskInfo?.speed}'),
                             ),
                             Expanded(
-                              child: const Text('下载进度：50%'),
+                              child: Text('下载进度：${taskInfo?.progress}'),
                             ),
                             Expanded(
                               child: const Text(''),
@@ -226,13 +234,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: const Text('分片数：150'),
+                              child: Text('分片数：${taskInfo?.tsTotal}'),
                             ),
                             Expanded(
-                              child: const Text('分片下载数：50'),
+                              child: Text('分片下载数：${taskInfo?.tsSuccess}'),
                             ),
                             Expanded(
-                              child: const Text('分片失败数：50'),
+                              child: Text('分片失败数：${taskInfo?.tsFail}'),
                             ),
                           ],
                         ),

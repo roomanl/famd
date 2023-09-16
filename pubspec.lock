@@ -433,7 +433,7 @@ packages:
     source: hosted
     version: "4.8.1"
   json_rpc_2:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: json_rpc_2
       sha256: "5e469bffa23899edacb7b22787780068d650b106a21c76db3c49218ab7ca447e"
@@ -846,7 +846,7 @@ packages:
     source: hosted
     version: "0.1.4-beta"
   web_socket_channel:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web_socket_channel
       sha256: d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b

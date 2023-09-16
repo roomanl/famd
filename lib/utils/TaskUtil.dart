@@ -18,14 +18,15 @@ startAria2Task(M3u8Task task) async {
   task.keyurl = m3u8.keyUrl;
   task.downdir = downPath;
   task.status = 2;
-  updateM3u8Task(task);
+
   List<String> tsList = m3u8.tsList;
-  String saveDir = await getTsSaveDir(task, downPath);
+  String saveDir = getTsSaveDir(task, downPath);
   await Aria2Util().addUrls(tsList, saveDir);
-  EasyLoading.showSuccess('任务开始成功');
+  updateM3u8Task(task);
+  EasyLoading.showSuccess('任务启动成功');
 }
 
-Future<String> getTsSaveDir(M3u8Task task, String? downPath) async {
+String getTsSaveDir(M3u8Task task, String? downPath) {
   // String? downPath = await findSysConfigByName(DOWN_PATH);
   String saveDir = '$downPath/${task.m3u8name}/${task.subname}/ts';
   File file = File(saveDir);
