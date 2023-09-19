@@ -6,3 +6,4 @@ final String ARIA2_URL_VALUE = 'http://127.0.0.1:6800/jsonrpc';
 
 final String ARIA2_EXE_NAME = 'aria2c.exe';
 final String ARIA2_CONF_NAME = 'aria2.conf';
+final String FFMPGE_EXE_NAME = 'ffmpeg.exe';

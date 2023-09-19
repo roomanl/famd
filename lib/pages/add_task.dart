@@ -106,8 +106,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
         continue;
       }
       M3u8Task task = M3u8Task(
-          subname: info[0],
-          m3u8url: info[1],
+          subname: info[0].trim(),
+          m3u8url: info[1].trim(),
           m3u8name: _namecontroller.text,
           status: 1);
       insertM3u8Task(task);

@@ -1,16 +1,19 @@
+import 'dart:io';
+
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
+import 'package:window_manager/window_manager.dart';
 import '../DB/server/M3u8TaskServer.dart';
 import '../DB/entity/M3u8Task.dart';
 import '../common/TaskInfo.dart';
 import '../common/const.dart';
 import '../utils/Aria2Util.dart';
 import '../utils/EventBusUtil.dart';
-import '../utils/TaskUtil.dart';
 
+import '../utils/TaskUtil.dart';
 import './add_task.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,21 +22,40 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin, WindowListener {
   late final TabController _tabController;
   final logger = Logger();
   late List<M3u8Task> taskList = [];
+  late List<M3u8Task> finishTaskList = [];
   late TaskInfo? taskInfo = TaskInfo();
 
   @override
   void initState() {
     super.initState();
+    windowManager.addListener(this);
     init();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  void onWindowClose() {
+    Aria2Util().closeServer();
   }
 
   init() async {
     EventBusUtil().eventBus.on<AddTaskEvent>().listen((event) {
       updateList();
+    });
+    EventBusUtil().eventBus.on<DownSuccessEvent>().listen((event) async {
+      await updateList();
+      startTask();
     });
     EventBusUtil().eventBus.on<TaskInfoEvent>().listen((event) {
       setState(() {
@@ -41,6 +63,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       });
     });
     _tabController = TabController(length: 2, vsync: this);
+    await updateList();
+    restTask(taskList);
     updateList();
   }
 
@@ -49,13 +73,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       EasyLoading.showInfo('列表中没有任务');
       return;
     }
-    // for (M3u8Task task in taskList) {
-    //   if (task.status == 2) {
-    //     EasyLoading.showInfo('已经在下载中');
-    //     return;
-    //   }
-    // }
-    await startAria2Task(taskList[0]);
+    for (M3u8Task task in taskList) {
+      if (task.status == 2) {
+        EasyLoading.showInfo('已经在下载中');
+        return;
+      }
+    }
+    await Aria2Util().startAria2Task(taskList[0]);
     updateList();
   }
 
@@ -64,15 +88,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // logger.i(list.toString());
     setState(() {
       taskList = [];
+      finishTaskList = [];
       for (M3u8Task task in list) {
         if (task.status == 1 || task.status == 2) {
           taskList.add(task);
+        } else {
+          finishTaskList.add(task);
         }
       }
     });
   }
 
-  deleteTask(task) {
+  deleteTask(M3u8Task task, bool delFile) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -90,6 +117,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Text('确定'),
               onPressed: () {
                 deleteM3u8TaskById(task.id!);
+                if (delFile) {
+                  String mp4Path =
+                      '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
+                  File file = File(mp4Path);
+                  if (file.existsSync()) {
+                    file.deleteSync();
+                  }
+                  String tsPath =
+                      '${task.downdir}/${task.m3u8name}/${task.subname}';
+                  try {
+                    Directory directory = Directory(tsPath);
+                    directory.deleteSync(recursive: true);
+                  } catch (e) {
+                    logger.e(e);
+                  }
+                }
                 updateList();
                 Navigator.of(context).pop();
               },
@@ -98,12 +141,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -191,7 +228,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            deleteTask(task);
+                            deleteTask(task, false);
                           },
                         ),
                       ],
@@ -221,7 +258,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('速    度：${taskInfo?.speed}'),
+                              child: Text('速    度：${taskInfo?.speed}/S'),
                             ),
                             Expanded(
                               child: Text('下载进度：${taskInfo?.progress}'),
@@ -247,10 +284,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: const Text('解码数：等待解码'),
+                              child: Text('解码数：${taskInfo?.tsDecrty}'),
                             ),
                             Expanded(
-                              child: const Text('合并状态：等待合并'),
+                              child: Text('合并状态：${taskInfo?.mergeStatus}'),
                             ),
                             Expanded(
                               child: const Text(''),
@@ -267,7 +304,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           Center(
-            child: Text("下载完成"),
+            child: ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemCount: finishTaskList.length,
+              itemBuilder: (BuildContext context, int index) {
+                M3u8Task task = finishTaskList[index];
+                return Container(
+                  height: 50,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          '${task.m3u8name}-${task.subname}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      ),
+                      const Text('下载完成'),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          deleteTask(task, true);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+            ),
           ),
         ],
       ),

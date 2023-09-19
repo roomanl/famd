@@ -7,7 +7,7 @@ class TaskInfo {
   int? tsTotal;
   int? tsSuccess;
   int? tsFail;
-  int? tsDecrty;
+  int tsDecrty;
   String? mergeStatus;
   List<TsTask>? tsTaskList;
   String? get getSpeed => this.speed;
@@ -58,13 +58,19 @@ class TaskInfo {
 }
 
 class TsTask {
-  String? tsName;
+  String tsName;
   String? gid;
   String? tsUrl;
+  String? savePath;
   int? staus;
+
+  get getSavePath => this.savePath;
+
+  set setSavePath(savePath) => this.savePath = savePath;
+
   String? get getTsName => this.tsName;
 
-  set setTsName(String? tsName) => this.tsName = tsName;
+  set setTsName(String? tsName) => this.tsName = tsName!;
 
   get getGid => this.gid;
 
@@ -77,10 +83,17 @@ class TsTask {
   get getStaus => this.staus;
 
   set setStaus(staus) => this.staus = staus;
-  TsTask({this.gid, this.tsName, this.tsUrl, this.staus = 0});
+
+  TsTask({
+    required this.tsName,
+    this.gid,
+    this.tsUrl,
+    this.savePath,
+    this.staus,
+  });
 
   @override
   String toString() {
-    return 'TsTask{tsName=$tsName, gid=$gid, tsUrl=$tsUrl, staus=$staus}';
+    return 'TsTask{tsName=$tsName, gid=$gid, tsUrl=$tsUrl, savePath=$savePath, staus=$staus}';
   }
 }

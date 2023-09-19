@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
+import 'package:aria2_m3u8/utils/FfmpegUtil.dart';
 import 'package:aria2_m3u8/utils/WebSocketManager.dart';
 import 'package:dio/dio.dart';
 import 'package:aria2/aria2.dart';
@@ -9,8 +11,12 @@ import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
 import '../common/TaskInfo.dart';
+import 'ASEUtil.dart';
 import 'EventBusUtil.dart';
+import 'M3u8Util.dart';
 import '../DB/server/SysConfigServer.dart';
+import '../DB/server/M3u8TaskServer.dart';
+import '../DB/entity/M3u8Task.dart';
 import '../common/const.dart';
 
 class Aria2Util {
@@ -25,9 +31,10 @@ class Aria2Util {
     logger = Logger();
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       connection();
-      getSpeed();
-      updataTaskInfo();
-      EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+      if (isDowning) {
+        getSpeed();
+        EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+      }
     });
   }
 
@@ -43,6 +50,32 @@ class Aria2Util {
   late String? aria2Path = null;
   late int? downSpeed;
   late TaskInfo? taskInfo = TaskInfo();
+  late M3u8Task tasking;
+  late bool isDowning = false;
+  late bool isDecryptTsing = false;
+  late Future<Process> cmdProcess;
+  late int processPid = 0;
+
+  startAria2Task(M3u8Task task) async {
+    if (isDowning) return;
+    isDowning = true;
+    tasking = task;
+    EasyLoading.show(status: '正在开始任务...');
+    String? downPath = await findSysConfigByName(DOWN_PATH);
+    M3u8Util m3u8 = M3u8Util(m3u8url: task.m3u8url);
+    await m3u8.init();
+    task.iv = m3u8.IV;
+    task.keyurl = m3u8.keyUrl;
+    task.downdir = downPath;
+    task.status = 2;
+
+    List<String> tsList = m3u8.tsList;
+    //[m3u8.tsList[0], m3u8.tsList[1]];
+    String saveDir = getTsSaveDir(task, downPath);
+    await Aria2Util().addUrls(tsList, saveDir);
+    updateM3u8Task(task);
+    EasyLoading.showSuccess('任务启动成功');
+  }
 
   addUrl(String url, String filename, String downPath) async {
     List params = [
@@ -81,7 +114,7 @@ class Aria2Util {
           {'out': filename, 'dir': saveDir}
         ]
       };
-      TsTask tsTask = TsTask(tsName: filename, tsUrl: url);
+      TsTask tsTask = TsTask(tsName: filename, tsUrl: url, savePath: saveDir);
       tsTaskList.add(tsTask);
       data.add(itemTask);
     }
@@ -93,14 +126,14 @@ class Aria2Util {
       taskInfo?.tsTaskList?[index].gid = item['result'];
     });
     EasyLoading.showSuccess('任务添加成功');
-    logger.i(taskInfo?.toString());
+    // logger.i(taskInfo?.toString());
   }
 
   getSpeed() async {
     if (!online) return;
     Aria2GlobalStat data = await aria2c.getGlobalStat();
     downSpeed = data.downloadSpeed;
-    taskInfo?.speed = data.downloadSpeed.toString();
+    taskInfo?.speed = bytesToSize(data.downloadSpeed);
     // logger.i(data.toJson());
   }
 
@@ -108,7 +141,6 @@ class Aria2Util {
     try {
       if (!online) {
         initConf();
-
         aria2c = Aria2c(aria2url, "http", "");
       }
       Aria2Version version = await aria2c.getVersion();
@@ -154,7 +186,7 @@ class Aria2Util {
           return;
         }
       });
-      logger.i(taskIndex);
+      // logger.i(taskIndex);
       if (taskIndex < 0) return;
       if (jsonData['method'] == 'aria2.onDownloadStart') {
         taskInfo?.tsTaskList?[taskIndex].staus = 1;
@@ -167,8 +199,9 @@ class Aria2Util {
         taskInfo?.tsTaskList?[taskIndex].staus = 2;
         // logger.i('下载完成：' + jsonData['params'][0]['gid']);
       }
+      updataTaskInfo();
     } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
-    logger.i(taskInfo.toString());
+    // logger.i(taskInfo.toString());
   }
 
   updataTaskInfo() {
@@ -187,7 +220,76 @@ class Aria2Util {
     taskInfo?.tsFail = tsFail;
     int tsTotal = taskInfo?.tsTotal ?? 0;
     progress = tsSuccess / tsTotal;
-    taskInfo?.progress = (progress * 100).toString() + '%';
+    taskInfo?.progress =
+        tsTotal == 0 ? '0%' : (progress * 100).toStringAsFixed(2) + '%';
+
+    if (tsSuccess + tsFail == tsTotal) {
+      if (tsFail > 0) {
+      } else {
+        decryptTs();
+      }
+    }
+  }
+
+  decryptTs() async {
+    if (isDecryptTsing) return;
+    isDecryptTsing = true;
+    EasyLoading.showInfo('开始解密ts文件');
+    String? downPath = await findSysConfigByName(DOWN_PATH);
+    List<String> decryptTsList = [];
+    if (!tasking.keyurl!.isEmpty) {
+      final keystr = await Dio().get(tasking.keyurl!);
+      taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
+        TsTask? tsTask = taskInfo?.tsTaskList?[index];
+        String tsPath = '${getTsSaveDir(tasking, downPath)}/${tsTask!.tsName}';
+        String tsSavePath =
+            '${getDtsSaveDir(tasking, downPath)}/${tsTask.tsName}';
+        bool decryptSuccess =
+            aseDecryptTs(tsPath, tsSavePath, keystr.toString(), tasking.iv);
+        if (decryptSuccess) {
+          taskInfo?.tsDecrty++;
+          decryptTsList.add('file \'$tsSavePath\'');
+        }
+        EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+      });
+    } else {
+      taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
+        TsTask? tsTask = taskInfo?.tsTaskList?[index];
+        String tsPath = '${getTsSaveDir(tasking, downPath)}/${tsTask!.tsName}';
+        decryptTsList.add('file \'$tsPath\'');
+      });
+    }
+    String fileListPath =
+        '$downPath/${tasking.m3u8name}/${tasking.subname}/file.txt';
+    // logger.i(fileListPath);
+    File(fileListPath).writeAsStringSync(decryptTsList.join('\n'), flush: true);
+    EasyLoading.showInfo('解密完成');
+    mergeTs(downPath, fileListPath);
+  }
+
+  mergeTs(downPath, fileListPath) {
+    EasyLoading.showInfo('开始合并ts文件');
+    taskInfo?.mergeStatus = '合并中';
+    EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+    String mp4Path =
+        '$downPath/${tasking.m3u8name}/${tasking.m3u8name}-${tasking.subname}.mp4';
+    tsMergeTs(fileListPath, mp4Path, () {
+      taskInfo?.mergeStatus = '合并完成';
+      EasyLoading.showInfo('合并成功');
+      tasking.status = 3;
+      updateM3u8Task(tasking);
+
+      try {
+        String folderPath = '$downPath/${tasking.m3u8name}/${tasking.subname}';
+        Directory directory = Directory(folderPath);
+        directory.deleteSync(recursive: true);
+      } catch (e) {
+        logger.e(e);
+      }
+      isDowning = false;
+      isDecryptTsing = false;
+      EventBusUtil().eventBus.fire(DownSuccessEvent());
+    });
   }
 
   void initConf() async {
@@ -196,20 +298,67 @@ class Aria2Util {
     // downPath ??= await findSysConfigByName(DOWN_PATH);
   }
 
-  void startServer() async {
+  void startServer() {
     var exe = '${aria2Path}/${ARIA2_EXE_NAME}';
     var conf = '--conf-path=${aria2Path}/aria2.conf';
-    var output = ''; // 命令输出结果
+    cmdProcess = Process.start('cmd', ['/c', exe, conf]);
+    cmdProcess.then((processResult) {
+      print(processResult.pid);
+      processPid = processResult.pid;
+      // processResult.exitCode.then((value) => print(value));
+      // processResult.stdout
+      //     .transform(utf8.decoder)
+      //     .transform(LineSplitter())
+      //     .listen((event) {
+      //   logger.i("child: $event");
+      // });
+      // processResult.stderr
+      //     .transform(utf8.decoder)
+      //     .transform(LineSplitter())
+      //     .listen((event) {
+      //   logger.i("child Error: $event");
+      // });
+    });
+  }
 
-    var process = await Process.run('cmd', ['/c', exe, conf]);
-    print(process.stdout);
-    print(process.exitCode);
-    print(process.pid);
-    print(process.stderr);
+  void closeServer() {
+    print('开始关闭服务');
+    // bool killSuccess = Process.killPid(processPid);
+    final processResult =
+        Process.runSync('taskkill', ['/F', '/T', '/PID', '$processPid']);
+    print('关闭服务:' + processResult.exitCode.toString());
+  }
+
+  String getTsSaveDir(M3u8Task task, String? downPath) {
+    // String? downPath = await findSysConfigByName(DOWN_PATH);
+    String saveDir = '$downPath/${task.m3u8name}/${task.subname}/ts';
+    Directory directory = Directory(saveDir);
+    if (!directory.existsSync()) {
+      directory.create(recursive: true);
+    }
+    return saveDir;
+  }
+
+  String getDtsSaveDir(M3u8Task task, String? downPath) {
+    // String? downPath = await findSysConfigByName(DOWN_PATH);
+    String saveDir = '$downPath/${task.m3u8name}/${task.subname}/dts';
+    Directory directory = Directory(saveDir);
+    if (!directory.existsSync()) {
+      directory.create(recursive: true);
+    }
+    return saveDir;
   }
 
   getVersion() async {
     var version = await aria2c.getVersion();
     return version;
+  }
+
+  bytesToSize(bytes) {
+    if (bytes == 0) return '0 B';
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = (log(bytes) / log(k)).floor();
+    return (bytes / pow(k, i)).toStringAsFixed(2) + ' ' + sizes[i];
   }
 }

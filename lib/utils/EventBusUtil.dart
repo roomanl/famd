@@ -31,3 +31,7 @@ class TaskInfoEvent {
   TaskInfo? taskInfo;
   TaskInfoEvent(this.taskInfo);
 }
+
+class DownSuccessEvent {
+  DownSuccessEvent();
+}

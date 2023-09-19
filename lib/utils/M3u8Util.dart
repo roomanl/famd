@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class M3u8Util {
@@ -17,9 +18,17 @@ class M3u8Util {
   init() async {
     tsList = [];
     parsuri = Uri.parse(m3u8url);
-    var res = await Dio().get(m3u8url);
-    String resText = res.toString();
+    // var res = await Dio().get(m3u8url);
+    var res = await http.get(parsuri);
+    logger.i(m3u8url);
+    logger.i(res.statusCode);
+    // logger.i(res.body);
+
     // logger.i(resText);
+    if (res.statusCode != 200) {
+      return;
+    }
+    String resText = res.body;
     List<String> lines = resText.split('\n');
     for (String line in lines) {
       if (line.endsWith('.ts') ||
