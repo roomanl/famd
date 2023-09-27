@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:aria2/aria2.dart';
 import '../common/const.dart';
-import '../DB/DBUtil.dart';
-import '../DB/server/SysConfigServer.dart';
 import '../utils/Aria2Util.dart';
+import '../utils/ConfUtil.dart';
 import '../utils/EventBusUtil.dart';
 import './home_page.dart';
 
@@ -195,16 +193,15 @@ class _StartPageState extends State<StartPage> {
   }
 
   init() async {
-    await DBUtil().initDB();
     subscription =
         EventBusUtil().eventBus.on<Aria2ServerEvent>().listen((event) {
       openHomePage(event.online);
     });
     Aria2Util();
-    String? aria2Path = await findSysConfigByName(ARIA2_PATH);
-    String? ffmpegPath = await findSysConfigByName(FFMPEG_PATH);
-    String? downPath = await findSysConfigByName(DOWN_PATH);
-    String? aria2url = await findSysConfigByName(ARIA2_URL);
+    String? aria2Path = await getAria2PathConf();
+    String? ffmpegPath = await getFFmpegPathConf();
+    String? downPath = await getDownPathConf();
+    String? aria2url = await getAria2UrlConf();
     saveAria2Url(aria2url ?? ARIA2_URL_VALUE);
     setState(() {
       settingConf[ARIA2_PATH] = aria2Path ?? '未设置';
@@ -229,7 +226,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   saveAria2Url(String url) {
-    addOrSave(ARIA2_URL, url);
+    setAria2UrlConf(url);
     setState(() {
       settingConf[ARIA2_URL] = url;
     });
@@ -239,7 +236,7 @@ class _StartPageState extends State<StartPage> {
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null) {
       print(selectedDirectory);
-      addOrSave(type, selectedDirectory);
+      setConf(type, selectedDirectory);
       setState(() {
         settingConf[type] = selectedDirectory;
       });
@@ -265,7 +262,7 @@ class _StartPageState extends State<StartPage> {
       EasyLoading.showInfo('aria2配置不正确');
       return false;
     }
-    File ffmpegExeFile = File('${settingConf[FFMPEG_PATH]}/bin/ffmpeg.exe');
+    File ffmpegExeFile = File('${settingConf[FFMPEG_PATH]}/$FFMPGE_EXE_NAME');
     if (!ffmpegExeFile.existsSync()) {
       EasyLoading.showInfo('ffmpeg配置不正确');
       return false;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../DB/server/M3u8TaskServer.dart';
-import '../DB/entity/M3u8Task.dart';
+import '../entity/M3u8Task.dart';
 import '../utils/EventBusUtil.dart';
+import '../utils/TaskPrefsUtil.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({super.key});
@@ -14,6 +15,7 @@ class AddTaskPage extends StatefulWidget {
 class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _urlcontroller = TextEditingController();
   final TextEditingController _namecontroller = TextEditingController();
+  var uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText:
-                      '格式为：xxx\$http://abc.m3u8,多个链接时，请确保每行只有一个链接。(xxx可以是第01集、第12期、高清版、1080P等)',
+                      '请输入视频链接，格式为：xxx\$http://abc.m3u8,多个链接时，请确保每行只有一个链接。(xxx可以是第01集、第12期、高清版、1080P等)',
                 ),
               ),
             ),
@@ -52,7 +54,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 controller: _namecontroller,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: '具体视频名称，例如：西游记',
+                  hintText: '请输入具体视频名称，例如：西游记',
                 ),
               ),
             ),
@@ -77,13 +79,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ),
     );
   }
+// 第70集$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8
+// 第71集$https://hd.ijycnd.com/play/zbqm5Byb/index.m3u8
 
   @override
   void initState() {
     super.initState();
-    _urlcontroller.text =
-        '第一集\$https://hd.ijycnd.com/play/Qe1PQDZd/index.m3u8\n第二集\$https://hd.ijycnd.com/play/Qe1PQDZd/index.m3u8';
-    _namecontroller.text = '测试';
+    _urlcontroller.text = '';
+    _namecontroller.text = '';
   }
 
   void addTask() async {
@@ -100,15 +103,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
         continue;
       }
       String m3u8name = '${_namecontroller.text}-${info[0]}';
-      M3u8Task? res = await findM3u8TaskByName(m3u8name);
-      if (res != null) {
+      bool has = await hasM3u8Name(_namecontroller.text, info[0].trim());
+      if (has) {
         EasyLoading.showInfo('$m3u8name,已在列表中，跳过！');
         continue;
       }
       M3u8Task task = M3u8Task(
+          id: uuid.v4(),
           subname: info[0].trim(),
           m3u8url: info[1].trim(),
-          m3u8name: _namecontroller.text,
+          m3u8name: _namecontroller.text.trim(),
           status: 1);
       insertM3u8Task(task);
     }

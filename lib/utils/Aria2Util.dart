@@ -10,14 +10,14 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
-import '../common/TaskInfo.dart';
+import '../entity/M3u8Task.dart';
+import '../entity/TaskInfo.dart';
 import 'ASEUtil.dart';
+import 'ConfUtil.dart';
 import 'EventBusUtil.dart';
 import 'M3u8Util.dart';
-import '../DB/server/SysConfigServer.dart';
-import '../DB/server/M3u8TaskServer.dart';
-import '../DB/entity/M3u8Task.dart';
 import '../common/const.dart';
+import 'TaskPrefsUtil.dart';
 
 class Aria2Util {
   // 私有静态变量，用于保存单例实例
@@ -61,7 +61,7 @@ class Aria2Util {
     isDowning = true;
     tasking = task;
     EasyLoading.show(status: '正在开始任务...');
-    String? downPath = await findSysConfigByName(DOWN_PATH);
+    String? downPath = await getDownPathConf();
     M3u8Util m3u8 = M3u8Util(m3u8url: task.m3u8url);
     await m3u8.init();
     task.iv = m3u8.IV;
@@ -70,10 +70,11 @@ class Aria2Util {
     task.status = 2;
 
     List<String> tsList = m3u8.tsList;
+    logger.i(tsList);
     //[m3u8.tsList[0], m3u8.tsList[1]];
     String saveDir = getTsSaveDir(task, downPath);
     await Aria2Util().addUrls(tsList, saveDir);
-    updateM3u8Task(task);
+    await updateM3u8Task(task);
     EasyLoading.showSuccess('任务启动成功');
   }
 
@@ -232,10 +233,10 @@ class Aria2Util {
   }
 
   decryptTs() async {
-    if (isDecryptTsing) return;
+    if (!isDowning && isDecryptTsing) return;
     isDecryptTsing = true;
     EasyLoading.showInfo('开始解密ts文件');
-    String? downPath = await findSysConfigByName(DOWN_PATH);
+    String? downPath = await getDownPathConf();
     List<String> decryptTsList = [];
     if (!tasking.keyurl!.isEmpty) {
       final keystr = await Dio().get(tasking.keyurl!);
@@ -264,7 +265,7 @@ class Aria2Util {
     // logger.i(fileListPath);
     File(fileListPath).writeAsStringSync(decryptTsList.join('\n'), flush: true);
     EasyLoading.showInfo('解密完成');
-    mergeTs(downPath, fileListPath);
+    // mergeTs(downPath, fileListPath);
   }
 
   mergeTs(downPath, fileListPath) {
@@ -286,21 +287,25 @@ class Aria2Util {
       } catch (e) {
         logger.e(e);
       }
-      isDowning = false;
-      isDecryptTsing = false;
+      downReset();
       EventBusUtil().eventBus.fire(DownSuccessEvent());
     });
   }
 
+  downReset() {
+    isDowning = false;
+    isDecryptTsing = false;
+  }
+
   void initConf() async {
-    aria2Path ??= await findSysConfigByName(ARIA2_PATH);
-    aria2url ??= await findSysConfigByName(ARIA2_URL);
-    // downPath ??= await findSysConfigByName(DOWN_PATH);
+    aria2Path ??= await getAria2PathConf();
+    aria2url ??= await getAria2UrlConf();
+    // downPath ??= await getAria2UrlConf(DOWN_PATH);
   }
 
   void startServer() {
-    var exe = '${aria2Path}/${ARIA2_EXE_NAME}';
-    var conf = '--conf-path=${aria2Path}/aria2.conf';
+    var exe = '$aria2Path/$ARIA2_EXE_NAME';
+    var conf = '--conf-path=$aria2Path/$ARIA2_CONF_NAME';
     cmdProcess = Process.start('cmd', ['/c', exe, conf]);
     cmdProcess.then((processResult) {
       print(processResult.pid);

@@ -40,6 +40,7 @@ class M3u8Util {
         getKey(line);
       } else if (line.contains('.m3u8')) {
         m3u8url = getRealUrl(line);
+        print(m3u8url);
         init();
       }
     }
@@ -57,6 +58,7 @@ class M3u8Util {
   }
 
   getRealUrl(line) {
+    print(line);
     String realUrl = '';
     if (line.startsWith('http')) {
       realUrl = line;

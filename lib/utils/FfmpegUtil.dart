@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:aria2_m3u8/utils/ASEUtil.dart';
 
-import '../DB/server/SysConfigServer.dart';
 import '../common/const.dart';
+import 'ConfUtil.dart';
 
 typedef Callback = void Function();
 tsMergeTs(dtslistpath, mp4path, Callback callback) async {
@@ -11,8 +11,8 @@ tsMergeTs(dtslistpath, mp4path, Callback callback) async {
   if (file.existsSync()) {
     file.deleteSync();
   }
-  String? ffmpegPath = await findSysConfigByName(FFMPEG_PATH);
-  final exe = '$ffmpegPath/bin/$FFMPGE_EXE_NAME';
+  String? ffmpegPath = await getFFmpegPathConf();
+  final exe = '$ffmpegPath/$FFMPGE_EXE_NAME';
   List<String> args = [
     '/c',
     exe,

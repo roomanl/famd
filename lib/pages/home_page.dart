@@ -1,18 +1,14 @@
 import 'dart:io';
-
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
-import '../DB/server/M3u8TaskServer.dart';
-import '../DB/entity/M3u8Task.dart';
-import '../common/TaskInfo.dart';
-import '../common/const.dart';
+import '../entity/M3u8Task.dart';
+import '../entity/TaskInfo.dart';
 import '../utils/Aria2Util.dart';
 import '../utils/EventBusUtil.dart';
 
+import '../utils/TaskPrefsUtil.dart';
 import '../utils/TaskUtil.dart';
 import './add_task.dart';
 
@@ -64,7 +60,7 @@ class _HomePageState extends State<HomePage>
     });
     _tabController = TabController(length: 2, vsync: this);
     await updateList();
-    restTask(taskList);
+    await restTask(taskList);
     updateList();
   }
 
@@ -80,11 +76,11 @@ class _HomePageState extends State<HomePage>
       }
     }
     await Aria2Util().startAria2Task(taskList[0]);
-    updateList();
+    await updateList();
   }
 
   updateList() async {
-    List<M3u8Task> list = await findAllM3u8Task();
+    List<M3u8Task> list = await getM3u8TaskList();
     // logger.i(list.toString());
     setState(() {
       taskList = [];
@@ -115,8 +111,8 @@ class _HomePageState extends State<HomePage>
             ),
             TextButton(
               child: Text('确定'),
-              onPressed: () {
-                deleteM3u8TaskById(task.id!);
+              onPressed: () async {
+                await deleteM3u8Task(task);
                 if (delFile) {
                   String mp4Path =
                       '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
@@ -168,6 +164,29 @@ class _HomePageState extends State<HomePage>
               icon: const Icon(Icons.play_arrow),
               onPressed: () {
                 startTask();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            child: IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () async {
+                Aria2Util().downReset();
+                await restTask(taskList);
+                await updateList();
+                startTask();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            child: IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () async {
+                await restTask(taskList);
+                await clearM3u8Task();
+                updateList();
               },
             ),
           ),

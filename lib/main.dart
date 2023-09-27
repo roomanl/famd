@@ -9,7 +9,7 @@ void main() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(500, 650),
+    size: Size(700, 650),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -20,7 +20,9 @@ void main() async {
     await windowManager.focus();
   });
   runApp(MaterialApp(
-    theme: ThemeData(useMaterial3: true),
+    theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: const Color.fromARGB(1, 13, 190, 138)),
     home: const StartPage(),
     builder: EasyLoading.init(),
   ));
