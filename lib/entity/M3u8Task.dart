@@ -8,7 +8,7 @@ class M3u8Task {
   String? keyurl;
   String? iv;
   String? downdir;
-  int? status;
+  int? status; //1未下载2下载中3下载完成4下载失败
   String get getId => this.id;
 
   set setId(String id) => this.id = id;

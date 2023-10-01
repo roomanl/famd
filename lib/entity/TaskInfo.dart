@@ -7,7 +7,7 @@ class TaskInfo {
   int? tsTotal;
   int? tsSuccess;
   int? tsFail;
-  int tsDecrty;
+  String? tsDecrty;
   String? mergeStatus;
   List<TsTask>? tsTaskList;
   String? get getSpeed => this.speed;
@@ -44,8 +44,8 @@ class TaskInfo {
   TaskInfo(
       {this.mergeStatus = '等待合并',
       this.progress = '0%',
-      this.speed = '0M/S',
-      this.tsDecrty = 0,
+      this.speed = '0',
+      this.tsDecrty = '等待解密',
       this.tsFail = 0,
       this.tsSuccess = 0,
       this.tsTotal = 0,

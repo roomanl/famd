@@ -22,7 +22,8 @@ void main() async {
   runApp(MaterialApp(
     theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: const Color.fromARGB(1, 13, 190, 138)),
+        fontFamily: 'FangYuan2',
+        colorSchemeSeed: Color.fromARGB(255, 13, 190, 138)),
     home: const StartPage(),
     builder: EasyLoading.init(),
   ));

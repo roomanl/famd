@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -5,12 +6,14 @@ import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
 import '../entity/M3u8Task.dart';
 import '../entity/TaskInfo.dart';
-import '../utils/Aria2Util.dart';
+import '../utils/Aria2Manager.dart';
 import '../utils/EventBusUtil.dart';
 
 import '../utils/TaskPrefsUtil.dart';
-import '../utils/TaskUtil.dart';
-import './add_task.dart';
+import '../utils/TaskManager.dart';
+import 'add_task_page.dart';
+import 'appinfo_page.dart';
+import 'setting_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +28,13 @@ class _HomePageState extends State<HomePage>
   late List<M3u8Task> taskList = [];
   late List<M3u8Task> finishTaskList = [];
   late TaskInfo? taskInfo = TaskInfo();
+  final TaskManager taskManager = TaskManager();
+  late StreamSubscription? subscription;
+  late bool aria2Online = true;
+  late bool isStartServer = false;
+  late int startCount = 0;
+  late Widget aria2OnlineWidget =
+      Image.asset('images/online.png', width: 25, height: 25);
 
   @override
   void initState() {
@@ -35,6 +45,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
+    subscription?.cancel();
     _tabController.dispose();
     windowManager.removeListener(this);
     super.dispose();
@@ -42,10 +53,14 @@ class _HomePageState extends State<HomePage>
 
   @override
   void onWindowClose() {
-    Aria2Util().closeServer();
+    Aria2Manager().closeServer();
   }
 
   init() async {
+    subscription =
+        EventBusUtil().eventBus.on<Aria2ServerEvent>().listen((event) {
+      listenerAria2Status(event.online);
+    });
     EventBusUtil().eventBus.on<AddTaskEvent>().listen((event) {
       updateList();
     });
@@ -60,12 +75,42 @@ class _HomePageState extends State<HomePage>
     });
     _tabController = TabController(length: 2, vsync: this);
     await updateList();
-    await restTask(taskList);
+    await taskManager.restTask(taskList);
     updateList();
   }
 
+  listenerAria2Status(online) {
+    aria2Online = online;
+    if (isStartServer && startCount > 10) {
+      EasyLoading.showError("启动失败");
+    } else if (isStartServer && aria2Online) {
+      isStartServer = false;
+      EasyLoading.showSuccess("启动成功");
+    }
+    setState(() {
+      if (aria2Online) {
+        aria2OnlineWidget =
+            Image.asset('images/online.png', width: 25, height: 25);
+      } else {
+        aria2OnlineWidget =
+            Image.asset('images/offline.png', width: 25, height: 25);
+      }
+    });
+  }
+
+  startAria2() {
+    if (isStartServer) {
+      return;
+    }
+    if (!aria2Online) {
+      EasyLoading.show(status: '启动中...');
+      isStartServer = true;
+      Aria2Manager().startServer();
+    }
+  }
+
   startTask() async {
-    if (taskList.length == 0) {
+    if (taskList.isEmpty) {
       EasyLoading.showInfo('列表中没有任务');
       return;
     }
@@ -75,7 +120,7 @@ class _HomePageState extends State<HomePage>
         return;
       }
     }
-    await Aria2Util().startAria2Task(taskList[0]);
+    await taskManager.startAria2Task(taskList[0]);
     await updateList();
   }
 
@@ -148,7 +193,18 @@ class _HomePageState extends State<HomePage>
           SizedBox(
             width: 60,
             child: IconButton(
+              icon: aria2OnlineWidget,
+              tooltip: aria2Online ? '在线' : '离线',
+              onPressed: () {
+                startAria2();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            child: IconButton(
               icon: const Icon(Icons.add),
+              tooltip: '添加任务',
               onPressed: () {
                 Navigator.push(
                     context,
@@ -162,6 +218,7 @@ class _HomePageState extends State<HomePage>
             width: 60,
             child: IconButton(
               icon: const Icon(Icons.play_arrow),
+              tooltip: '开始下载',
               onPressed: () {
                 startTask();
               },
@@ -171,9 +228,10 @@ class _HomePageState extends State<HomePage>
             width: 60,
             child: IconButton(
               icon: const Icon(Icons.refresh),
+              tooltip: '重新下载',
               onPressed: () async {
-                Aria2Util().downReset();
-                await restTask(taskList);
+                taskManager.downFinish();
+                await taskManager.restTask(taskList);
                 await updateList();
                 startTask();
               },
@@ -183,8 +241,9 @@ class _HomePageState extends State<HomePage>
             width: 60,
             child: IconButton(
               icon: const Icon(Icons.delete_forever),
+              tooltip: '清空任务',
               onPressed: () async {
-                await restTask(taskList);
+                await taskManager.restTask(taskList);
                 await clearM3u8Task();
                 updateList();
               },
@@ -194,9 +253,10 @@ class _HomePageState extends State<HomePage>
             width: 60,
             child: IconButton(
               icon: const Icon(Icons.settings),
+              tooltip: '设置',
               onPressed: () {
-                // Aria2Util().addUrl('https://7-zip.org/a/7z2301-x64.exe',
-                //     '222.exe', 'D:/Aria2-M3u8/download');
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => SettingPage()));
               },
             ),
           ),
@@ -204,8 +264,10 @@ class _HomePageState extends State<HomePage>
             width: 60,
             child: IconButton(
               icon: const Icon(Icons.info),
+              tooltip: '关于',
               onPressed: () {
-                // ...
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => AppinfoPage()));
               },
             ),
           ),
@@ -233,22 +295,34 @@ class _HomePageState extends State<HomePage>
                 M3u8Task task = taskList[index];
                 if (task.status == 1) {
                   return Container(
-                    height: 50,
-                    child: Row(
+                    height: 60,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            '${task.m3u8name}-${task.subname}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                '${task.m3u8name}-${task.subname}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                            ),
+                            const Text('等待下载'),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                deleteTask(task, false);
+                              },
+                            ),
+                          ],
                         ),
-                        const Text('等待下载'),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            deleteTask(task, false);
-                          },
+                        Text(
+                          task.m3u8url,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: Color.fromARGB(100, 0, 0, 0)),
                         ),
                       ],
                     ),
@@ -261,23 +335,36 @@ class _HomePageState extends State<HomePage>
                       // crossAxisAlignment: CrossAxisAlignment.center,
                       // mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                '${task.m3u8name}-${task.subname}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    '${task.m3u8name}-${task.subname}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                                const Text('下载中'),
+                              ],
                             ),
-                            const Text('下载中'),
+                            Text(
+                              task.m3u8url,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromARGB(100, 0, 0, 0)),
+                            ),
                           ],
                         ),
                         const Divider(),
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('速    度：${taskInfo?.speed}/S'),
+                              child: Text('速       度：${taskInfo?.speed}/S'),
                             ),
                             Expanded(
                               child: Text('下载进度：${taskInfo?.progress}'),
@@ -290,7 +377,7 @@ class _HomePageState extends State<HomePage>
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('分片数：${taskInfo?.tsTotal}'),
+                              child: Text('分 片  数：${taskInfo?.tsTotal}'),
                             ),
                             Expanded(
                               child: Text('分片下载数：${taskInfo?.tsSuccess}'),
@@ -303,7 +390,7 @@ class _HomePageState extends State<HomePage>
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('解码数：${taskInfo?.tsDecrty}'),
+                              child: Text('解密状态：${taskInfo?.tsDecrty}'),
                             ),
                             Expanded(
                               child: Text('合并状态：${taskInfo?.mergeStatus}'),
@@ -328,6 +415,7 @@ class _HomePageState extends State<HomePage>
               itemCount: finishTaskList.length,
               itemBuilder: (BuildContext context, int index) {
                 M3u8Task task = finishTaskList[index];
+                String statusText = task.status == 3 ? '下载完成' : '下载失败';
                 return Container(
                   height: 50,
                   child: Row(
@@ -339,7 +427,7 @@ class _HomePageState extends State<HomePage>
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                       ),
-                      const Text('下载完成'),
+                      Text(statusText),
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
