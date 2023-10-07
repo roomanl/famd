@@ -1,4 +1,4 @@
-name: aria2_m3u8
+name: famd
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -35,7 +35,6 @@ dependencies:
   window_manager: ^0.3.6
   file_picker: ^5.3.4
   flutter_easyloading: ^3.0.5
-  aria2: ^0.1.3
   event_bus: ^2.0.0
   logger: ^2.0.1
   uri: ^1.0.0
@@ -81,9 +80,6 @@ flutter:
   uses-material-design: true
   assets:
     - images/
-    - plugin/windows/aria2/m3u8aria2c.exe
-    - plugin/windows/aria2/aria2.conf
-    - plugin/windows/ffmpeg/ffmpeg.exe
   fonts:
     - family: FangYuan2
       fonts:

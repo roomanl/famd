@@ -1,6 +1,8 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(aria2_m3u8 LANGUAGES CXX)
+# project(aria2_m3u8 LANGUAGES CXX)
+set(PROJECT_NAME "aria2_m3u8")
+project(${PROJECT_NAME} LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
@@ -100,3 +102,6 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+install(DIRECTORY "${PROJECT_MYPLUGIN_DIR}"
+  DESTINATION "${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)

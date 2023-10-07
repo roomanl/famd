@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import '../common/const.dart';
+import '../utils/Ariar2HttpUtils.dart';
 import '../utils/SettingConfUtils.dart';
 
 class AppinfoPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _AppinfoPageState extends State<AppinfoPage> {
           children: <Widget>[
             Text('版本：$appVersion'),
             const Text('作者：怡和路恶霸'),
+            Text('Aria2版本：$aria2Version'),
             const Text('开源地址：https://github.com/roomanl/famd'),
           ],
         ),
@@ -39,6 +41,7 @@ class _AppinfoPageState extends State<AppinfoPage> {
   }
 
   late String appVersion = '1.0';
+  late String aria2Version = '1.0';
 
   @override
   void initState() {
@@ -48,8 +51,10 @@ class _AppinfoPageState extends State<AppinfoPage> {
 
   init() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String aria2 = await getVersion();
     setState(() {
       appVersion = packageInfo.version;
+      aria2Version = aria2;
     });
   }
 

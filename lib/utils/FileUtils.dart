@@ -50,18 +50,13 @@ List<String> readFile(String path) {
 }
 
 getPlugAssetsDir(String plugName) {
-  String osDirName = '';
-  String assetsDirName = '';
+  String pathSeparator = Platform.pathSeparator;
+  String plugDir = 'data${pathSeparator}plugin$pathSeparator$plugName';
   if (Platform.isWindows) {
-    osDirName = 'windows';
+    String exePath = Platform.resolvedExecutable;
+    return exePath.replaceAll(Platform.executable, plugDir);
   }
-  if (kDebugMode) {
-    assetsDirName = 'plugin';
-  } else {
-    assetsDirName = 'data/flutter_assets/plugin';
-  }
-  String dir = '${Directory.current.path}/$assetsDirName/$osDirName/$plugName';
-  return dir;
+  return null;
 }
 
 getAppRootDir() {

@@ -364,7 +364,7 @@ class _HomePageState extends State<HomePage>
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('速       度：${taskInfo?.speed}/S'),
+                              child: Text('速      度：${taskInfo?.speed}/S'),
                             ),
                             Expanded(
                               child: Text('下载进度：${taskInfo?.progress}'),

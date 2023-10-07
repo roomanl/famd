@@ -102,3 +102,5 @@ add_custom_target(flutter_assemble DEPENDS
   ${CPP_WRAPPER_SOURCES_PLUGIN}
   ${CPP_WRAPPER_SOURCES_APP}
 )
+
+set(PROJECT_MYPLUGIN_DIR "${PROJECT_DIR}/windows/bin/" PARENT_SCOPE)

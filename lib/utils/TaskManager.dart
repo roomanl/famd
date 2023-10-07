@@ -31,8 +31,8 @@ class TaskManager {
   }
 
   restTask(List<M3u8Task> taskList) async {
-    Aria2Manager().aria2c.forcePauseAll();
-    Aria2Manager().aria2c.purgeDownloadResult();
+    await Aria2Manager().forcePauseAll();
+    await Aria2Manager().purgeDownloadResult();
     Aria2Manager().clearSession();
     for (M3u8Task task in taskList) {
       if (task.status == 2) {
@@ -73,14 +73,14 @@ class TaskManager {
       String filename = '${i.toString().padLeft(4, '0')}.ts';
       TsTask tsTask;
       if (isResetDown(task, downPath, filename)) {
-        var res = await Aria2Manager().addUrl(url, filename, saveDir);
-        print(res.toString());
-        var jsonRes = jsonDecode(res.toString());
-        tsTask = TsTask(
-            tsName: filename,
-            tsUrl: url,
-            savePath: saveDir,
-            gid: jsonRes['result']);
+        String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
+        if (gid != null) {
+          tsTask =
+              TsTask(tsName: filename, tsUrl: url, savePath: saveDir, gid: gid);
+        } else {
+          tsTask =
+              TsTask(tsName: filename, tsUrl: url, savePath: saveDir, staus: 3);
+        }
       } else {
         tsTask =
             TsTask(tsName: filename, tsUrl: url, savePath: saveDir, staus: 2);
@@ -95,13 +95,13 @@ class TaskManager {
     EasyLoading.showSuccess('任务启动成功');
   }
 
-  restStartAria2Task() {
+  restStartAria2Task() async {
     if (restCount > 3) {
       decryptTs();
     }
-    EasyLoading.showInfo('第$restCount次重新下载失败文件');
-    Aria2Manager().aria2c.forcePauseAll();
-    Aria2Manager().aria2c.purgeDownloadResult();
+    // EasyLoading.showInfo('第$restCount次重新下载失败文件');
+    await Aria2Manager().forcePauseAll();
+    await Aria2Manager().purgeDownloadResult();
     isDowning = false;
     isDecryptTsing = false;
     startAria2Task(tasking);
@@ -197,8 +197,8 @@ class TaskManager {
       // EasyLoading.showInfo('合并成功');
       tasking.status = 3;
       updateM3u8Task(tasking);
-      // String folderPath = '$downPath/${tasking.m3u8name}/${tasking.subname}';
-      // deleteDir(folderPath);
+      String folderPath = '$downPath/${tasking.m3u8name}/${tasking.subname}';
+      deleteDir(folderPath);
       downFinish();
       EventBusUtil().eventBus.fire(DownSuccessEvent());
     } else {
