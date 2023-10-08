@@ -12,6 +12,9 @@ bool aseDecryptTs(
   ivstr ??= '0x00000000000000000000000000000000';
   try {
     File tsfile = File(tsPath);
+    if (!tsfile.existsSync()) {
+      return false;
+    }
     final bytes = tsfile.readAsBytesSync();
 
     final key = Uint8List.fromList(keystr.codeUnits);

@@ -109,6 +109,7 @@ class TaskManager {
   }
 
   updataTaskInfo() {
+    if (!isDowning) return;
     double progress = 0;
     int tsSuccess = 0;
     int tsFail = 0;
@@ -132,9 +133,30 @@ class TaskManager {
     if (tsSuccess + tsFail == tsTotal) {
       if (tsFail > 0) {
         restStartAria2Task();
-      } else {
+      } else if (tsSuccess > 0) {
         decryptTs();
+      } else {
+        errDownFinish();
       }
+    }
+  }
+
+  /// 下载完一个TS后会调用listNotifications来把TS标记为已下载
+  /// 但是有极小的概率TS下载完后没有调用listNotifications
+  /// 导致updataTaskInfo中tsSuccess + tsFail永远小于tsTotal，然后软件就会卡在这里不动
+  /// checkTsFileNum则是检查磁盘目录中已下载的TS数量
+  /// 如果磁盘目录中已下载的的TS数量等于tsTotal，也调用decryptTs开始解密TS，防止软件卡住不动
+  /// 此方法30S调用一次
+  checkTsFileNum() {
+    if (!isDowning || isDecryptTsing) return;
+    List<FileSystemEntity> fileList =
+        getDirFile(getTsSaveDir(tasking, downPath));
+    List<FileSystemEntity> list =
+        fileList.where((file) => file.path.endsWith('.ts')).toList();
+    List<FileSystemEntity> arialist =
+        fileList.where((file) => file.path.endsWith('.aria2')).toList();
+    if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
+      decryptTs();
     }
   }
 
@@ -221,30 +243,35 @@ class TaskManager {
   }
 
   listNotifications(String data) {
-    Map<String, dynamic> jsonData = jsonDecode(data);
-    if (data.contains('aria2.onDown')) {
-      String gid = jsonData['params'][0]['gid'];
-      int taskIndex = -1;
-      taskInfo?.tsTaskList?.asMap().forEach((index, item) {
-        if (taskInfo?.tsTaskList?[index].gid == gid) {
-          taskIndex = index;
-          return;
+    if (data.contains('check-ts-um')) {
+      /// 如果是每30S主动触发的广播，就检查本地TS文件是不是已经全部下载完成
+      checkTsFileNum();
+    } else {
+      Map<String, dynamic> jsonData = jsonDecode(data);
+      if (data.contains('aria2.onDown')) {
+        String gid = jsonData['params'][0]['gid'];
+        int taskIndex = -1;
+        taskInfo?.tsTaskList?.asMap().forEach((index, item) {
+          if (taskInfo?.tsTaskList?[index].gid == gid) {
+            taskIndex = index;
+            return;
+          }
+        });
+        // logger.i(taskIndex);
+        if (taskIndex < 0) return;
+        if (jsonData['method'] == 'aria2.onDownloadStart') {
+          taskInfo?.tsTaskList?[taskIndex].staus = 1;
+        } else if (jsonData['method'] == 'aria2.onDownloadPause') {
+          taskInfo?.tsTaskList?[taskIndex].staus = 3;
+        } else if (jsonData['method'] == 'aria2.onDownloadError') {
+          taskInfo?.tsTaskList?[taskIndex].staus = 3;
+          // logger.i('下载失败：' + data);
+        } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
+          taskInfo?.tsTaskList?[taskIndex].staus = 2;
+          // logger.i('下载完成：' + jsonData['params'][0]['gid']);
         }
-      });
-      // logger.i(taskIndex);
-      if (taskIndex < 0) return;
-      if (jsonData['method'] == 'aria2.onDownloadStart') {
-        taskInfo?.tsTaskList?[taskIndex].staus = 1;
-      } else if (jsonData['method'] == 'aria2.onDownloadPause') {
-        taskInfo?.tsTaskList?[taskIndex].staus = 3;
-      } else if (jsonData['method'] == 'aria2.onDownloadError') {
-        taskInfo?.tsTaskList?[taskIndex].staus = 3;
-        // logger.i('下载失败：' + data);
-      } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
-        taskInfo?.tsTaskList?[taskIndex].staus = 2;
-        // logger.i('下载完成：' + jsonData['params'][0]['gid']);
-      }
-    } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
+      } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
+    }
     updataTaskInfo();
     EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
   }

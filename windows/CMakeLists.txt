@@ -1,12 +1,12 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
 # project(aria2_m3u8 LANGUAGES CXX)
-set(PROJECT_NAME "aria2_m3u8")
+set(PROJECT_NAME "Famd")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "aria2_m3u8")
+set(BINARY_NAME "Famd")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

@@ -14,13 +14,6 @@ class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();
   factory Aria2Manager() => _instance;
 
-  Aria2Manager._internal() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      connection();
-      getSpeed();
-    });
-  }
-
 // final WebSocketManager _webSocketManager = WebSocketManager();
   var webSocketChannel = null;
   var jsonRpcClient = null;
@@ -33,6 +26,23 @@ class Aria2Manager {
   late Future<Process> cmdProcess;
   late int processPid = 0;
   var uuid = Uuid();
+  late int timerCount = 0;
+
+  Aria2Manager._internal() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      connection();
+      getSpeed();
+      timerCount++;
+
+      /// 下载完一个TS后才会触发ListAria2Notifications广播
+      /// 有极小的概率TS下载完后没有触发ListAria2Notifications广播
+      /// TS下载完却没有触发ListAria2Notifications广播，会导致软件卡住
+      /// 这里设置每30秒主动触发一次ListAria2Notifications广播，防止软件卡住
+      if (online && timerCount % 30 == 0) {
+        EventBusUtil().eventBus.fire(ListAria2Notifications('check-ts-um'));
+      }
+    });
+  }
 
   Future<String?> addUrl(String url, String filename, String downPath) async {
     var params = [

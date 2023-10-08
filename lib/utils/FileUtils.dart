@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 
 createDir(String dir) {
   Directory directory = Directory(dir);
@@ -47,6 +46,11 @@ fileExistsSync(String path) {
 List<String> readFile(String path) {
   File file = File(path);
   return file.existsSync() ? file.readAsLinesSync() : [];
+}
+
+getDirFile(String dir) {
+  Directory directory = Directory(dir);
+  return directory.listSync();
 }
 
 getPlugAssetsDir(String plugName) {
