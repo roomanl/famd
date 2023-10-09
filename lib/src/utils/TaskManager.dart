@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import '../entity/M3u8Task.dart';
+import '../entity/m3u8_task.dart';
 import '../entity/TaskInfo.dart';
 import 'ASEUtil.dart';
 import 'Aria2Manager.dart';
@@ -195,8 +195,7 @@ class TaskManager {
       });
     }
     if (decryptTsList.isNotEmpty) {
-      String fileListPath =
-          '$downPath/${tasking.m3u8name}/${tasking.subname}/file.txt';
+      String fileListPath = getTsListTxtPath(tasking, downPath);
       File(fileListPath)
           .writeAsStringSync(decryptTsList.join('\n'), flush: true);
       taskInfo?.tsDecrty = '解密完成';
@@ -211,15 +210,15 @@ class TaskManager {
     // EasyLoading.showInfo('开始合并ts文件');
     taskInfo?.mergeStatus = '合并中...';
     EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
-    String mp4Path =
-        '$downPath/${tasking.m3u8name}/${tasking.m3u8name}-${tasking.subname}.mp4';
+    String mp4Path = getMp4Path(tasking, downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
       taskInfo?.mergeStatus = '合并完成';
       // EasyLoading.showInfo('合并成功');
       tasking.status = 3;
       updateM3u8Task(tasking);
-      String folderPath = '$downPath/${tasking.m3u8name}/${tasking.subname}';
+      String folderPath = getDtsDir(tasking, downPath, '');
+      //  '$downPath/${tasking.m3u8name}/${tasking.subname}';
       deleteDir(folderPath);
       downFinish();
       EventBusUtil().eventBus.fire(DownSuccessEvent());
@@ -302,5 +301,16 @@ class TaskManager {
     String saveDir = '$downPath/${task.m3u8name}/${task.subname}/$dirname';
     createDir(saveDir);
     return saveDir;
+  }
+
+  String getMp4Path(M3u8Task task, String? downPath) {
+    String mp4Path =
+        '$downPath/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
+    return mp4Path;
+  }
+
+  String getTsListTxtPath(M3u8Task task, String? downPath) {
+    String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.txt';
+    return fileListPath;
   }
 }

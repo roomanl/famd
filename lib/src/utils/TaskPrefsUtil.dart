@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../entity/M3u8Task.dart';
+import '../entity/m3u8_task.dart';
 
 final logger = Logger();
 

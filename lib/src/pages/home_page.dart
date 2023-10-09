@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
-import '../entity/M3u8Task.dart';
+import '../entity/m3u8_task.dart';
 import '../entity/TaskInfo.dart';
 import '../utils/Aria2Manager.dart';
 import '../utils/EventBusUtil.dart';
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage>
   late bool isStartServer = false;
   late int startCount = 0;
   late Widget aria2OnlineWidget =
-      Image.asset('images/online.png', width: 25, height: 25);
+      Image.asset('lib/resources/images/online.png', width: 25, height: 25);
 
   @override
   void initState() {
@@ -89,11 +89,11 @@ class _HomePageState extends State<HomePage>
     }
     setState(() {
       if (aria2Online) {
-        aria2OnlineWidget =
-            Image.asset('images/online.png', width: 25, height: 25);
+        aria2OnlineWidget = Image.asset('lib/resources/images/online.png',
+            width: 25, height: 25);
       } else {
-        aria2OnlineWidget =
-            Image.asset('images/offline.png', width: 25, height: 25);
+        aria2OnlineWidget = Image.asset('lib/resources/images/offline.png',
+            width: 25, height: 25);
       }
     });
   }

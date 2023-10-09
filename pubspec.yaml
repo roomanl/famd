@@ -47,6 +47,7 @@ dependencies:
   uuid: ^3.0.6
   path_provider: ^2.1.0
   package_info_plus: ^4.1.0
+  get: ^4.6.5
 
 
 
@@ -79,11 +80,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - images/
+    - lib/resources/images/
   fonts:
     - family: FangYuan2
       fonts:
-        - asset: lib/fonts/AlimamaFangYuanTiVF-Thin.ttf
+        - asset: lib/resources/fonts/AlimamaFangYuanTiVF-Thin.ttf
           weight: 500
 
   # To add assets to your application, add an assets section, like this:
