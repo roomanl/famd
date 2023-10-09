@@ -1,6 +1,6 @@
 import 'dart:io';
 import '../common/const.dart';
-import 'FileUtils.dart';
+import 'file_utils.dart';
 
 getAria2rootPath() {
   return getPlugAssetsDir('aria2');

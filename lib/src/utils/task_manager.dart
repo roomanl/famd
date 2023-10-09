@@ -4,16 +4,16 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../entity/m3u8_task.dart';
-import '../entity/TaskInfo.dart';
-import 'ASEUtil.dart';
-import 'Aria2Manager.dart';
-import 'SettingConfUtils.dart';
-import 'EventBusUtil.dart';
-import 'FfmpegUtil.dart';
-import 'M3u8Util.dart';
-import 'TaskPrefsUtil.dart';
-import 'Utils.dart';
-import 'FileUtils.dart';
+import '../entity/task_info.dart';
+import 'ase_util.dart';
+import 'aria2_manager.dart';
+import 'setting_conf_utils.dart';
+import 'event_bus_util.dart';
+import 'ffmpeg_util.dart';
+import 'm3u8_util.dart';
+import 'task_prefs_util.dart';
+import 'common_utils.dart';
+import 'file_utils.dart';
 
 class TaskManager {
   var logger = Logger();

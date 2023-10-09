@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/const.dart';
-import 'FileUtils.dart';
+import 'file_utils.dart';
 
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 

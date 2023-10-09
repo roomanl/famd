@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'FileUtils.dart';
+import 'file_utils.dart';
 
 tsMergeTs(dtslistpath, mp4path) async {
   File file = File(mp4path);

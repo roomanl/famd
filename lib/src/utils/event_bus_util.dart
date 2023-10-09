@@ -1,6 +1,6 @@
 import 'package:event_bus/event_bus.dart';
 
-import '../entity/TaskInfo.dart';
+import '../entity/task_info.dart';
 
 class EventBusUtil {
   // 私有静态变量，用于保存单例实例

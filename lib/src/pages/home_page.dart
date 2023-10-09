@@ -5,12 +5,12 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
 import '../entity/m3u8_task.dart';
-import '../entity/TaskInfo.dart';
-import '../utils/Aria2Manager.dart';
-import '../utils/EventBusUtil.dart';
+import '../entity/task_info.dart';
+import '../utils/aria2_manager.dart';
+import '../utils/event_bus_util.dart';
 
-import '../utils/TaskPrefsUtil.dart';
-import '../utils/TaskManager.dart';
+import '../utils/task_prefs_util.dart';
+import '../utils/task_manager.dart';
 import 'add_task_page.dart';
 import 'appinfo_page.dart';
 import 'setting_page.dart';

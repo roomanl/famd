@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../utils/Aria2Manager.dart';
-import '../utils/EventBusUtil.dart';
+import '../utils/aria2_manager.dart';
+import '../utils/event_bus_util.dart';
 import './home_page.dart';
 
 class StartPage extends StatefulWidget {

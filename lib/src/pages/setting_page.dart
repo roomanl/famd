@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../common/const.dart';
-import '../utils/Aria2ConfUtil.dart';
-import '../utils/SettingConfUtils.dart';
+import '../utils/aria2_conf_util.dart';
+import '../utils/setting_conf_utils.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});

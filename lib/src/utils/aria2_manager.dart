@@ -5,10 +5,10 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
-import 'Aria2ConfUtil.dart' as Aria2Conf;
-import 'Ariar2HttpUtils.dart' as Aria2Http;
-import 'EventBusUtil.dart';
-import 'FileUtils.dart';
+import 'aria2_conf_util.dart' as Aria2Conf;
+import 'ariar2_http_utils.dart' as Aria2Http;
+import 'event_bus_util.dart';
+import 'file_utils.dart';
 
 class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
-import 'Aria2ConfUtil.dart' as Aria2Conf;
+import 'aria2_conf_util.dart' as Aria2Conf;
 
 final aria2url = Aria2Conf.getAria2UrlConf();
 var uuid = Uuid();
