@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../common/const.dart';
 import '../utils/aria2_manager.dart';
 import '../utils/event_bus_util.dart';
 import './home_page.dart';
@@ -20,8 +21,7 @@ class _StartPageState extends State<StartPage> {
           height: 150,
           child: ElevatedButton(
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 53, 188, 174)),
+                backgroundColor: MaterialStateProperty.all(mainColor),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
                 elevation: MaterialStateProperty.all(20),
                 shape: MaterialStateProperty.all(

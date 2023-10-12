@@ -21,12 +21,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         title: const Text('添加任务'),
       ),
       body: Padding(
@@ -118,7 +118,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
     EventBusUtil().eventBus.fire(AddTaskEvent());
     EasyLoading.showSuccess('添加成功');
-    Navigator.pop(context);
+    // Navigator.pop(context);
     // print(_urlcontroller.text);
     // print(_namecontroller.text);
     // M3u8Util(m3u8url: _urlcontroller.text);

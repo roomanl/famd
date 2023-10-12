@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import './src/pages/start_page.dart';
+import 'src/common/const.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +10,7 @@ void main() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(700, 650),
+    size: Size(800, 600),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -21,9 +22,10 @@ void main() async {
   });
   runApp(MaterialApp(
     theme: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'FangYuan2',
-        colorSchemeSeed: Color.fromARGB(255, 13, 190, 138)),
+      useMaterial3: true,
+      fontFamily: mainFont,
+      colorSchemeSeed: mainColor,
+    ),
     home: const StartPage(),
     builder: EasyLoading.init(),
   ));
