@@ -1,20 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'package:get/instance_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
+import '../states/app_states.dart';
 import 'aria2_conf_util.dart' as Aria2Conf;
 import 'ariar2_http_utils.dart' as Aria2Http;
 import 'event_bus_util.dart';
-import 'file_utils.dart';
 
 class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();
   factory Aria2Manager() => _instance;
 
-// final WebSocketManager _webSocketManager = WebSocketManager();
+  final _appCtrl = Get.put(AppController());
   var webSocketChannel = null;
   var jsonRpcClient = null;
   late Logger logger = Logger();
@@ -82,7 +83,8 @@ class Aria2Manager {
       jsonRpcClient = null;
       webSocketChannel = null;
     }
-    EventBusUtil().eventBus.fire(Aria2ServerEvent(online));
+    _appCtrl.updateAria2Online(online);
+    // EventBusUtil().eventBus.fire(Aria2ServerEvent(online));
   }
 
   listenWebSocket() {

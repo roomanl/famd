@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import './src/pages/start_page.dart';
@@ -20,7 +21,7 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(MaterialApp(
+  runApp(GetMaterialApp(
     theme: ThemeData(
       useMaterial3: true,
       fontFamily: mainFont,

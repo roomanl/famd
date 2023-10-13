@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../entity/m3u8_task.dart';
-import '../utils/event_bus_util.dart';
+import '../states/app_states.dart';
 import '../utils/task_prefs_util.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -82,6 +83,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
 // 第70集$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8
 // 第71集$https://hd.ijycnd.com/play/zbqm5Byb/index.m3u8
 
+  final _appCtrl = Get.put(AppController());
+  final _taskCtrl = Get.put(TaskController());
+
   @override
   void initState() {
     super.initState();
@@ -114,14 +118,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
           m3u8url: info[1].trim(),
           m3u8name: _namecontroller.text.trim(),
           status: 1);
-      insertM3u8Task(task);
+      await insertM3u8Task(task);
     }
-    EventBusUtil().eventBus.fire(AddTaskEvent());
+    await _taskCtrl.updateTaskList();
+    _appCtrl.updatePageIndex(1);
+    _urlcontroller.text = '';
+    _namecontroller.text = '';
     EasyLoading.showSuccess('添加成功');
-    // Navigator.pop(context);
-    // print(_urlcontroller.text);
-    // print(_namecontroller.text);
-    // M3u8Util(m3u8url: _urlcontroller.text);
   }
 
   @override

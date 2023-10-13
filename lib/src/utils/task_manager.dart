@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/instance_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../entity/m3u8_task.dart';
 import '../entity/task_info.dart';
+import '../states/app_states.dart';
 import 'ase_util.dart';
 import 'aria2_manager.dart';
 import 'setting_conf_utils.dart';
@@ -23,6 +25,7 @@ class TaskManager {
   late M3u8Task tasking;
   late int restCount = 0;
   late String? downPath;
+  final _taskCtrl = Get.put(TaskController());
 
   TaskManager() {
     EventBusUtil().eventBus.on<ListAria2Notifications>().listen((event) {
@@ -91,7 +94,8 @@ class TaskManager {
 
     await updateM3u8Task(task);
     updataTaskInfo();
-    EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+    _taskCtrl.updateTaskInfo(taskInfo);
     EasyLoading.showSuccess('任务启动成功');
   }
 
@@ -185,7 +189,8 @@ class TaskManager {
           decryptTsList.add('file \'$tsSavePath\'');
         }
         // print(decryptSuccess);
-        EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+        // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+        _taskCtrl.updateTaskInfo(taskInfo);
       });
     } else {
       taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
@@ -209,7 +214,8 @@ class TaskManager {
   mergeTs(downPath, fileListPath) async {
     // EasyLoading.showInfo('开始合并ts文件');
     taskInfo?.mergeStatus = '合并中...';
-    EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+    _taskCtrl.updateTaskInfo(taskInfo);
+    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
     String mp4Path = getMp4Path(tasking, downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
@@ -272,7 +278,8 @@ class TaskManager {
       } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
     }
     updataTaskInfo();
-    EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
+    _taskCtrl.updateTaskInfo(taskInfo);
+    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
   }
 
   bool isResetDown(M3u8Task task, String? downPath, String tsName) {

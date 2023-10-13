@@ -1,11 +1,11 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
 import '../entity/m3u8_task.dart';
-import '../entity/task_info.dart';
-import '../utils/aria2_manager.dart';
+import '../states/app_states.dart';
 import '../utils/event_bus_util.dart';
 
 import '../utils/task_prefs_util.dart';
@@ -19,18 +19,10 @@ class DownManagerPage extends StatefulWidget {
 
 class _DownManagerPageState extends State<DownManagerPage>
     with TickerProviderStateMixin {
+  final TaskController _taskCtrl = Get.find();
   late final TabController _tabController;
   final logger = Logger();
-  late List<M3u8Task> taskList = [];
-  late List<M3u8Task> finishTaskList = [];
-  late TaskInfo? taskInfo = TaskInfo();
   final TaskManager taskManager = TaskManager();
-  late StreamSubscription? subscription;
-  late bool aria2Online = true;
-  late bool isStartServer = false;
-  late int startCount = 0;
-  late Widget aria2OnlineWidget =
-      Image.asset('lib/resources/images/online.png', width: 25, height: 25);
 
   @override
   void initState() {
@@ -39,90 +31,32 @@ class _DownManagerPageState extends State<DownManagerPage>
   }
 
   init() async {
-    subscription =
-        EventBusUtil().eventBus.on<Aria2ServerEvent>().listen((event) {
-      listenerAria2Status(event.online);
-    });
     EventBusUtil().eventBus.on<AddTaskEvent>().listen((event) {
-      updateList();
+      _taskCtrl.updateTaskList();
     });
     EventBusUtil().eventBus.on<DownSuccessEvent>().listen((event) async {
-      await updateList();
+      await _taskCtrl.updateTaskList();
       startTask();
     });
-    EventBusUtil().eventBus.on<TaskInfoEvent>().listen((event) {
-      if (!mounted) return;
-      setState(() {
-        taskInfo = event.taskInfo;
-      });
-    });
     _tabController = TabController(length: 2, vsync: this);
-    await updateList();
-    await taskManager.restTask(taskList);
-    updateList();
-  }
-
-  listenerAria2Status(online) {
-    if (!mounted) return;
-    aria2Online = online;
-    if (isStartServer && startCount > 10) {
-      EasyLoading.showError("启动失败");
-    } else if (isStartServer && aria2Online) {
-      isStartServer = false;
-      EasyLoading.showSuccess("启动成功");
-    }
-    setState(() {
-      if (aria2Online) {
-        aria2OnlineWidget = Image.asset('lib/resources/images/online.png',
-            width: 25, height: 25);
-      } else {
-        aria2OnlineWidget = Image.asset('lib/resources/images/offline.png',
-            width: 25, height: 25);
-      }
-    });
-  }
-
-  startAria2() {
-    if (isStartServer) {
-      return;
-    }
-    if (!aria2Online) {
-      EasyLoading.show(status: '启动中...');
-      isStartServer = true;
-      Aria2Manager().startServer();
-    }
+    await _taskCtrl.updateTaskList();
+    await taskManager.restTask(_taskCtrl.taskList);
+    _taskCtrl.updateTaskList();
   }
 
   startTask() async {
-    if (taskList.isEmpty) {
+    if (_taskCtrl.taskList.isEmpty) {
       EasyLoading.showInfo('列表中没有任务');
       return;
     }
-    for (M3u8Task task in taskList) {
+    for (M3u8Task task in _taskCtrl.taskList) {
       if (task.status == 2) {
         EasyLoading.showInfo('已经在下载中');
         return;
       }
     }
-    await taskManager.startAria2Task(taskList[0]);
-    await updateList();
-  }
-
-  updateList() async {
-    if (!mounted) return;
-    List<M3u8Task> list = await getM3u8TaskList();
-    // logger.i(list.toString());
-    setState(() {
-      taskList = [];
-      finishTaskList = [];
-      for (M3u8Task task in list) {
-        if (task.status == 1 || task.status == 2) {
-          taskList.add(task);
-        } else {
-          finishTaskList.add(task);
-        }
-      }
-    });
+    await taskManager.startAria2Task(_taskCtrl.taskList[0]);
+    _taskCtrl.updateTaskList();
   }
 
   deleteTask(M3u8Task task, bool delFile) {
@@ -159,7 +93,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                     logger.e(e);
                   }
                 }
-                updateList();
+                await _taskCtrl.updateTaskList();
                 Navigator.of(context).pop();
               },
             ),
@@ -178,30 +112,6 @@ class _DownManagerPageState extends State<DownManagerPage>
           SizedBox(
             width: 60,
             child: IconButton(
-              icon: aria2OnlineWidget,
-              tooltip: aria2Online ? '在线' : '离线',
-              onPressed: () {
-                startAria2();
-              },
-            ),
-          ),
-          // SizedBox(
-          //   width: 60,
-          //   child: IconButton(
-          //     icon: const Icon(Icons.add),
-          //     tooltip: '添加任务',
-          //     onPressed: () {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (BuildContext context) =>
-          //                   const AddTaskPage()));
-          //     },
-          //   ),
-          // ),
-          SizedBox(
-            width: 60,
-            child: IconButton(
               icon: const Icon(Icons.play_arrow),
               tooltip: '开始下载',
               onPressed: () {
@@ -216,8 +126,8 @@ class _DownManagerPageState extends State<DownManagerPage>
               tooltip: '重新下载',
               onPressed: () async {
                 taskManager.downFinish();
-                await taskManager.restTask(taskList);
-                await updateList();
+                await taskManager.restTask(_taskCtrl.taskList);
+                await _taskCtrl.updateTaskList();
                 startTask();
               },
             ),
@@ -228,34 +138,12 @@ class _DownManagerPageState extends State<DownManagerPage>
               icon: const Icon(Icons.delete_forever),
               tooltip: '清空任务',
               onPressed: () async {
-                await taskManager.restTask(taskList);
+                await taskManager.restTask(_taskCtrl.taskList);
                 await clearM3u8Task();
-                updateList();
+                _taskCtrl.updateTaskList();
               },
             ),
           ),
-          // SizedBox(
-          //   width: 60,
-          //   child: IconButton(
-          //     icon: const Icon(Icons.settings),
-          //     tooltip: '设置',
-          //     onPressed: () {
-          //       Navigator.of(context).push(MaterialPageRoute(
-          //           builder: (BuildContext context) => SettingPage()));
-          //     },
-          //   ),
-          // ),
-          // SizedBox(
-          //   width: 60,
-          //   child: IconButton(
-          //     icon: const Icon(Icons.info),
-          //     tooltip: '关于',
-          //     onPressed: () {
-          //       Navigator.of(context).push(MaterialPageRoute(
-          //           builder: (BuildContext context) => AppinfoPage()));
-          //     },
-          //   ),
-          // ),
         ],
         bottom: TabBar(
           controller: _tabController,
@@ -273,158 +161,170 @@ class _DownManagerPageState extends State<DownManagerPage>
         controller: _tabController,
         children: <Widget>[
           Center(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(8),
-              itemCount: taskList.length,
-              itemBuilder: (BuildContext context, int index) {
-                M3u8Task task = taskList[index];
-                if (task.status == 1) {
-                  return Container(
-                    height: 60,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                '${task.m3u8name}-${task.subname}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                            ),
-                            const Text('等待下载'),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                deleteTask(task, false);
-                              },
-                            ),
-                          ],
-                        ),
-                        Text(
-                          task.m3u8url,
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromARGB(100, 0, 0, 0)),
-                        ),
-                      ],
-                    ),
-                  );
-                } else if (task.status == 2) {
-                  return Container(
-                    // height: 50,
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      // mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Text(
-                                    '${task.m3u8name}-${task.subname}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
+            child: GetBuilder<TaskController>(
+              builder: (_) => ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemCount: _taskCtrl.taskList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  M3u8Task task = _taskCtrl.taskList[index];
+                  if (task.status == 1) {
+                    return Container(
+                      height: 60,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  '${task.m3u8name}-${task.subname}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
                                 ),
-                                const Text('下载中'),
-                              ],
-                            ),
-                            Text(
-                              task.m3u8url,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color.fromARGB(100, 0, 0, 0)),
-                            ),
-                          ],
-                        ),
-                        const Divider(),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text('速      度：${taskInfo?.speed}/S'),
-                            ),
-                            Expanded(
-                              child: Text('下载进度：${taskInfo?.progress}'),
-                            ),
-                            Expanded(
-                              child: const Text(''),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text('分 片  数：${taskInfo?.tsTotal}'),
-                            ),
-                            Expanded(
-                              child: Text('分片下载数：${taskInfo?.tsSuccess}'),
-                            ),
-                            Expanded(
-                              child: Text('分片失败数：${taskInfo?.tsFail}'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text('解密状态：${taskInfo?.tsDecrty}'),
-                            ),
-                            Expanded(
-                              child: Text('合并状态：${taskInfo?.mergeStatus}'),
-                            ),
-                            Expanded(
-                              child: const Text(''),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(),
+                              ),
+                              const Text('等待下载'),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  deleteTask(task, false);
+                                },
+                              ),
+                            ],
+                          ),
+                          Text(
+                            task.m3u8url,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                color: Color.fromARGB(100, 0, 0, 0)),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (task.status == 2) {
+                    return Container(
+                      // height: 50,
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      '${task.m3u8name}-${task.subname}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                  const Text('下载中'),
+                                ],
+                              ),
+                              Text(
+                                task.m3u8url,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color.fromARGB(100, 0, 0, 0)),
+                              ),
+                            ],
+                          ),
+                          const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                    '速      度：${_taskCtrl.taskInfo.speed}/S'),
+                              ),
+                              Expanded(
+                                child:
+                                    Text('下载进度：${_taskCtrl.taskInfo.progress}'),
+                              ),
+                              Expanded(
+                                child: const Text(''),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                    '分 片  数：${_taskCtrl.taskInfo.tsTotal}'),
+                              ),
+                              Expanded(
+                                child: Text(
+                                    '分片下载数：${_taskCtrl.taskInfo.tsSuccess}'),
+                              ),
+                              Expanded(
+                                child:
+                                    Text('分片失败数：${_taskCtrl.taskInfo.tsFail}'),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child:
+                                    Text('解密状态：${_taskCtrl.taskInfo.tsDecrty}'),
+                              ),
+                              Expanded(
+                                child: Text(
+                                    '合并状态：${_taskCtrl.taskInfo.mergeStatus}'),
+                              ),
+                              Expanded(
+                                child: const Text(''),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(),
+              ),
             ),
           ),
           Center(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(8),
-              itemCount: finishTaskList.length,
-              itemBuilder: (BuildContext context, int index) {
-                M3u8Task task = finishTaskList[index];
-                String statusText = task.status == 3 ? '下载完成' : '下载失败';
-                return Container(
-                  height: 50,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          '${task.m3u8name}-${task.subname}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+            child: GetBuilder<TaskController>(
+              builder: (_) => ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemCount: _taskCtrl.finishTaskList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  M3u8Task task = _taskCtrl.finishTaskList[index];
+                  String statusText = task.status == 3 ? '下载完成' : '下载失败';
+                  return Container(
+                    height: 50,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            '${task.m3u8name}-${task.subname}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
                         ),
-                      ),
-                      Text(statusText),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          deleteTask(task, true);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(),
+                        Text(statusText),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            deleteTask(task, true);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(),
+              ),
             ),
           ),
         ],
