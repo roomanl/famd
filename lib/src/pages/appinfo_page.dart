@@ -25,7 +25,8 @@ class _AppinfoPageState extends State<AppinfoPage> {
         // ),
         title: const Text('关于'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisSize: MainAxisSize.min,

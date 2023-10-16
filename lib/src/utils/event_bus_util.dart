@@ -17,26 +17,7 @@ class EventBusUtil {
   }
 }
 
-class Aria2ServerEvent {
-  bool online;
-
-  Aria2ServerEvent(this.online);
-}
-
-class AddTaskEvent {
-  AddTaskEvent();
-}
-
-class TaskInfoEvent {
-  TaskInfo? taskInfo;
-  TaskInfoEvent(this.taskInfo);
-}
-
 class ListAria2Notifications {
   String data;
   ListAria2Notifications(this.data);
-}
-
-class DownSuccessEvent {
-  DownSuccessEvent();
 }

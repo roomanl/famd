@@ -40,7 +40,7 @@ class Aria2Manager {
       /// TS下载完却没有触发ListAria2Notifications广播，会导致软件卡住
       /// 这里设置每30秒主动触发一次ListAria2Notifications广播，防止软件卡住
       if (online && timerCount % 30 == 0) {
-        EventBusUtil().eventBus.fire(ListAria2Notifications('check-ts-um'));
+        EventBusUtil().eventBus.fire(ListAria2Notifications('check-ts-num'));
       }
     });
   }

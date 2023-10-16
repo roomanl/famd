@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
-
+import 'package:window_manager/window_manager.dart';
 import '../common/const.dart';
 import '../components/page_view.dart' as MyPageView;
 import '../states/app_states.dart';
@@ -20,7 +19,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,37 +49,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  final MyPageView.PageController _pageController =
-      MyPageView.PageController(initialPage: 1);
   final List<NavigationRailDestination> destinations = const [
     NavigationRailDestination(
       icon: Icon(Icons.add),
-      selectedIcon: Icon(Icons.add),
       label: Text('添加任务'),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.list),
-      selectedIcon: Icon(Icons.list),
       label: Text('任务管理'),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.settings),
-      selectedIcon: Icon(Icons.settings),
       label: Text('设置'),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.info),
-      selectedIcon: Icon(Icons.info),
       label: Text('关于'),
     ),
   ];
-
-  final _taskCtrl = Get.put(TaskController());
+  final MyPageView.PageController _pageController =
+      MyPageView.PageController(initialPage: 1);
   final _appCtrl = Get.put(AppController());
   late bool isStartServer = false;
   late int startCount = 0;
   static const Color textColor = Color(0xffcfd1d7);
-  static const Color activeColor = Colors.blue;
+  static const Color activeColor = Color.fromRGBO(27, 167, 132, 1);
   static const TextStyle labelStyle =
       TextStyle(color: textColor, fontSize: 11, fontFamily: 'FangYuan2');
 
@@ -88,7 +81,20 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    windowManager.addListener(this);
     taskStatesListener();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  void onWindowClose() {
+    ///关闭软件时关闭aria2服务
+    Aria2Manager().closeServer();
   }
 
   taskStatesListener() {
@@ -127,7 +133,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildLeftNavigation() {
     return Obx(() => NavigationRail(
-          labelType: NavigationRailLabelType.all,
+          labelType: NavigationRailLabelType.none,
           backgroundColor: mainColor,
           unselectedIconTheme: const IconThemeData(color: textColor),
           selectedIconTheme: const IconThemeData(color: activeColor),
@@ -136,11 +142,11 @@ class _HomePageState extends State<HomePage> {
           onDestinationSelected: _onDestinationSelected,
           destinations: destinations,
           selectedIndex: _appCtrl.pageIndex.value,
-          leading: IconButton(
-            icon: Image.asset('lib/resources/images/logo.png',
-                width: 40, height: 40),
-            onPressed: () {},
-          ),
+          // leading: IconButton(
+          //   icon: Image.asset('lib/resources/images/logo.png',
+          //       width: 40, height: 40),
+          //   onPressed: () {},
+          // ),
           trailing: Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,

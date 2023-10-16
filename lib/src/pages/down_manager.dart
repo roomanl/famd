@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
-import '../utils/event_bus_util.dart';
 
 import '../utils/task_prefs_util.dart';
 import '../utils/task_manager.dart';
@@ -22,7 +20,7 @@ class _DownManagerPageState extends State<DownManagerPage>
   final TaskController _taskCtrl = Get.find();
   late final TabController _tabController;
   final logger = Logger();
-  final TaskManager taskManager = TaskManager();
+  final TaskManager _taskManager = TaskManager();
 
   @override
   void initState() {
@@ -31,32 +29,13 @@ class _DownManagerPageState extends State<DownManagerPage>
   }
 
   init() async {
-    EventBusUtil().eventBus.on<AddTaskEvent>().listen((event) {
-      _taskCtrl.updateTaskList();
-    });
-    EventBusUtil().eventBus.on<DownSuccessEvent>().listen((event) async {
-      await _taskCtrl.updateTaskList();
-      startTask();
-    });
     _tabController = TabController(length: 2, vsync: this);
     await _taskCtrl.updateTaskList();
-    await taskManager.restTask(_taskCtrl.taskList);
-    _taskCtrl.updateTaskList();
+    await _taskManager.restTask(_taskCtrl.taskList);
   }
 
-  startTask() async {
-    if (_taskCtrl.taskList.isEmpty) {
-      EasyLoading.showInfo('列表中没有任务');
-      return;
-    }
-    for (M3u8Task task in _taskCtrl.taskList) {
-      if (task.status == 2) {
-        EasyLoading.showInfo('已经在下载中');
-        return;
-      }
-    }
-    await taskManager.startAria2Task(_taskCtrl.taskList[0]);
-    _taskCtrl.updateTaskList();
+  startTask() {
+    _taskManager.startAria2Task();
   }
 
   deleteTask(M3u8Task task, bool delFile) {
@@ -107,7 +86,7 @@ class _DownManagerPageState extends State<DownManagerPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text('DownManager'),
+        title: const Text('任务管理'),
         actions: <Widget>[
           SizedBox(
             width: 60,
@@ -125,8 +104,8 @@ class _DownManagerPageState extends State<DownManagerPage>
               icon: const Icon(Icons.refresh),
               tooltip: '重新下载',
               onPressed: () async {
-                taskManager.downFinish();
-                await taskManager.restTask(_taskCtrl.taskList);
+                _taskManager.downFinish();
+                await _taskManager.restTask(_taskCtrl.taskList);
                 await _taskCtrl.updateTaskList();
                 startTask();
               },
@@ -138,7 +117,7 @@ class _DownManagerPageState extends State<DownManagerPage>
               icon: const Icon(Icons.delete_forever),
               tooltip: '清空任务',
               onPressed: () async {
-                await taskManager.restTask(_taskCtrl.taskList);
+                await _taskManager.restTask(_taskCtrl.taskList);
                 await clearM3u8Task();
                 _taskCtrl.updateTaskList();
               },
@@ -148,12 +127,8 @@ class _DownManagerPageState extends State<DownManagerPage>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(
-              text: '下载中',
-            ),
-            Tab(
-              text: '下载完成',
-            ),
+            Tab(text: '下载中'),
+            Tab(text: '下载完成'),
           ],
         ),
       ),

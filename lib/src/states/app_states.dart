@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_workers/rx_workers.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../entity/m3u8_task.dart';

@@ -43,28 +43,38 @@ class TaskManager {
         await updateM3u8Task(task);
       }
     }
+    _taskCtrl.updateTaskList();
   }
 
-  startAria2Task(M3u8Task task) async {
+  startAria2Task({M3u8Task? task}) async {
     if (isDowning) return;
+    if (_taskCtrl.taskList.isEmpty) {
+      EasyLoading.showInfo('列表中没有任务');
+      return;
+    }
+    for (M3u8Task task in _taskCtrl.taskList) {
+      if (task.status == 2) {
+        EasyLoading.showInfo('已经在下载中');
+        return;
+      }
+    }
     isDowning = true;
-    tasking = task;
+    tasking = task ?? _taskCtrl.taskList[0];
     EasyLoading.show(status: '正在开始任务...');
     downPath = await getDownPath();
-    M3u8Util m3u8 = M3u8Util(m3u8url: task.m3u8url);
+    M3u8Util m3u8 = M3u8Util(m3u8url: tasking.m3u8url);
     bool success = await m3u8.init();
     if (!success) {
       errDownFinish();
-      EventBusUtil().eventBus.fire(DownSuccessEvent());
       return;
     }
-    task.iv = m3u8.IV;
-    task.keyurl = m3u8.keyUrl;
-    task.downdir = downPath;
-    task.status = 2;
+    tasking.iv = m3u8.IV;
+    tasking.keyurl = m3u8.keyUrl;
+    tasking.downdir = downPath;
+    tasking.status = 2;
 
     List<String> tsList = m3u8.tsList;
-    String saveDir = getTsSaveDir(task, downPath);
+    String saveDir = getTsSaveDir(tasking, downPath);
 
     taskInfo = TaskInfo();
     taskInfo?.tsTotal = tsList.length;
@@ -75,7 +85,7 @@ class TaskManager {
       // print(url);
       String filename = '${i.toString().padLeft(4, '0')}.ts';
       TsTask tsTask;
-      if (isResetDown(task, downPath, filename)) {
+      if (isResetDown(tasking, downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
         if (gid != null) {
           tsTask =
@@ -92,9 +102,8 @@ class TaskManager {
     }
     taskInfo?.tsTaskList = tsTaskList;
 
-    await updateM3u8Task(task);
+    await updateM3u8Task(tasking);
     updataTaskInfo();
-    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
     _taskCtrl.updateTaskInfo(taskInfo);
     EasyLoading.showSuccess('任务启动成功');
   }
@@ -108,7 +117,7 @@ class TaskManager {
     await Aria2Manager().purgeDownloadResult();
     isDowning = false;
     isDecryptTsing = false;
-    startAria2Task(tasking);
+    startAria2Task(task: tasking);
     restCount++;
   }
 
@@ -188,8 +197,6 @@ class TaskManager {
           // taskInfo?.tsDecrty++;
           decryptTsList.add('file \'$tsSavePath\'');
         }
-        // print(decryptSuccess);
-        // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
         _taskCtrl.updateTaskInfo(taskInfo);
       });
     } else {
@@ -212,22 +219,20 @@ class TaskManager {
   }
 
   mergeTs(downPath, fileListPath) async {
-    // EasyLoading.showInfo('开始合并ts文件');
     taskInfo?.mergeStatus = '合并中...';
     _taskCtrl.updateTaskInfo(taskInfo);
-    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
     String mp4Path = getMp4Path(tasking, downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
       taskInfo?.mergeStatus = '合并完成';
-      // EasyLoading.showInfo('合并成功');
       tasking.status = 3;
-      updateM3u8Task(tasking);
+      await updateM3u8Task(tasking);
       String folderPath = getDtsDir(tasking, downPath, '');
-      //  '$downPath/${tasking.m3u8name}/${tasking.subname}';
+      // '$downPath/${tasking.m3u8name}/${tasking.subname}';
       deleteDir(folderPath);
       downFinish();
-      EventBusUtil().eventBus.fire(DownSuccessEvent());
+      await _taskCtrl.updateTaskList();
+      startAria2Task();
     } else {
       errDownFinish();
     }
@@ -238,7 +243,8 @@ class TaskManager {
     tasking.status = 4;
     await updateM3u8Task(tasking);
     downFinish();
-    EventBusUtil().eventBus.fire(DownSuccessEvent());
+    await _taskCtrl.updateTaskList();
+    startAria2Task();
   }
 
   downFinish() {
@@ -248,7 +254,7 @@ class TaskManager {
   }
 
   listNotifications(String data) {
-    if (data.contains('check-ts-um')) {
+    if (data.contains('check-ts-num')) {
       /// 如果是每30S主动触发的广播，就检查本地TS文件是不是已经全部下载完成
       checkTsFileNum();
     } else {
