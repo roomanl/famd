@@ -109,14 +109,17 @@ class TaskManager {
   }
 
   restStartAria2Task() async {
-    if (restCount > 3) {
+    //有下载失败的分片，重试5次，超过5次不再重试
+    if (restCount > 5) {
       decryptTs();
+      return;
     }
     // EasyLoading.showInfo('第$restCount次重新下载失败文件');
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
     isDowning = false;
     isDecryptTsing = false;
+    tasking.status = 1;
     startAria2Task(task: tasking);
     restCount++;
   }

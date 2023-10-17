@@ -8,3 +8,7 @@ bytesToSize(bytes) {
   var i = (log(bytes) / log(k)).floor();
   return (bytes / pow(k, i)).toStringAsFixed(2) + ' ' + sizes[i];
 }
+
+permission777(filePath) {
+  Process.runSync('chmod', ['-R', '777', filePath]);
+}

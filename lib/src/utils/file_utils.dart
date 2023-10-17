@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path;
 
 createDir(String dir) {
   Directory directory = Directory(dir);
@@ -26,7 +28,7 @@ writeLinesToFile(String path, String text) {
   if (!file.existsSync()) {
     file.createSync(recursive: true);
   }
-  file.writeAsString(text, flush: true);
+  file.writeAsStringSync(text, flush: true);
 }
 
 deleteDir(String dir) {
@@ -55,10 +57,14 @@ getDirFile(String dir) {
 
 getPlugAssetsDir(String plugName) {
   String pathSeparator = Platform.pathSeparator;
+  if (kDebugMode) {}
   String plugDir = 'data${pathSeparator}plugin$pathSeparator$plugName';
-  if (Platform.isWindows) {
+  if (Platform.isWindows || Platform.isLinux) {
     String exePath = Platform.resolvedExecutable;
-    return exePath.replaceAll(Platform.executable, plugDir);
+    List<String> pathList = exePath.split(pathSeparator);
+    // String basename = path.basename(exePath);
+    pathList[pathList.length - 1] = plugDir;
+    return pathList.join(pathSeparator);
   }
   return null;
 }

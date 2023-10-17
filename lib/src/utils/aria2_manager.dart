@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 import '../states/app_states.dart';
 import 'aria2_conf_util.dart' as Aria2Conf;
 import 'ariar2_http_utils.dart' as Aria2Http;
+import 'common_utils.dart';
 import 'event_bus_util.dart';
 
 class Aria2Manager {
@@ -103,9 +104,14 @@ class Aria2Manager {
   void startServer() {
     closeServer();
     var exe = Aria2Conf.getAria2ExePath();
-    var conf = '--conf-path=${Aria2Conf.getAria2ConfPath()}';
+    var conf = Aria2Conf.getAria2ConfPath();
 
-    cmdProcess = Process.start(exe, [conf],
+    if (Platform.isLinux) {
+      permission777(exe);
+      permission777(conf);
+    }
+
+    cmdProcess = Process.start(exe, ['--conf-path=$conf'],
         workingDirectory: Aria2Conf.getAria2rootPath());
     cmdProcess.then((processResult) {
       print(processResult.pid);
@@ -140,10 +146,16 @@ class Aria2Manager {
 
   closeServer() {
     print('开始关闭服务');
-    // bool killSuccess = Process.killPid(processPid);
-    final processResult =
-        Process.runSync('taskkill', ['/F', '/T', '/IM', 'm3u8aria2c.exe']);
-    print('关闭服务:' + processResult.exitCode.toString());
+    bool killSuccess = false;
+    if (Platform.isWindows) {
+      final processResult =
+          Process.runSync('taskkill', ['/F', '/T', '/IM', 'm3u8aria2c.exe']);
+      killSuccess = processResult.exitCode == 0;
+    } else if (Platform.isLinux) {
+      final processResult = Process.runSync('killall', ['m3u8aria2c']);
+      killSuccess = processResult.exitCode == 0;
+    }
+    print('关闭服务:' + killSuccess.toString());
   }
 }
 

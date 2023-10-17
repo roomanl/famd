@@ -8,12 +8,16 @@ getAria2rootPath() {
 
 getAria2ExePath() {
   String dir = getPlugAssetsDir('aria2');
-  return '$dir/m3u8aria2c.exe';
+  String ariaName = 'm3u8aria2c';
+  if (Platform.isWindows) {
+    ariaName = 'm3u8aria2c.exe';
+  }
+  return '$dir/$ariaName';
 }
 
 getAria2ConfPath() {
   String dir = getPlugAssetsDir('aria2');
-  return '$dir/aria2.conf';
+  return '$dir${Platform.pathSeparator}aria2.conf';
 }
 
 getAria2UrlConf() {
@@ -25,9 +29,10 @@ initAria2Conf() {
   String confPath = getAria2ConfPath();
   List<String> textLines = readFile(confPath);
   List<String> confLines = [];
-  String logFile = getAria2rootPath() + '/aria2.log';
-  String sessionFile = getAria2rootPath() + '/aria2.session';
-  String downloadsDir = getAppRootDir() + '/downloads';
+  String logFile = getAria2rootPath() + '${Platform.pathSeparator}aria2.log';
+  String sessionFile =
+      getAria2rootPath() + '${Platform.pathSeparator}aria2.session';
+  String downloadsDir = getAppRootDir() + '${Platform.pathSeparator}downloads';
   deleteFile(logFile);
   deleteFile(sessionFile);
   createDir(downloadsDir);
@@ -62,7 +67,8 @@ getAria2Port() {
 }
 
 clearSession() {
-  String sessionFile = getAria2rootPath() + '/aria2.session';
+  String sessionFile =
+      getAria2rootPath() + '${Platform.pathSeparator}aria2.session';
   deleteFile(sessionFile);
   createFile(sessionFile);
 }

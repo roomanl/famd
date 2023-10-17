@@ -86,3 +86,6 @@ add_custom_target(flutter_assemble DEPENDS
   "${FLUTTER_LIBRARY}"
   ${FLUTTER_LIBRARY_HEADERS}
 )
+
+
+set(PROJECT_MYPLUGIN_DIR "${PROJECT_DIR}/linux/bin/" PARENT_SCOPE)

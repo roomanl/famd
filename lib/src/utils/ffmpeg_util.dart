@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'common_utils.dart';
 import 'file_utils.dart';
 
 tsMergeTs(dtslistpath, mp4path) async {
@@ -7,9 +8,10 @@ tsMergeTs(dtslistpath, mp4path) async {
     file.deleteSync();
   }
   String ffmpegPath = getFFmpegExePath();
+  if (Platform.isLinux) {
+    permission777(ffmpegPath);
+  }
   List<String> args = [
-    '/c',
-    ffmpegPath,
     '-f',
     'concat',
     '-safe',
@@ -20,9 +22,10 @@ tsMergeTs(dtslistpath, mp4path) async {
     'copy',
     mp4path
   ];
-  var process = Process.runSync('cmd', args);
+  var process = Process.runSync(ffmpegPath, args);
   String output = process.stdout;
-  Process.runSync('taskkill', ['/F', '/T', '/PID', '${process.pid}']);
+  // Process.runSync('taskkill', ['/F', '/T', '/PID', '${process.pid}']);
+  Process.killPid(process.pid);
   if (process.exitCode == 0) {
     return true;
   }
@@ -31,5 +34,9 @@ tsMergeTs(dtslistpath, mp4path) async {
 
 getFFmpegExePath() {
   String dir = getPlugAssetsDir('ffmpeg');
-  return '$dir/ffmpeg.exe';
+  String ffmpegName = 'ffmpeg';
+  if (Platform.isWindows) {
+    ffmpegName = 'ffmpeg.exe';
+  }
+  return '$dir/$ffmpegName';
 }
