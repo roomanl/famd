@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_rx/get_rx.dart';
@@ -81,13 +83,17 @@ class _HomePageState extends State<HomePage> with WindowListener {
   void initState() {
     // TODO: implement initState
     super.initState();
-    windowManager.addListener(this);
+    if (Platform.isWindows || Platform.isLinux) {
+      windowManager.addListener(this);
+    }
     taskStatesListener();
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
+    if (Platform.isWindows || Platform.isLinux) {
+      windowManager.removeListener(this);
+    }
     super.dispose();
   }
 

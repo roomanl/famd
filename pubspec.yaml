@@ -77,6 +77,7 @@ flutter:
   uses-material-design: true
   assets:
     - lib/resources/images/
+    - lib/resources/aria2.conf
   fonts:
     - family: FangYuan2
       fonts:

@@ -7,7 +7,7 @@ tsMergeTs(dtslistpath, mp4path) async {
   if (file.existsSync()) {
     file.deleteSync();
   }
-  String ffmpegPath = getFFmpegExePath();
+  String ffmpegPath = await getFFmpegExePath();
   if (Platform.isLinux) {
     permission777(ffmpegPath);
   }
@@ -32,8 +32,8 @@ tsMergeTs(dtslistpath, mp4path) async {
   return false;
 }
 
-getFFmpegExePath() {
-  String dir = getPlugAssetsDir('ffmpeg');
+getFFmpegExePath() async {
+  String dir = await getPlugAssetsDir('ffmpeg');
   String ffmpegName = 'ffmpeg';
   if (Platform.isWindows) {
     ffmpegName = 'ffmpeg.exe';

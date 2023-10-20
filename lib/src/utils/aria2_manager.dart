@@ -101,18 +101,17 @@ class Aria2Manager {
     EventBusUtil().eventBus.fire(ListAria2Notifications(data));
   }
 
-  void startServer() {
+  void startServer() async {
     closeServer();
-    var exe = Aria2Conf.getAria2ExePath();
-    var conf = Aria2Conf.getAria2ConfPath();
+    var exe = await Aria2Conf.getAria2ExePath();
+    var conf = await Aria2Conf.getAria2ConfPath();
 
     if (Platform.isLinux) {
       permission777(exe);
       permission777(conf);
     }
 
-    cmdProcess = Process.start(exe, ['--conf-path=$conf'],
-        workingDirectory: Aria2Conf.getAria2rootPath());
+    cmdProcess = Process.start(exe, ['--conf-path=$conf']);
     cmdProcess.then((processResult) {
       print(processResult.pid);
       processPid = processResult.pid;
@@ -136,8 +135,8 @@ class Aria2Manager {
     });
   }
 
-  initAria2Conf() {
-    Aria2Conf.initAria2Conf();
+  initAria2Conf() async {
+    await Aria2Conf.initAria2Conf();
   }
 
   clearSession() {
@@ -151,7 +150,7 @@ class Aria2Manager {
       final processResult =
           Process.runSync('taskkill', ['/F', '/T', '/IM', 'm3u8aria2c.exe']);
       killSuccess = processResult.exitCode == 0;
-    } else if (Platform.isLinux) {
+    } else if (Platform.isLinux || Platform.isAndroid) {
       final processResult = Process.runSync('killall', ['m3u8aria2c']);
       killSuccess = processResult.exitCode == 0;
     }

@@ -1,11 +1,13 @@
-import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:flutter/services.dart';
 import 'package:get/instance_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import '../common/const.dart';
 import '../states/app_states.dart';
 import '../utils/aria2_manager.dart';
-import '../utils/event_bus_util.dart';
+import '../utils/native_channel_utils.dart';
 import './home_page.dart';
 
 class StartPage extends StatefulWidget {
@@ -65,6 +67,10 @@ class _StartPageState extends State<StartPage> {
     appStatesListener();
     Aria2Manager().initAria2Conf();
     startAria2();
+    // String path = await getAria2SoPath();
+    // print('=====================>' + path);
+    // String aa = await rootBundle.loadString("lib/resources/aria2.conf");
+    // print('=====================>' + aa);
   }
 
   appStatesListener() {

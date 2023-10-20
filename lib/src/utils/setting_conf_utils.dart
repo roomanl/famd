@@ -25,7 +25,7 @@ Future<bool> setDownPath(data) async {
   return prefs.setString(SETTING_DOWN_PATH_KEY, data);
 }
 
-getAria2DefDownPath() {
-  String downloadsDir = getAppRootDir() + '/downloads';
+getAria2DefDownPath() async {
+  String downloadsDir = await getAppRootDir() + '/downloads';
   return downloadsDir;
 }

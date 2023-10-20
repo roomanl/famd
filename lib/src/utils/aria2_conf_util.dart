@@ -1,22 +1,27 @@
 import 'dart:io';
 import '../common/const.dart';
 import 'file_utils.dart';
+import 'native_channel_utils.dart';
 
-getAria2rootPath() {
-  return getPlugAssetsDir('aria2');
+getAria2rootPath() async {
+  return await getPlugAssetsDir('aria2');
 }
 
-getAria2ExePath() {
-  String dir = getPlugAssetsDir('aria2');
-  String ariaName = 'm3u8aria2c';
-  if (Platform.isWindows) {
-    ariaName = 'm3u8aria2c.exe';
+getAria2ExePath() async {
+  if (Platform.isWindows || Platform.isLinux) {
+    String dir = await getPlugAssetsDir('aria2');
+    String ariaName = 'm3u8aria2c';
+    if (Platform.isWindows) {
+      ariaName = 'm3u8aria2c.exe';
+    }
+    return '$dir/$ariaName';
+  } else if (Platform.isAndroid) {
+    return await getAria2SoPath();
   }
-  return '$dir/$ariaName';
 }
 
-getAria2ConfPath() {
-  String dir = getPlugAssetsDir('aria2');
+getAria2ConfPath() async {
+  String dir = await getPlugAssetsDir('aria2');
   return '$dir${Platform.pathSeparator}aria2.conf';
 }
 
@@ -25,14 +30,15 @@ getAria2UrlConf() {
   return ARIA2_URL_VALUE.replaceAll('{port}', port);
 }
 
-initAria2Conf() {
-  String confPath = getAria2ConfPath();
-  List<String> textLines = readFile(confPath);
+initAria2Conf() async {
+  String rootPath = await getAria2rootPath();
+  String confPath = await getAria2ConfPath();
+  List<String> aria2ConfLines = await readDefAria2Conf();
   List<String> confLines = [];
-  String logFile = getAria2rootPath() + '${Platform.pathSeparator}aria2.log';
-  String sessionFile =
-      getAria2rootPath() + '${Platform.pathSeparator}aria2.session';
-  String downloadsDir = getAppRootDir() + '${Platform.pathSeparator}downloads';
+  String logFile = '$rootPath${Platform.pathSeparator}aria2.log';
+  String sessionFile = '$rootPath${Platform.pathSeparator}aria2.session';
+  String downloadsDir =
+      await getAppRootDir() + '${Platform.pathSeparator}downloads';
   deleteFile(logFile);
   deleteFile(sessionFile);
   createDir(downloadsDir);
@@ -42,7 +48,7 @@ initAria2Conf() {
   confLines.add('log=$logFile');
   confLines.add('input-file=$sessionFile');
   confLines.add('save-session=$sessionFile');
-  for (String line in textLines) {
+  for (String line in aria2ConfLines) {
     if (!line.startsWith('dir=') &&
         !line.startsWith('log=') &&
         !line.startsWith('input-file=') &&
@@ -66,9 +72,9 @@ getAria2Port() {
   return port;
 }
 
-clearSession() {
+clearSession() async {
   String sessionFile =
-      getAria2rootPath() + '${Platform.pathSeparator}aria2.session';
+      await getAria2rootPath() + '${Platform.pathSeparator}aria2.session';
   deleteFile(sessionFile);
   createFile(sessionFile);
 }

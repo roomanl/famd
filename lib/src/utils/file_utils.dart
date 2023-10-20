@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 createDir(String dir) {
   Directory directory = Directory(dir);
@@ -50,25 +52,39 @@ List<String> readFile(String path) {
   return file.existsSync() ? file.readAsLinesSync() : [];
 }
 
+Future<List<String>> readDefAria2Conf() async {
+  String text = await rootBundle.loadString("lib/resources/aria2.conf");
+  return text.split('\n');
+}
+
 getDirFile(String dir) {
   Directory directory = Directory(dir);
   return directory.listSync();
 }
 
-getPlugAssetsDir(String plugName) {
+getPlugAssetsDir(String plugName) async {
   String pathSeparator = Platform.pathSeparator;
-  if (kDebugMode) {}
-  String plugDir = 'data${pathSeparator}plugin$pathSeparator$plugName';
   if (Platform.isWindows || Platform.isLinux) {
+    String plugDir = 'data${pathSeparator}plugin$pathSeparator$plugName';
     String exePath = Platform.resolvedExecutable;
     List<String> pathList = exePath.split(pathSeparator);
     // String basename = path.basename(exePath);
     pathList[pathList.length - 1] = plugDir;
     return pathList.join(pathSeparator);
+  } else if (Platform.isAndroid) {
+    Directory? cacheDir = await getExternalStorageDirectory();
+    String plugDir = '${cacheDir?.path}$pathSeparator$plugName';
+    createDir(plugDir);
+    return plugDir;
   }
   return null;
 }
 
-getAppRootDir() {
-  return Directory.current.path;
+getAppRootDir() async {
+  if (Platform.isWindows || Platform.isLinux) {
+    return Directory.current.path;
+  } else if (Platform.isAndroid) {
+    Directory? cacheDir = await getExternalStorageDirectory();
+    return cacheDir?.path;
+  }
 }
