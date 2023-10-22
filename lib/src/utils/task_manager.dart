@@ -111,7 +111,7 @@ class TaskManager {
   restStartAria2Task() async {
     //有下载失败的分片，重试5次，超过5次不再重试
     if (restCount > 5) {
-      decryptTs();
+      await decryptTs();
       return;
     }
     // EasyLoading.showInfo('第$restCount次重新下载失败文件');
@@ -124,7 +124,7 @@ class TaskManager {
     restCount++;
   }
 
-  updataTaskInfo() {
+  updataTaskInfo() async {
     if (!isDowning) return;
     double progress = 0;
     int tsSuccess = 0;
@@ -150,7 +150,7 @@ class TaskManager {
       if (tsFail > 0) {
         restStartAria2Task();
       } else if (tsSuccess > 0) {
-        decryptTs();
+        await decryptTs();
       } else {
         errDownFinish();
       }
@@ -163,21 +163,23 @@ class TaskManager {
   /// checkTsFileNum则是检查磁盘目录中已下载的TS数量
   /// 如果磁盘目录中已下载的的TS数量等于tsTotal，也调用decryptTs开始解密TS，防止软件卡住不动
   /// 此方法30S调用一次
-  checkTsFileNum() {
-    if (!isDowning || isDecryptTsing) return;
-    List<FileSystemEntity> fileList =
-        getDirFile(getTsSaveDir(tasking, downPath));
-    List<FileSystemEntity> list =
-        fileList.where((file) => file.path.endsWith('.ts')).toList();
-    List<FileSystemEntity> arialist =
-        fileList.where((file) => file.path.endsWith('.aria2')).toList();
-    if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
-      decryptTs();
-    }
+  checkTsFileNum() async {
+    try {
+      if (!isDowning || isDecryptTsing) return;
+      List<FileSystemEntity> fileList =
+          getDirFile(getTsSaveDir(tasking, downPath));
+      List<FileSystemEntity> list =
+          fileList.where((file) => file.path.endsWith('.ts')).toList();
+      List<FileSystemEntity> arialist =
+          fileList.where((file) => file.path.endsWith('.aria2')).toList();
+      if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
+        await decryptTs();
+      }
+    } catch (e) {}
   }
 
   decryptTs() async {
-    if (!isDowning && isDecryptTsing) return;
+    if (!isDowning || isDecryptTsing) return;
     isDecryptTsing = true;
     // EasyLoading.showInfo('开始解密ts文件');
     taskInfo?.tsDecrty = '解密中...';
@@ -189,19 +191,29 @@ class TaskManager {
         return;
       }
       String keystr = keyres.body;
-      taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
+      for (var index = 0; index < taskInfo!.tsTaskList!.length; index++) {
+        // taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
         TsTask? tsTask = taskInfo?.tsTaskList?[index];
         String tsPath = '${getTsSaveDir(tasking, downPath)}/${tsTask!.tsName}';
         String tsSavePath =
             '${getDtsSaveDir(tasking, downPath)}/${tsTask.tsName}';
-        bool decryptSuccess =
-            aseDecryptTs(tsPath, tsSavePath, keystr.toString(), tasking.iv);
+        bool decryptSuccess = false;
+        if (Platform.isWindows || Platform.isLinux) {
+          decryptSuccess = await aseDecryptTs(
+              tsPath, tsSavePath, keystr.toString(), tasking.iv);
+        } else if (Platform.isAndroid) {
+          ///flutter解码方式在android特别慢，这里调用android原生来解码
+          decryptSuccess = await androidAseDecryptTs(
+              tsPath, tsSavePath, keystr.toString(), tasking.iv);
+        }
         if (decryptSuccess) {
           // taskInfo?.tsDecrty++;
           decryptTsList.add('file \'$tsSavePath\'');
         }
+        taskInfo?.tsDecrty = (index + 1).toString();
         _taskCtrl.updateTaskInfo(taskInfo);
-      });
+        // });
+      }
     } else {
       taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
         TsTask? tsTask = taskInfo?.tsTaskList?[index];
@@ -303,30 +315,5 @@ class TaskManager {
       return true;
     }
     return false;
-  }
-
-  String getTsSaveDir(M3u8Task task, String? downPath) {
-    return getDtsDir(task, downPath, 'ts');
-  }
-
-  String getDtsSaveDir(M3u8Task task, String? downPath) {
-    return getDtsDir(task, downPath, 'dts');
-  }
-
-  String getDtsDir(M3u8Task task, String? downPath, String dirname) {
-    String saveDir = '$downPath/${task.m3u8name}/${task.subname}/$dirname';
-    createDir(saveDir);
-    return saveDir;
-  }
-
-  String getMp4Path(M3u8Task task, String? downPath) {
-    String mp4Path =
-        '$downPath/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
-    return mp4Path;
-  }
-
-  String getTsListTxtPath(M3u8Task task, String? downPath) {
-    String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.txt';
-    return fileListPath;
   }
 }

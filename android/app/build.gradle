@@ -22,8 +22,14 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace "com.example.aria2_m3u8"
+    namespace "cn.rootvip.famd"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -52,7 +58,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.aria2_m3u8"
+        applicationId "cn.rootvip.famd"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 24
@@ -62,15 +68,27 @@ android {
 
         ndk {
 //            abiFilters "armeabi", "armeabi-v7a", "x86", "mips", "arm64-v8a"
-           abiFilters  "arm64-v8a","armeabi-v7a", "x86", "x86_64"
+//           abiFilters  "arm64-v8a","armeabi-v7a", "x86", "x86_64"
         }
     }
-
+    signingConfigs {
+       release {
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
+           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+           storePassword keystoreProperties['storePassword']
+       }
+   }
     buildTypes {
+        debug {
+            ndk {
+                // abiFilters  "x86"
+            }
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -81,4 +99,5 @@ flutter {
 
 dependencies {
     implementation fileTree(include: ['*.jar','*.so'], dir: 'libs')
+    implementation 'org.bouncycastle:bcprov-jdk16:1.46'
 }

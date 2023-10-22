@@ -21,3 +21,7 @@ class ListAria2Notifications {
   String data;
   ListAria2Notifications(this.data);
 }
+
+class UnfocusEvent {
+  UnfocusEvent();
+}

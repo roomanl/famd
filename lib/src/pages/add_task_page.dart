@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
+import '../utils/event_bus_util.dart';
 import '../utils/task_prefs_util.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),
@@ -30,54 +32,51 @@ class _AddTaskPageState extends State<AddTaskPage> {
         // ),
         title: const Text('添加任务'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 160,
-              child: TextField(
+      body: ListView(children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: <Widget>[
+              TextField(
                 // initialValue: settingConf[ARIA2_URL],
                 controller: _urlcontroller,
                 maxLines: 5,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText:
                       '请输入视频链接，格式为：xxx\$http://abc.m3u8,多个链接时，请确保每行只有一个链接。(xxx可以是第01集、第12期、高清版、1080P等)',
                 ),
               ),
-            ),
-            // SizedBox(height: 20),
-            SizedBox(
-              height: 70,
-              child: TextField(
+              const SizedBox(height: 10),
+              TextField(
                 // initialValue: settingConf[ARIA2_URL],
                 controller: _namecontroller,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: '请输入具体视频名称，例如：西游记',
                 ),
               ),
-            ),
-            Row(
-              // height: 50,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        addTask();
-                      },
-                      child: const Text('添加'),
+              const SizedBox(height: 10),
+              Row(
+                // height: 50,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          addTask();
+                        },
+                        child: const Text('添加'),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 // 第70集$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8
@@ -89,8 +88,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   void initState() {
     super.initState();
-    _urlcontroller.text = '';
-    _namecontroller.text = '';
+    _urlcontroller.text =
+        '第70集\$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8';
   }
 
   void addTask() async {
@@ -122,8 +121,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
     await _taskCtrl.updateTaskList();
     _appCtrl.updatePageIndex(1);
-    _urlcontroller.text = '';
-    _namecontroller.text = '';
+    _urlcontroller.clear();
+    _namecontroller.clear();
+    FocusScope.of(context).requestFocus(FocusNode());
     EasyLoading.showSuccess('添加成功');
   }
 

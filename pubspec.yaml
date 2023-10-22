@@ -33,7 +33,7 @@ dependencies:
 
   cached_network_image: ^3.2.3
   window_manager: ^0.3.6
-  file_picker: ^5.3.4
+  file_picker: ^6.0.0
   flutter_easyloading: ^3.0.5
   event_bus: ^2.0.0
   logger: ^2.0.1
@@ -50,6 +50,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   get: ^4.6.6
   path: ^1.8.3
+  ffmpeg_kit_flutter: ^6.0.0
+  permission_handler: ^11.0.1
+  device_info_plus: ^9.1.0
 
 dev_dependencies:
   flutter_test:

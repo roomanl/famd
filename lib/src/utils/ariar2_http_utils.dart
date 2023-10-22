@@ -3,11 +3,12 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'aria2_conf_util.dart' as Aria2Conf;
 
-final aria2url = Aria2Conf.getAria2UrlConf();
+final Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
 var uuid = Uuid();
 
 Future<String?> addUrl(params) async {
   try {
+    String aria2url = await _aria2url;
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
           "jsonrpc": "2.0",
@@ -25,6 +26,7 @@ Future<String?> addUrl(params) async {
 
 getVersion() async {
   String aria2Version = '0';
+  String aria2url = await _aria2url;
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -45,6 +47,7 @@ getVersion() async {
 
 getSpeed() async {
   int downSpeed = 0;
+  String aria2url = await _aria2url;
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -63,6 +66,7 @@ getSpeed() async {
 }
 
 forcePauseAll() async {
+  String aria2url = await _aria2url;
   try {
     await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -75,6 +79,7 @@ forcePauseAll() async {
 }
 
 purgeDownloadResult() async {
+  String aria2url = await _aria2url;
   try {
     await http.post(Uri.parse(aria2url),
         body: json.encode({

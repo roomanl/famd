@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
-import 'package:path_provider/path_provider.dart';
 import '../common/const.dart';
 import '../states/app_states.dart';
 import '../utils/aria2_manager.dart';
+import '../utils/common_utils.dart';
 import '../utils/native_channel_utils.dart';
 import './home_page.dart';
 
@@ -21,24 +19,57 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          height: 150,
-          child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(mainColor),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-                elevation: MaterialStateProperty.all(20),
-                shape: MaterialStateProperty.all(
-                  const CircleBorder(),
-                )),
-            onPressed: () {
-              startAria2();
-            },
-            child: Text(
-              startBtnText,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: mainColor, //
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Famd M3u8下载器',
+                    style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 0.8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 36),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(mainColor),
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      elevation: MaterialStateProperty.all(20),
+                      shape: MaterialStateProperty.all(
+                        const CircleBorder(),
+                      )),
+                  onPressed: () {
+                    startAria2();
+                  },
+                  child: Text(
+                    startBtnText,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    'V $appVersion',
+                    style: const TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 0.3),
+                        fontSize: 18),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -49,11 +80,19 @@ class _StartPageState extends State<StartPage> {
   late int count = 0;
   late bool isStartServer = false;
   String startBtnText = '启动Aria2服务';
+  late String appVersion = '1.0';
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _appCtrl
+        .updateShowNavigationDrawer(MediaQuery.of(context).size.width <= 500);
   }
 
   @override
@@ -64,13 +103,14 @@ class _StartPageState extends State<StartPage> {
   }
 
   init() async {
+    final v = await getAppVersion();
+    setState(() {
+      appVersion = v;
+    });
     appStatesListener();
-    Aria2Manager().initAria2Conf();
+    await Aria2Manager().initAria2Conf();
     startAria2();
-    // String path = await getAria2SoPath();
-    // print('=====================>' + path);
-    // String aa = await rootBundle.loadString("lib/resources/aria2.conf");
-    // print('=====================>' + aa);
+    // openHomePage(true);
   }
 
   appStatesListener() {
@@ -98,7 +138,7 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-  startAria2() {
+  startAria2() async {
     if (isStartServer) {
       return;
     }

@@ -10,6 +10,7 @@ import '../common/const.dart';
 import '../components/page_view.dart' as MyPageView;
 import '../states/app_states.dart';
 import '../utils/aria2_manager.dart';
+import '../utils/event_bus_util.dart';
 import 'add_task_page.dart';
 import 'appinfo_page.dart';
 import 'down_manager.dart';
@@ -24,51 +25,168 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WindowListener {
   @override
   Widget build(BuildContext context) {
+    return _buildNavigation();
+  }
+
+  Widget _buildNavigation() {
     return Scaffold(
+      key: scaffoldKey,
+      appBar: _buildAppBar(),
       body: SafeArea(
+        bottom: false,
+        top: false,
         child: Row(
-          children: <Widget>[
-            _buildLeftNavigation(),
-            const VerticalDivider(thickness: 1, width: 1),
-            Expanded(
-              /// 自带PageView只能缓存1个页面，因为与IOS辅助功能有冲突，
-              /// 这里复制ageView源码，增加自定义缓存参数cacheExtentNum
-              child: MyPageView.PageView(
-                controller: _pageController,
-                allowImplicitScrolling: true,
-                cacheExtentNum: 4.0,
-                children: const [
-                  AddTaskPage(),
-                  DownManagerPage(),
-                  SettingPage(),
-                  AppinfoPage(),
-                ],
-              ),
-            ),
-          ],
+          children: _buildcontentPage(),
         ),
+      ),
+      endDrawer: NavigationDrawer(
+        onDestinationSelected: handleScreenChanged,
+        selectedIndex: -1,
+        children: <Widget>[
+          const SizedBox(height: 50),
+          ...destinations.map(
+            (NavDestination destination) {
+              return NavigationDrawerDestination(
+                label: Text(destination.label),
+                icon: destination.icon,
+              );
+            },
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+            child: Divider(),
+          ),
+        ],
       ),
     );
   }
 
-  final List<NavigationRailDestination> destinations = const [
-    NavigationRailDestination(
-      icon: Icon(Icons.add),
-      label: Text('添加任务'),
-    ),
-    NavigationRailDestination(
-      icon: Icon(Icons.list),
-      label: Text('任务管理'),
-    ),
-    NavigationRailDestination(
-      icon: Icon(Icons.settings),
-      label: Text('设置'),
-    ),
-    NavigationRailDestination(
-      icon: Icon(Icons.info),
-      label: Text('关于'),
-    ),
+  AppBar? _buildAppBar() {
+    return _appCtrl.showNavigationDrawer.isTrue
+        ? AppBar(
+            backgroundColor: mainColor,
+            title: const Text(
+              'Famd',
+              style: TextStyle(
+                color: Color.fromRGBO(255, 255, 255, 1),
+              ),
+            ),
+            leading: IconButton(
+              color: const Color.fromRGBO(255, 255, 255, 1),
+              icon: const Icon(Icons.home),
+              onPressed: () => {_changePageView(1)},
+            ),
+            actions: <Widget>[
+              SizedBox(
+                width: 60,
+                child: Obx(() => _buildWifiIcon()),
+              ),
+              SizedBox(
+                width: 60,
+                child: IconButton(
+                  color: const Color.fromRGBO(255, 255, 255, 1),
+                  icon: const Icon(Icons.add_rounded),
+                  onPressed: () {
+                    _changePageView(0);
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 60,
+                child: IconButton(
+                  color: const Color.fromRGBO(255, 255, 255, 1),
+                  icon: const Icon(Icons.tune_rounded),
+                  onPressed: () {
+                    scaffoldKey.currentState!.openEndDrawer();
+                  },
+                ),
+              ),
+            ],
+          )
+        : null;
+  }
+
+  List<Widget> _buildcontentPage() {
+    return _appCtrl.showNavigationDrawer.isTrue
+        ? [
+            Expanded(
+              child: _buildViewPage(),
+            )
+          ]
+        : [
+            Obx(() => NavigationRail(
+                  labelType: NavigationRailLabelType.none,
+                  backgroundColor: mainColor,
+                  unselectedIconTheme: const IconThemeData(color: textColor),
+                  selectedIconTheme: const IconThemeData(color: activeColor),
+                  unselectedLabelTextStyle: labelStyle,
+                  selectedLabelTextStyle: labelStyle,
+                  onDestinationSelected: _changePageView,
+                  destinations: destinations.map(
+                    (NavDestination destination) {
+                      return NavigationRailDestination(
+                        label: Text(destination.label),
+                        icon: destination.icon,
+                      );
+                    },
+                  ).toList(),
+                  selectedIndex: _appCtrl.pageIndex.value,
+                  trailing: Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 20.0),
+                        child: _buildWifiIcon(),
+                      ),
+                    ),
+                  ),
+                )),
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(
+              /// 自带PageView只能缓存1个页面，因为与IOS辅助功能有冲突，
+              /// 这里复制ageView源码，增加自定义缓存参数cacheExtentNum
+              child: _buildViewPage(),
+            ),
+          ];
+  }
+
+  Widget _buildViewPage() {
+    /// 自带PageView只能缓存1个页面，因为与IOS辅助功能有冲突，
+    /// 这里复制ageView源码，增加自定义缓存参数cacheExtentNum
+    return MyPageView.PageView(
+      controller: _pageController,
+      allowImplicitScrolling: true,
+      // physics: const NeverScrollableScrollPhysics(),
+      cacheExtentNum: 4,
+      children: const [
+        AddTaskPage(),
+        DownManagerPage(),
+        SettingPage(),
+        AppinfoPage(),
+      ],
+    );
+  }
+
+  Widget _buildWifiIcon() {
+    Widget icon = _appCtrl.aria2Online.isTrue
+        ? Image.asset('lib/resources/images/online.png', width: 25, height: 25)
+        : Image.asset('lib/resources/images/offline.png',
+            width: 25, height: 25);
+    return IconButton(
+      icon: icon,
+      onPressed: () {
+        startAria2();
+      },
+    );
+  }
+
+  List<NavDestination> destinations = const <NavDestination>[
+    NavDestination('添加任务', Icon(Icons.add)),
+    NavDestination('任务管理', Icon(Icons.list)),
+    NavDestination('设置', Icon(Icons.settings)),
+    NavDestination('关于', Icon(Icons.info)),
   ];
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final MyPageView.PageController _pageController =
       MyPageView.PageController(initialPage: 1);
   final _appCtrl = Get.put(AppController());
@@ -90,6 +208,13 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _appCtrl
+        .updateShowNavigationDrawer(MediaQuery.of(context).size.width <= 500);
+  }
+
+  @override
   void dispose() {
     if (Platform.isWindows || Platform.isLinux) {
       windowManager.removeListener(this);
@@ -107,7 +232,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
     ///监听页码变化跳转页面
     _appCtrl.pageIndex.listen((val) {
       if (_pageController.page != val) {
-        _pageController.jumpToPage(_appCtrl.pageIndex.value);
+        _pageController.jumpToPage(val);
       }
     });
 
@@ -137,46 +262,26 @@ class _HomePageState extends State<HomePage> with WindowListener {
     }
   }
 
-  Widget _buildLeftNavigation() {
-    return Obx(() => NavigationRail(
-          labelType: NavigationRailLabelType.none,
-          backgroundColor: mainColor,
-          unselectedIconTheme: const IconThemeData(color: textColor),
-          selectedIconTheme: const IconThemeData(color: activeColor),
-          unselectedLabelTextStyle: labelStyle,
-          selectedLabelTextStyle: labelStyle,
-          onDestinationSelected: _onDestinationSelected,
-          destinations: destinations,
-          selectedIndex: _appCtrl.pageIndex.value,
-          // leading: IconButton(
-          //   icon: Image.asset('lib/resources/images/logo.png',
-          //       width: 40, height: 40),
-          //   onPressed: () {},
-          // ),
-          trailing: Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
-                child: IconButton(
-                  icon: _appCtrl.aria2Online.isTrue
-                      ? Image.asset('lib/resources/images/online.png',
-                          width: 40, height: 40)
-                      : Image.asset('lib/resources/images/offline.png',
-                          width: 40, height: 40),
-                  onPressed: () {
-                    startAria2();
-                  },
-                ),
-              ),
-            ),
-          ),
-        ));
-  }
+  void _changePageView(int index) {
+    ///不知道为什么在android切换页面的时候，添加任务页面中的输入框老是会自动获取焦点
+    ///获取焦点后会自动跳转到添加任务页面，导致无法切换到其他页面
+    ///所在这里切换页面时去除所有输入框焦点
+    FocusScope.of(context).requestFocus(FocusNode());
 
-  void _onDestinationSelected(int index) {
     ///添加任务后需自动跳转到任务管理页，需要在别的页面更改页码，因此把页码交给状态管理
     _appCtrl.updatePageIndex(index);
     // _pageController.jumpToPage(index);
   }
+
+  void handleScreenChanged(int selectedScreen) {
+    _changePageView(selectedScreen);
+    scaffoldKey.currentState!.closeEndDrawer();
+  }
+}
+
+class NavDestination {
+  const NavDestination(this.label, this.icon);
+
+  final String label;
+  final Widget icon;
 }

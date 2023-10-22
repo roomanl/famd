@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../common/const.dart';
 import 'file_utils.dart';
 import 'native_channel_utils.dart';
@@ -16,17 +19,23 @@ getAria2ExePath() async {
     }
     return '$dir/$ariaName';
   } else if (Platform.isAndroid) {
-    return await getAria2SoPath();
+    final libDir = await nativeLibraryDir();
+    var libPath = '$libDir/libaria2c.so';
+    File file = File(libPath);
+    if (!file.existsSync()) {
+      EasyLoading.showToast('aria2 没找到');
+    }
+    return libPath;
   }
 }
 
-getAria2ConfPath() async {
+Future<String> getAria2ConfPath() async {
   String dir = await getPlugAssetsDir('aria2');
   return '$dir${Platform.pathSeparator}aria2.conf';
 }
 
-getAria2UrlConf() {
-  String port = getAria2Port();
+Future<String> getAria2UrlConf() async {
+  String port = await getAria2Port();
   return ARIA2_URL_VALUE.replaceAll('{port}', port);
 }
 
@@ -59,8 +68,8 @@ initAria2Conf() async {
   writeLinesToFile(confPath, confLines.join("\n"));
 }
 
-getAria2Port() {
-  String confPath = getAria2ConfPath();
+getAria2Port() async {
+  String confPath = await getAria2ConfPath();
   List<String> textLines = readFile(confPath);
   String port = '46800';
   for (String line in textLines) {

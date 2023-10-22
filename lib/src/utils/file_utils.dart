@@ -4,6 +4,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import '../entity/m3u8_task.dart';
+
 createDir(String dir) {
   Directory directory = Directory(dir);
   if (!directory.existsSync()) {
@@ -59,6 +61,9 @@ Future<List<String>> readDefAria2Conf() async {
 
 getDirFile(String dir) {
   Directory directory = Directory(dir);
+  if (!directory.existsSync()) {
+    return [];
+  }
   return directory.listSync();
 }
 
@@ -87,4 +92,29 @@ getAppRootDir() async {
     Directory? cacheDir = await getExternalStorageDirectory();
     return cacheDir?.path;
   }
+}
+
+String getTsSaveDir(M3u8Task task, String? downPath) {
+  return getDtsDir(task, downPath, 'ts');
+}
+
+String getDtsSaveDir(M3u8Task task, String? downPath) {
+  return getDtsDir(task, downPath, 'dts');
+}
+
+String getDtsDir(M3u8Task task, String? downPath, String dirname) {
+  String saveDir = '$downPath/${task.m3u8name}/${task.subname}/$dirname';
+  createDir(saveDir);
+  return saveDir;
+}
+
+String getMp4Path(M3u8Task task, String? downPath) {
+  String mp4Path =
+      '$downPath/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
+  return mp4Path;
+}
+
+String getTsListTxtPath(M3u8Task task, String? downPath) {
+  String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.ts';
+  return fileListPath;
 }

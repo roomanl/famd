@@ -22,7 +22,7 @@ class Aria2Manager {
   late Logger logger = Logger();
   late Timer timer;
   late bool online = false;
-  late String aria2url = Aria2Conf.getAria2UrlConf();
+  late Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
   late int downSpeed = 0;
   late String aria2Version = '0';
   late Future<Process> cmdProcess;
@@ -72,6 +72,7 @@ class Aria2Manager {
     if (version != '0') {
       online = true;
       if (webSocketChannel == null) {
+        String aria2url = await _aria2url;
         String url = aria2url.replaceAll('http', 'ws');
         final wsUrl = Uri.parse(url);
         webSocketChannel = WebSocketChannel.connect(wsUrl);
@@ -105,7 +106,6 @@ class Aria2Manager {
     closeServer();
     var exe = await Aria2Conf.getAria2ExePath();
     var conf = await Aria2Conf.getAria2ConfPath();
-
     if (Platform.isLinux) {
       permission777(exe);
       permission777(conf);

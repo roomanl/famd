@@ -1,7 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../common/const.dart';
 import '../utils/aria2_conf_util.dart';
+import '../utils/permission_util.dart';
 import '../utils/setting_conf_utils.dart';
 
 class SettingPage extends StatefulWidget {
@@ -27,33 +29,35 @@ class _SettingPageState extends State<SettingPage> {
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[
-          SizedBox(
-            height: 50,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const Text(
-                        '下载目录',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(settingConf[SETTING_DOWN_PATH_KEY]!),
-                    ],
-                  ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      '下载目录',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    Text(
+                      settingConf[SETTING_DOWN_PATH_KEY]!,
+                      style: const TextStyle(
+                          fontSize: 12, color: Color.fromARGB(100, 0, 0, 0)),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    selectedDirectory(SETTING_DOWN_PATH_KEY);
-                  },
-                  child: const Text('更改'),
-                ),
-              ],
-            ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  selectedDirectory(SETTING_DOWN_PATH_KEY);
+                },
+                child: const Text('更改'),
+              ),
+            ],
           ),
+          const Divider(thickness: 1, height: 1),
         ],
       ),
     );
@@ -77,6 +81,11 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   selectedDirectory(String key) async {
+    bool isGranted = await checkStoragePermission();
+    if (!isGranted) {
+      EasyLoading.showToast('没有权限');
+      return;
+    }
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null) {
       print(selectedDirectory);

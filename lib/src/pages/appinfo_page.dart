@@ -1,9 +1,6 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
-import '../common/const.dart';
 import '../utils/ariar2_http_utils.dart';
-import '../utils/setting_conf_utils.dart';
+import '../utils/common_utils.dart';
 
 class AppinfoPage extends StatefulWidget {
   const AppinfoPage({super.key});
@@ -51,10 +48,10 @@ class _AppinfoPageState extends State<AppinfoPage> {
   }
 
   init() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String aria2 = await getVersion();
+    final v = await getAppVersion();
     setState(() {
-      appVersion = packageInfo.version;
+      appVersion = v;
       aria2Version = aria2;
     });
   }

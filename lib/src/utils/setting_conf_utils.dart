@@ -17,7 +17,7 @@ Future<bool> setConf(String key, String data) async {
 Future<String> getDownPath() async {
   final SharedPreferences prefs = await _prefs;
   String? path = prefs.getString(SETTING_DOWN_PATH_KEY);
-  return path ?? getAria2DefDownPath();
+  return path ?? await getAria2DefDownPath();
 }
 
 Future<bool> setDownPath(data) async {

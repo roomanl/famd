@@ -18,3 +18,16 @@ pluginManagement {
 include ":app"
 
 apply from: "${settings.ext.flutterSdkPath}/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+
+// gradle.beforeProject({ project->
+//     if (project.hasProperty("target-platform") && !project.getProperty("target-platform").split(",").contains("android-arm")) {
+//         project.setProperty("target-platform", "android-arm")
+//     }
+// })
+
+// gradle.beforeProject({ project->
+//     if (project.hasProperty("target-platform") && !project.getProperty("target-platform").split(",").contains("android-x86")) {
+//         project.setProperty("target-platform", "android-arm")
+//     }
+// })
+

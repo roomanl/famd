@@ -5,10 +5,12 @@ import 'package:encrypt/encrypt.dart';
 import 'package:logger/logger.dart';
 import "package:pointycastle/export.dart";
 
+import 'native_channel_utils.dart';
+
 var logger = Logger();
 
-bool aseDecryptTs(
-    String tsPath, String savePath, String keystr, String? ivstr) {
+Future<bool> aseDecryptTs(
+    String tsPath, String savePath, String keystr, String? ivstr) async {
   ivstr ??= '0x00000000000000000000000000000000';
   try {
     File tsfile = File(tsPath);
@@ -35,6 +37,28 @@ bool aseDecryptTs(
     file.parent.createSync(recursive: true);
     file.writeAsBytesSync(decrypted, flush: true);
 
+    return true;
+  } catch (e) {
+    logger.i(e);
+  }
+  return false;
+}
+
+Future<bool> androidAseDecryptTs(
+    String tsPath, String savePath, String keystr, String? ivstr) async {
+  ivstr ??= '0x00000000000000000000000000000000';
+  try {
+    File tsfile = File(tsPath);
+    if (!tsfile.existsSync()) {
+      return false;
+    }
+    final bytes = await decryptTS(tsPath, keystr);
+    if (bytes.isEmpty) {
+      return false;
+    }
+    final file = File(savePath);
+    file.parent.createSync(recursive: true);
+    file.writeAsBytesSync(bytes, flush: true);
     return true;
   } catch (e) {
     logger.i(e);

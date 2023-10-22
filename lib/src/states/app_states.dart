@@ -24,6 +24,7 @@ class CustomTheme extends ChangeNotifier {
 class AppController extends GetxController {
   RxInt pageIndex = 1.obs;
   RxBool aria2Online = false.obs;
+  RxBool showNavigationDrawer = false.obs;
 
   // @override
   // void onInit() {
@@ -40,6 +41,12 @@ class AppController extends GetxController {
   updateAria2Online(bool online) {
     aria2Online.update((val) {
       aria2Online.value = online;
+    });
+  }
+
+  updateShowNavigationDrawer(bool online) {
+    showNavigationDrawer.update((val) {
+      showNavigationDrawer.value = online;
     });
   }
 }
@@ -59,6 +66,8 @@ class TaskController extends GetxController {
       } else {
         finishTaskList.add(task);
       }
+      // taskList.add(task);
+      // finishTaskList.add(task);
       // update();
     }
     update();

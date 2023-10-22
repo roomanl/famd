@@ -6,6 +6,9 @@ import 'package:logger/logger.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
 
+import '../utils/file_utils.dart';
+import '../utils/native_channel_utils.dart';
+import '../utils/setting_conf_utils.dart';
 import '../utils/task_prefs_util.dart';
 import '../utils/task_manager.dart';
 
@@ -21,6 +24,8 @@ class _DownManagerPageState extends State<DownManagerPage>
   late final TabController _tabController;
   final logger = Logger();
   final TaskManager _taskManager = TaskManager();
+  final textStyle =
+      const TextStyle(fontSize: 12, color: Color.fromRGBO(0, 0, 0, 0.5));
 
   @override
   void initState() {
@@ -59,18 +64,10 @@ class _DownManagerPageState extends State<DownManagerPage>
                 if (delFile) {
                   String mp4Path =
                       '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
-                  File file = File(mp4Path);
-                  if (file.existsSync()) {
-                    file.deleteSync();
-                  }
                   String tsPath =
                       '${task.downdir}/${task.m3u8name}/${task.subname}';
-                  try {
-                    Directory directory = Directory(tsPath);
-                    directory.deleteSync(recursive: true);
-                  } catch (e) {
-                    logger.e(e);
-                  }
+                  deleteFile(mp4Path);
+                  deleteDir(tsPath);
                 }
                 await _taskCtrl.updateTaskList();
                 Navigator.of(context).pop();
@@ -144,7 +141,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                   M3u8Task task = _taskCtrl.taskList[index];
                   if (task.status == 1) {
                     return Container(
-                      height: 60,
+                      padding: const EdgeInsets.all(10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -154,9 +151,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                               Expanded(
                                 child: Text(
                                   '${task.m3u8name}-${task.subname}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                               ),
                               const Text('等待下载'),
@@ -179,7 +174,6 @@ class _DownManagerPageState extends State<DownManagerPage>
                     );
                   } else if (task.status == 2) {
                     return Container(
-                      // height: 50,
                       padding: const EdgeInsets.all(10),
                       child: Column(
                         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -210,16 +204,18 @@ class _DownManagerPageState extends State<DownManagerPage>
                               ),
                             ],
                           ),
-                          const Divider(),
+                          const Divider(thickness: 1, height: 1),
                           Row(
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                    '速      度：${_taskCtrl.taskInfo.speed}/S'),
+                                    '速      度：${_taskCtrl.taskInfo.speed}/S',
+                                    style: textStyle),
                               ),
                               Expanded(
-                                child:
-                                    Text('下载进度：${_taskCtrl.taskInfo.progress}'),
+                                child: Text(
+                                    '下载进度：${_taskCtrl.taskInfo.progress}',
+                                    style: textStyle),
                               ),
                               Expanded(
                                 child: const Text(''),
@@ -230,27 +226,32 @@ class _DownManagerPageState extends State<DownManagerPage>
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                    '分 片  数：${_taskCtrl.taskInfo.tsTotal}'),
+                                    '分 片  数：${_taskCtrl.taskInfo.tsTotal}',
+                                    style: textStyle),
                               ),
                               Expanded(
                                 child: Text(
-                                    '分片下载数：${_taskCtrl.taskInfo.tsSuccess}'),
+                                    '分片下载数：${_taskCtrl.taskInfo.tsSuccess}',
+                                    style: textStyle),
                               ),
                               Expanded(
-                                child:
-                                    Text('分片失败数：${_taskCtrl.taskInfo.tsFail}'),
+                                child: Text(
+                                    '分片失败数：${_taskCtrl.taskInfo.tsFail}',
+                                    style: textStyle),
                               ),
                             ],
                           ),
                           Row(
                             children: <Widget>[
                               Expanded(
-                                child:
-                                    Text('解密状态：${_taskCtrl.taskInfo.tsDecrty}'),
+                                child: Text(
+                                    '解密状态：${_taskCtrl.taskInfo.tsDecrty}',
+                                    style: textStyle),
                               ),
                               Expanded(
                                 child: Text(
-                                    '合并状态：${_taskCtrl.taskInfo.mergeStatus}'),
+                                    '合并状态：${_taskCtrl.taskInfo.mergeStatus}',
+                                    style: textStyle),
                               ),
                               Expanded(
                                 child: const Text(''),
@@ -263,7 +264,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                   }
                 },
                 separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                    const Divider(thickness: 1, height: 1),
               ),
             ),
           ),
@@ -276,17 +277,24 @@ class _DownManagerPageState extends State<DownManagerPage>
                   M3u8Task task = _taskCtrl.finishTaskList[index];
                   String statusText = task.status == 3 ? '下载完成' : '下载失败';
                   return Container(
-                    height: 50,
+                    padding: const EdgeInsets.all(10),
                     child: Row(
                       children: <Widget>[
                         Expanded(
                           child: Text(
                             '${task.m3u8name}-${task.subname}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
                         Text(statusText),
+                        // IconButton(
+                        //   icon: const Icon(Icons.play_circle_outlined),
+                        //   onPressed: () async {
+                        //     String downPath = await getDownPath();
+                        //     String mp4Path = getMp4Path(task, downPath);
+                        //     playerAndroidVideo(mp4Path);
+                        //   },
+                        // ),
                         IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -298,7 +306,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                    const Divider(thickness: 1, height: 1),
               ),
             ),
           ),
