@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
@@ -7,8 +6,6 @@ import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
 
 import '../utils/file_utils.dart';
-import '../utils/native_channel_utils.dart';
-import '../utils/setting_conf_utils.dart';
 import '../utils/task_prefs_util.dart';
 import '../utils/task_manager.dart';
 
@@ -48,17 +45,17 @@ class _DownManagerPageState extends State<DownManagerPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('提示'),
+          title: const Text('提示'),
           content: Text('您确定要删除吗？'),
           actions: <Widget>[
             TextButton(
-              child: Text('取消'),
+              child: const Text('取消'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('确定'),
+              child: const Text('确定'),
               onPressed: () async {
                 await deleteM3u8Task(task);
                 if (delFile) {

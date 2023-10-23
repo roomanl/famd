@@ -9,6 +9,7 @@ import 'package:window_manager/window_manager.dart';
 import '../common/const.dart';
 import '../components/page_view.dart' as MyPageView;
 import '../states/app_states.dart';
+import '../utils/app_update.dart';
 import '../utils/aria2_manager.dart';
 import '../utils/event_bus_util.dart';
 import 'add_task_page.dart';
@@ -51,6 +52,10 @@ class _HomePageState extends State<HomePage> with WindowListener {
                 icon: destination.icon,
               );
             },
+          ),
+          const NavigationDrawerDestination(
+            label: Text('检查更新'),
+            icon: Icon(Icons.update_rounded),
           ),
           const Padding(
             padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
@@ -274,8 +279,12 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   void handleScreenChanged(int selectedScreen) {
-    _changePageView(selectedScreen);
-    scaffoldKey.currentState!.closeEndDrawer();
+    if (selectedScreen == 4) {
+      checkAppUpdate(context);
+    } else {
+      _changePageView(selectedScreen);
+      scaffoldKey.currentState!.closeEndDrawer();
+    }
   }
 }
 

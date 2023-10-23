@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 bytesToSize(bytes) {
   if (bytes == 0) return '0 B';
@@ -18,4 +19,10 @@ permission777(filePath) {
 getAppVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.version;
+}
+
+openWebUrl(String url) async {
+  if (!await launchUrl(Uri.parse(url))) {
+    throw Exception('Could not launch $url');
+  }
 }
