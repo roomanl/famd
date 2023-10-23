@@ -165,6 +165,9 @@ class TaskManager {
   /// 此方法30S调用一次
   checkTsFileNum() async {
     try {
+      /// 还是那个问题，对文件的操作在不同的平台存在不同的问题
+      /// 比如android没权限会报错
+      /// 所以为了防止操作文件时报错，导致程序执行不下去，在文件操作中捕捉异常
       if (!isDowning || isDecryptTsing) return;
       List<FileSystemEntity> fileList =
           getDirFile(getTsSaveDir(tasking, downPath));

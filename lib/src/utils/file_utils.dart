@@ -6,6 +6,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../entity/m3u8_task.dart';
 
+///在windows上不知道什么原因，删除文件夹时（directory.delete）删除最后一级文件夹会保存
+///在android上有的文件夹只能添加删除特定的文件，比如Moves文件夹只能添加删除视频文件，添加其他文件会报错
+///为了防止操作文件时报错，导致程序执行不下去，在文件操作中捕捉异常
 createDir(String dir) {
   Directory directory = Directory(dir);
   if (!directory.existsSync()) {
