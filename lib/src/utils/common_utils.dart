@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'native_channel_utils.dart';
 
 bytesToSize(bytes) {
   if (bytes == 0) return '0 B';
@@ -24,5 +27,17 @@ getAppVersion() async {
 openWebUrl(String url) async {
   if (!await launchUrl(Uri.parse(url))) {
     throw Exception('Could not launch $url');
+  }
+}
+
+playerVideo(String path) {
+  if (Platform.isWindows) {
+    path = path.replaceAll("\\", "/");
+    Process.run('start', [path]);
+    // openWebUrl('file:///$path');
+  } else if (Platform.isAndroid) {
+    playerAndroidVideo(path);
+  } else {
+    EasyLoading.showToast('功能未实现');
   }
 }

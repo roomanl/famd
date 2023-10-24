@@ -17,7 +17,7 @@ Future<bool> aseDecryptTs(
     if (!tsfile.existsSync()) {
       return false;
     }
-    final bytes = tsfile.readAsBytesSync();
+    final bytes = await tsfile.readAsBytes();
 
     final key = Uint8List.fromList(keystr.codeUnits);
     // final iv = Uint8List.fromList(ivstr.substring(0, 16).codeUnits);
@@ -34,8 +34,8 @@ Future<bool> aseDecryptTs(
     paddingCipher.init(false, paddingParams);
     final decrypted = paddingCipher.process(bytes);
     final file = File(savePath);
-    file.parent.createSync(recursive: true);
-    file.writeAsBytesSync(decrypted, flush: true);
+    await file.parent.create(recursive: true);
+    await file.writeAsBytes(decrypted, flush: true);
 
     return true;
   } catch (e) {

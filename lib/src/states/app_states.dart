@@ -55,6 +55,7 @@ class TaskController extends GetxController {
   List<M3u8Task> taskList = [];
   List<M3u8Task> finishTaskList = [];
   TaskInfo taskInfo = TaskInfo();
+  RxString downStatusInfo = "".obs;
 
   updateTaskList() async {
     List<M3u8Task> list = await getM3u8TaskList();
@@ -76,5 +77,11 @@ class TaskController extends GetxController {
   updateTaskInfo(info) {
     taskInfo = info;
     update();
+  }
+
+  updateDownStatusInfo(String info) {
+    downStatusInfo.update((val) {
+      downStatusInfo.value = info;
+    });
   }
 }

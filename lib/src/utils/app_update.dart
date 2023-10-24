@@ -23,11 +23,13 @@ checkAppVsersion(vJson, context) async {
   final oldVersion = await getAppVersion();
   final newVsersion = vJson['version'];
   if (oldVersion != newVsersion) {
-    String updateMsg = "更新内容：\n";
-    updateMsg += vJson['contents'].join('\n') + "\n";
+    String updateMsg = "";
     updateMsg += "当前版本：v$oldVersion\n";
     updateMsg += "最  新 版：v$newVsersion\n";
-    updateMsg += "更新时间：${vJson['date']}";
+    updateMsg += "更新内容：\n";
+    updateMsg += vJson['contents'].join('\n');
+
+    // updateMsg += "更新时间：${vJson['date']}";
     showDialog(
       context: context,
       builder: (BuildContext context) {

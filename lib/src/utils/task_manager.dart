@@ -48,19 +48,24 @@ class TaskManager {
 
   startAria2Task({M3u8Task? task}) async {
     if (isDowning) return;
-    if (_taskCtrl.taskList.isEmpty) {
-      EasyLoading.showInfo('列表中没有任务');
-      return;
-    }
-    for (M3u8Task task in _taskCtrl.taskList) {
-      if (task.status == 2) {
-        EasyLoading.showInfo('已经在下载中');
+    if (task == null) {
+      if (_taskCtrl.taskList.isEmpty) {
+        EasyLoading.showInfo('列表中没有任务');
         return;
       }
+      for (M3u8Task task in _taskCtrl.taskList) {
+        if (task.status == 2) {
+          EasyLoading.showInfo('已经在下载中');
+          return;
+        }
+      }
+      _taskCtrl.updateDownStatusInfo("正在开始任务...");
     }
     isDowning = true;
     tasking = task ?? _taskCtrl.taskList[0];
-    EasyLoading.show(status: '正在开始任务...');
+    tasking.status = 2;
+    await updateM3u8Task(tasking);
+    _taskCtrl.updateTaskList();
     downPath = await getDownPath();
     M3u8Util m3u8 = M3u8Util(m3u8url: tasking.m3u8url);
     bool success = await m3u8.init();
@@ -71,7 +76,6 @@ class TaskManager {
     tasking.iv = m3u8.IV;
     tasking.keyurl = m3u8.keyUrl;
     tasking.downdir = downPath;
-    tasking.status = 2;
 
     List<String> tsList = m3u8.tsList;
     String saveDir = getTsSaveDir(tasking, downPath);
@@ -105,7 +109,8 @@ class TaskManager {
     await updateM3u8Task(tasking);
     updataTaskInfo();
     _taskCtrl.updateTaskInfo(taskInfo);
-    EasyLoading.showSuccess('任务启动成功');
+    _taskCtrl.updateDownStatusInfo("下载中...");
+    // EasyLoading.showSuccess('任务启动成功');
   }
 
   restStartAria2Task() async {
@@ -120,8 +125,9 @@ class TaskManager {
     isDowning = false;
     isDecryptTsing = false;
     tasking.status = 1;
-    startAria2Task(task: tasking);
     restCount++;
+    _taskCtrl.updateDownStatusInfo("重试$restCount");
+    startAria2Task(task: tasking);
   }
 
   updataTaskInfo() async {
@@ -185,6 +191,7 @@ class TaskManager {
     if (!isDowning || isDecryptTsing) return;
     isDecryptTsing = true;
     // EasyLoading.showInfo('开始解密ts文件');
+    _taskCtrl.updateDownStatusInfo("解密中...");
     taskInfo?.tsDecrty = '解密中...';
     List<String> decryptTsList = [];
     if (tasking.keyurl!.isNotEmpty) {
@@ -229,19 +236,23 @@ class TaskManager {
       File(fileListPath)
           .writeAsStringSync(decryptTsList.join('\n'), flush: true);
       taskInfo?.tsDecrty = '解密完成';
+      _taskCtrl.updateDownStatusInfo("解密完成");
       mergeTs(downPath, fileListPath);
     } else {
       taskInfo?.tsDecrty = '解密失败';
+      _taskCtrl.updateDownStatusInfo("解密失败");
       errDownFinish();
     }
   }
 
   mergeTs(downPath, fileListPath) async {
+    _taskCtrl.updateDownStatusInfo("合并中...");
     taskInfo?.mergeStatus = '合并中...';
     _taskCtrl.updateTaskInfo(taskInfo);
     String mp4Path = getMp4Path(tasking, downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
+      _taskCtrl.updateDownStatusInfo("合并完成");
       taskInfo?.mergeStatus = '合并完成';
       tasking.status = 3;
       await updateM3u8Task(tasking);

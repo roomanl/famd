@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../common/color.dart';
+import '../common/const.dart';
+import '../utils/app_update.dart';
 import '../utils/ariar2_http_utils.dart';
 import '../utils/common_utils.dart';
 
@@ -28,10 +31,52 @@ class _AppinfoPageState extends State<AppinfoPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('版本：$appVersion'),
-            const Text('作者：怡和路恶霸'),
-            Text('Aria2版本：$aria2Version'),
-            const Text('开源地址：https://github.com/roomanl/famd'),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                children: [
+                  Text('版本：$appVersion    '),
+                  InkWell(
+                    onTap: () {
+                      checkAppUpdate(context);
+                    },
+                    child: const Text(
+                      '检查更新',
+                      style: TextStyle(
+                        color: KONGQUELAN,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: const Text('作者：怡和路恶霸'),
+            ),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Text('Aria2版本：$aria2Version'),
+            ),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                children: [
+                  const Text('开源地址：'),
+                  InkWell(
+                    onTap: () {
+                      openWebUrl(FAMD_GITHUB_URL);
+                    },
+                    child: const Text(
+                      FAMD_GITHUB_URL,
+                      style: TextStyle(
+                        color: KONGQUELAN,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

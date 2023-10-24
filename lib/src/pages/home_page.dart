@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:get/instance_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import '../common/const.dart';
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
             ),
             leading: IconButton(
               color: const Color.fromRGBO(255, 255, 255, 1),
-              icon: const Icon(Icons.home),
+              icon: const Icon(Icons.home_rounded),
               onPressed: () => {_changePageView(1)},
             ),
             actions: <Widget>[
@@ -187,9 +188,9 @@ class _HomePageState extends State<HomePage> with WindowListener {
 
   List<NavDestination> destinations = const <NavDestination>[
     NavDestination('添加任务', Icon(Icons.add)),
-    NavDestination('任务管理', Icon(Icons.list)),
+    NavDestination('任务管理', Icon(Icons.home_rounded)),
     NavDestination('设置', Icon(Icons.settings)),
-    NavDestination('关于', Icon(Icons.info)),
+    NavDestination('关于', Icon(Icons.info))
   ];
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final MyPageView.PageController _pageController =
@@ -215,8 +216,14 @@ class _HomePageState extends State<HomePage> with WindowListener {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _appCtrl
-        .updateShowNavigationDrawer(MediaQuery.of(context).size.width <= 500);
+    final showDrawer = MediaQuery.of(context).size.width <= 500;
+
+    ///如果应用宽度>500时，EndDrawer还是弹出状态的话，就关闭它
+    ///这里有问题展示注释
+    // if (!showDrawer && scaffoldKey.currentState!.isEndDrawerOpen) {
+    //   scaffoldKey.currentState!.closeEndDrawer();
+    // }
+    _appCtrl.updateShowNavigationDrawer(showDrawer);
   }
 
   @override

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
+import '../common/color.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
 
+import '../utils/common_utils.dart';
 import '../utils/file_utils.dart';
 import '../utils/task_prefs_util.dart';
 import '../utils/task_manager.dart';
@@ -46,7 +48,7 @@ class _DownManagerPageState extends State<DownManagerPage>
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('提示'),
-          content: Text('您确定要删除吗？'),
+          content: const Text('您确定要删除吗？'),
           actions: <Widget>[
             TextButton(
               child: const Text('取消'),
@@ -136,6 +138,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                 itemCount: _taskCtrl.taskList.length,
                 itemBuilder: (BuildContext context, int index) {
                   M3u8Task task = _taskCtrl.taskList[index];
+                  // task.status = 2;
                   if (task.status == 1) {
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -151,9 +154,15 @@ class _DownManagerPageState extends State<DownManagerPage>
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
-                              const Text('等待下载'),
+                              const Icon(
+                                Icons.query_builder_rounded,
+                                color: KONGQUELAN,
+                              ),
                               IconButton(
-                                icon: const Icon(Icons.delete),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: SHANCHAHONG,
+                                ),
                                 onPressed: () {
                                   deleteTask(task, false);
                                 },
@@ -173,7 +182,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                     return Container(
                       padding: const EdgeInsets.all(10),
                       child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         // mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Column(
@@ -186,11 +195,15 @@ class _DownManagerPageState extends State<DownManagerPage>
                                     child: Text(
                                       '${task.m3u8name}-${task.subname}',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
+                                          color: Color.fromRGBO(0, 0, 0, 0.7),
+                                          fontSize: 16),
                                     ),
                                   ),
-                                  const Text('下载中'),
+                                  Text(
+                                    _taskCtrl.downStatusInfo.value,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: KONGQUELAN),
+                                  ),
                                 ],
                               ),
                               Text(
@@ -201,58 +214,44 @@ class _DownManagerPageState extends State<DownManagerPage>
                               ),
                             ],
                           ),
-                          const Divider(thickness: 1, height: 1),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    '速      度：${_taskCtrl.taskInfo.speed}/S',
-                                    style: textStyle),
-                              ),
-                              Expanded(
-                                child: Text(
-                                    '下载进度：${_taskCtrl.taskInfo.progress}',
-                                    style: textStyle),
-                              ),
-                              Expanded(
-                                child: const Text(''),
-                              ),
-                            ],
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                            child: Divider(thickness: 1, height: 0.5),
                           ),
                           Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(
-                                    '分 片  数：${_taskCtrl.taskInfo.tsTotal}',
-                                    style: textStyle),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                        '速      度：${_taskCtrl.taskInfo.speed}/S',
+                                        style: textStyle),
+                                    Text('分 片  数：${_taskCtrl.taskInfo.tsTotal}',
+                                        style: textStyle),
+                                    Text('解密状态：${_taskCtrl.taskInfo.tsDecrty}',
+                                        style: textStyle),
+                                  ],
+                                ),
                               ),
                               Expanded(
-                                child: Text(
-                                    '分片下载数：${_taskCtrl.taskInfo.tsSuccess}',
-                                    style: textStyle),
-                              ),
-                              Expanded(
-                                child: Text(
-                                    '分片失败数：${_taskCtrl.taskInfo.tsFail}',
-                                    style: textStyle),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    '解密状态：${_taskCtrl.taskInfo.tsDecrty}',
-                                    style: textStyle),
-                              ),
-                              Expanded(
-                                child: Text(
-                                    '合并状态：${_taskCtrl.taskInfo.mergeStatus}',
-                                    style: textStyle),
-                              ),
-                              Expanded(
-                                child: const Text(''),
-                              ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                        '下 载 进 度：${_taskCtrl.taskInfo.progress}',
+                                        style: textStyle),
+                                    Text(
+                                        '分片下载数：${_taskCtrl.taskInfo.tsSuccess} / ${_taskCtrl.taskInfo.tsFail}',
+                                        style: textStyle),
+                                    Text(
+                                        '合 并 状 态：${_taskCtrl.taskInfo.mergeStatus}',
+                                        style: textStyle),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ],
@@ -272,7 +271,22 @@ class _DownManagerPageState extends State<DownManagerPage>
                 itemCount: _taskCtrl.finishTaskList.length,
                 itemBuilder: (BuildContext context, int index) {
                   M3u8Task task = _taskCtrl.finishTaskList[index];
-                  String statusText = task.status == 3 ? '下载完成' : '下载失败';
+                  // String statusText = task.status == 3 ? '下载完成' : '下载失败';
+                  Widget statusIcon = task.status == 3
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.play_circle_outline,
+                            color: FENLV,
+                          ),
+                          onPressed: () async {
+                            String mp4Path = getMp4Path(task, task.downdir);
+                            playerVideo(mp4Path);
+                          },
+                        )
+                      : const Icon(
+                          Icons.error_outline_rounded,
+                          color: SHANCHAHONG,
+                        );
                   return Container(
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -280,20 +294,18 @@ class _DownManagerPageState extends State<DownManagerPage>
                         Expanded(
                           child: Text(
                             '${task.m3u8name}-${task.subname}',
-                            style: const TextStyle(fontSize: 16),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color.fromRGBO(0, 0, 0, 0.7),
+                            ),
                           ),
                         ),
-                        Text(statusText),
-                        // IconButton(
-                        //   icon: const Icon(Icons.play_circle_outlined),
-                        //   onPressed: () async {
-                        //     String downPath = await getDownPath();
-                        //     String mp4Path = getMp4Path(task, downPath);
-                        //     playerAndroidVideo(mp4Path);
-                        //   },
-                        // ),
+                        statusIcon,
                         IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: SHANCHAHONG,
+                          ),
                           onPressed: () {
                             deleteTask(task, true);
                           },
