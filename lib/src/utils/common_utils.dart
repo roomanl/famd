@@ -32,9 +32,8 @@ openWebUrl(String url) async {
 
 playerVideo(String path) {
   if (Platform.isWindows) {
-    path = path.replaceAll("\\", "/");
-    Process.run('start', [path]);
-    // openWebUrl('file:///$path');
+    path = path.replaceAll("/", "\\");
+    Process.runSync('start', [path], runInShell: true);
   } else if (Platform.isAndroid) {
     playerAndroidVideo(path);
   } else {

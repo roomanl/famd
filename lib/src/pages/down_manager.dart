@@ -243,9 +243,19 @@ class _DownManagerPageState extends State<DownManagerPage>
                                     Text(
                                         '下 载 进 度：${_taskCtrl.taskInfo.progress}',
                                         style: textStyle),
-                                    Text(
-                                        '分片下载数：${_taskCtrl.taskInfo.tsSuccess} / ${_taskCtrl.taskInfo.tsFail}',
-                                        style: textStyle),
+                                    Row(
+                                      children: <Widget>[
+                                        Text('分片下载数：', style: textStyle),
+                                        Text('${_taskCtrl.taskInfo.tsSuccess}',
+                                            style: const TextStyle(
+                                                fontSize: 12, color: FENLV)),
+                                        Text(' / ', style: textStyle),
+                                        Text('${_taskCtrl.taskInfo.tsFail}',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: SHANCHAHONG)),
+                                      ],
+                                    ),
                                     Text(
                                         '合 并 状 态：${_taskCtrl.taskInfo.mergeStatus}',
                                         style: textStyle),

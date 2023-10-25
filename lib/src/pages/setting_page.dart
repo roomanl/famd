@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -81,10 +83,12 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   selectedDirectory(String key) async {
-    bool isGranted = await checkStoragePermission();
-    if (!isGranted) {
-      EasyLoading.showToast('没有权限');
-      return;
+    if (Platform.isAndroid) {
+      bool isGranted = await checkStoragePermission();
+      if (!isGranted) {
+        EasyLoading.showToast('没有权限');
+        return;
+      }
     }
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null) {

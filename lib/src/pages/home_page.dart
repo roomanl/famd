@@ -45,7 +45,22 @@ class _HomePageState extends State<HomePage> with WindowListener {
         onDestinationSelected: handleScreenChanged,
         selectedIndex: -1,
         children: <Widget>[
-          const SizedBox(height: 50),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {},
+                  icon: Image.asset('lib/resources/images/logo.png',
+                      width: 40, height: 40),
+                ),
+                Text(
+                  'Famd M3U8下载器',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+          ),
           ...destinations.map(
             (NavDestination destination) {
               return NavigationDrawerDestination(
@@ -211,6 +226,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
       windowManager.addListener(this);
     }
     taskStatesListener();
+    checkAppUpdate(context, false);
   }
 
   @override
@@ -287,7 +303,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
 
   void handleScreenChanged(int selectedScreen) {
     if (selectedScreen == 4) {
-      checkAppUpdate(context);
+      checkAppUpdate(context, true);
     } else {
       _changePageView(selectedScreen);
       scaffoldKey.currentState!.closeEndDrawer();

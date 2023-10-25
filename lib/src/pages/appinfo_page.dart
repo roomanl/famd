@@ -38,7 +38,7 @@ class _AppinfoPageState extends State<AppinfoPage> {
                   Text('版本：$appVersion    '),
                   InkWell(
                     onTap: () {
-                      checkAppUpdate(context);
+                      checkAppUpdate(context, true);
                     },
                     child: const Text(
                       '检查更新',

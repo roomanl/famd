@@ -7,22 +7,30 @@ import 'package:http/http.dart' as http;
 import '../common/const.dart';
 import 'common_utils.dart';
 
-checkAppUpdate(context) async {
-  EasyLoading.show(status: '正在检查更新...');
+checkAppUpdate(context, openDialog) async {
+  if (openDialog) {
+    EasyLoading.show(status: '正在检查更新...');
+  }
   var res = await http.get(Uri.parse(APP_CHECK_VERSION_URL));
-  EasyLoading.dismiss();
+  if (openDialog) {
+    EasyLoading.dismiss();
+  }
   if (res.statusCode == 200) {
     var vJson = jsonDecode(utf8.decode(res.bodyBytes)) as Map;
-    checkAppVsersion(vJson, context);
-  } else {
+    checkAppVsersion(vJson, context, openDialog);
+  } else if (openDialog) {
     latestVersionToast();
   }
 }
 
-checkAppVsersion(vJson, context) async {
+checkAppVsersion(vJson, context, openDialog) async {
   final oldVersion = await getAppVersion();
   final newVsersion = vJson['version'];
   if (oldVersion != newVsersion) {
+    if (!openDialog) {
+      EasyLoading.showToast('有新版本');
+      return;
+    }
     String updateMsg = "";
     updateMsg += "当前版本：v$oldVersion\n";
     updateMsg += "最  新 版：v$newVsersion\n";
@@ -54,7 +62,7 @@ checkAppVsersion(vJson, context) async {
         );
       },
     );
-  } else {
+  } else if (openDialog) {
     latestVersionToast();
   }
 }
