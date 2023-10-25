@@ -88,8 +88,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   void initState() {
     super.initState();
-    _urlcontroller.text =
-        '第70集\$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8';
+    // _urlcontroller.text =
+    //     '第70集\$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8';
   }
 
   void addTask() async {

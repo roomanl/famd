@@ -21,10 +21,14 @@ class TaskManager {
   var logger = Logger();
   late bool isDowning = false;
   late bool isDecryptTsing = false;
+  late bool isMergeTsing = false;
   late TaskInfo? taskInfo = TaskInfo();
   late M3u8Task tasking;
   late int restCount = 0;
   late String? downPath;
+
+  ///记录下载回调时间
+  late int notificationsTime = 0;
   final _taskCtrl = Get.put(TaskController());
 
   TaskManager() {
@@ -67,6 +71,7 @@ class TaskManager {
     await updateM3u8Task(tasking);
     _taskCtrl.updateTaskList();
     downPath = await getDownPath();
+    taskInfo = TaskInfo();
     M3u8Util m3u8 = M3u8Util(m3u8url: tasking.m3u8url);
     bool success = await m3u8.init();
     if (!success) {
@@ -80,7 +85,6 @@ class TaskManager {
     List<String> tsList = m3u8.tsList;
     String saveDir = getTsSaveDir(tasking, downPath);
 
-    taskInfo = TaskInfo();
     taskInfo?.tsTotal = tsList.length;
 
     List<TsTask>? tsTaskList = [];
@@ -115,7 +119,7 @@ class TaskManager {
 
   restStartAria2Task() async {
     //有下载失败的分片，重试5次，超过5次不再重试
-    if (restCount > 5) {
+    if (restCount >= 5) {
       await decryptTs();
       return;
     }
@@ -123,7 +127,6 @@ class TaskManager {
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
     isDowning = false;
-    isDecryptTsing = false;
     tasking.status = 1;
     restCount++;
     _taskCtrl.updateDownStatusInfo("重试$restCount");
@@ -131,7 +134,7 @@ class TaskManager {
   }
 
   updataTaskInfo() async {
-    if (!isDowning) return;
+    if (!isDowning || isDecryptTsing || isMergeTsing) return;
     double progress = 0;
     int tsSuccess = 0;
     int tsFail = 0;
@@ -169,26 +172,26 @@ class TaskManager {
   /// checkTsFileNum则是检查磁盘目录中已下载的TS数量
   /// 如果磁盘目录中已下载的的TS数量等于tsTotal，也调用decryptTs开始解密TS，防止软件卡住不动
   /// 此方法30S调用一次
-  checkTsFileNum() async {
-    try {
-      /// 还是那个问题，对文件的操作在不同的平台存在不同的问题
-      /// 比如android没权限会报错
-      /// 所以为了防止操作文件时报错，导致程序执行不下去，在文件操作中捕捉异常
-      if (!isDowning || isDecryptTsing) return;
-      List<FileSystemEntity> fileList =
-          getDirFile(getTsSaveDir(tasking, downPath));
-      List<FileSystemEntity> list =
-          fileList.where((file) => file.path.endsWith('.ts')).toList();
-      List<FileSystemEntity> arialist =
-          fileList.where((file) => file.path.endsWith('.aria2')).toList();
-      if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
-        await decryptTs();
-      }
-    } catch (e) {}
-  }
+  // checkTsFileNum() async {
+  //   try {
+  //     /// 还是那个问题，对文件的操作在不同的平台存在不同的问题
+  //     /// 比如android没权限会报错
+  //     /// 所以为了防止操作文件时报错，导致程序执行不下去，在文件操作中捕捉异常
+  //     if (!isDowning || isDecryptTsing) return;
+  //     List<FileSystemEntity> fileList =
+  //         getDirFile(getTsSaveDir(tasking, downPath));
+  //     List<FileSystemEntity> list =
+  //         fileList.where((file) => file.path.endsWith('.ts')).toList();
+  //     List<FileSystemEntity> arialist =
+  //         fileList.where((file) => file.path.endsWith('.aria2')).toList();
+  //     if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
+  //       await decryptTs();
+  //     }
+  //   } catch (e) {}
+  // }
 
   decryptTs() async {
-    if (!isDowning || isDecryptTsing) return;
+    if (!isDowning || isDecryptTsing || isMergeTsing) return;
     isDecryptTsing = true;
     // EasyLoading.showInfo('开始解密ts文件');
     _taskCtrl.updateDownStatusInfo("解密中...");
@@ -246,6 +249,7 @@ class TaskManager {
   }
 
   mergeTs(downPath, fileListPath) async {
+    isMergeTsing = true;
     _taskCtrl.updateDownStatusInfo("合并中...");
     taskInfo?.mergeStatus = '合并中...';
     _taskCtrl.updateTaskInfo(taskInfo);
@@ -279,14 +283,29 @@ class TaskManager {
   downFinish() {
     isDowning = false;
     isDecryptTsing = false;
+    isMergeTsing = false;
     restCount = 0;
+    notificationsTime = 0;
   }
 
   listNotifications(String data) {
-    if (data.contains('check-ts-num')) {
-      /// 如果是每30S主动触发的广播，就检查本地TS文件是不是已经全部下载完成
-      checkTsFileNum();
+    if (data.contains('check-down-status')) {
+      ///检查下载专题是否卡住
+      ///最后一次下载完回调的时间记录和当前时间相减，如果如果>10S判断为卡住
+      ///在下载中不在解密中并且notificationsTime有时间才重试
+      if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 10000 &&
+          notificationsTime != 0 &&
+          !isDecryptTsing &&
+          !isMergeTsing &&
+          isDowning) {
+        logger.i("卡住");
+
+        ///卡住的话重试
+        restStartAria2Task();
+      }
     } else {
+      ///每次下载完回调纪录一次时间
+      notificationsTime = DateTime.now().millisecondsSinceEpoch;
       Map<String, dynamic> jsonData = jsonDecode(data);
       if (data.contains('aria2.onDown')) {
         String gid = jsonData['params'][0]['gid'];
@@ -309,12 +328,13 @@ class TaskManager {
         } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
           taskInfo?.tsTaskList?[taskIndex].staus = 2;
           // logger.i('下载完成：' + jsonData['params'][0]['gid']);
+        } else {
+          taskInfo?.tsTaskList?[taskIndex].staus = 3;
         }
+        updataTaskInfo();
+        _taskCtrl.updateTaskInfo(taskInfo);
       } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
     }
-    updataTaskInfo();
-    _taskCtrl.updateTaskInfo(taskInfo);
-    // EventBusUtil().eventBus.fire(TaskInfoEvent(taskInfo));
   }
 
   bool isResetDown(M3u8Task task, String? downPath, String tsName) {

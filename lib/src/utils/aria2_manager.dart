@@ -36,12 +36,11 @@ class Aria2Manager {
       getSpeed();
       timerCount++;
 
-      /// 下载完一个TS后才会触发ListAria2Notifications广播
-      /// 有极小的概率TS下载完后没有触发ListAria2Notifications广播
-      /// TS下载完却没有触发ListAria2Notifications广播，会导致软件卡住
-      /// 这里设置每30秒主动触发一次ListAria2Notifications广播，防止软件卡住
-      if (online && timerCount % 30 == 0) {
-        EventBusUtil().eventBus.fire(ListAria2Notifications('check-ts-num'));
+      /// 每10S通知一次任务管理检查下载状态，是否卡住
+      if (online && timerCount % 10 == 0) {
+        EventBusUtil()
+            .eventBus
+            .fire(ListAria2Notifications('check-down-status'));
       }
     });
   }

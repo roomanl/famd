@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "aria2_m3u8" "\0"
+            VALUE "CompanyName", "cn.rootvip" "\0"
+            VALUE "FileDescription", "famd aria2 m3u8 downloader" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "aria2_m3u8" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "aria2_m3u8.exe" "\0"
-            VALUE "ProductName", "aria2_m3u8" "\0"
+            VALUE "InternalName", "famd_m3u8" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 cn.rootvip. All rights reserved." "\0"
+            VALUE "OriginalFilename", "famd_m3u8.exe" "\0"
+            VALUE "ProductName", "famd_m3u8" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
