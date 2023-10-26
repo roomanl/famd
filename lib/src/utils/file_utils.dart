@@ -118,6 +118,6 @@ String getMp4Path(M3u8Task task, String? downPath) {
 }
 
 String getTsListTxtPath(M3u8Task task, String? downPath) {
-  String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.ts';
+  String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.txt';
   return fileListPath;
 }

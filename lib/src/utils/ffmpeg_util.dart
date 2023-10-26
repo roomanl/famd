@@ -26,7 +26,7 @@ tsMergeTs(dtslistpath, mp4path) async {
       permission777(ffmpegPath);
     }
 
-    var process = Process.runSync(ffmpegPath, args);
+    var process = await Process.run(ffmpegPath, args);
     String output = process.stdout;
     // Process.runSync('taskkill', ['/F', '/T', '/PID', '${process.pid}']);
     Process.killPid(process.pid);

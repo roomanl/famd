@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   taskStatesListener() {
     ///监听页码变化跳转页面
     _appCtrl.pageIndex.listen((val) {
-      if (_pageController.page != val) {
+      if (_pageController.hasClients && _pageController.page != val) {
         _pageController.jumpToPage(val);
       }
     });

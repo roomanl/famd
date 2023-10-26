@@ -15,3 +15,7 @@ Future<List<int>> decryptTS(String path, String key) async {
 playerAndroidVideo(String path) async {
   return await _channel.invokeMethod('playerVideo', {'path': path});
 }
+
+requestPermission() async {
+  return await _channel.invokeMethod('requestPermission');
+}

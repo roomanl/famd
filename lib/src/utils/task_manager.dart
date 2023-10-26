@@ -52,6 +52,7 @@ class TaskManager {
 
   startAria2Task({M3u8Task? task}) async {
     if (isDowning) return;
+    taskInfo = TaskInfo();
     if (task == null) {
       if (_taskCtrl.taskList.isEmpty) {
         EasyLoading.showInfo('列表中没有任务');
@@ -63,6 +64,7 @@ class TaskManager {
           return;
         }
       }
+      _taskCtrl.updateTaskInfo(taskInfo);
       _taskCtrl.updateDownStatusInfo("正在开始任务...");
     }
     isDowning = true;
@@ -71,7 +73,7 @@ class TaskManager {
     await updateM3u8Task(tasking);
     _taskCtrl.updateTaskList();
     downPath = await getDownPath();
-    taskInfo = TaskInfo();
+
     M3u8Util m3u8 = M3u8Util(m3u8url: tasking.m3u8url);
     bool success = await m3u8.init();
     if (!success) {

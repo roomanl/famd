@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../common/const.dart';
-import '../utils/aria2_conf_util.dart';
 import '../utils/permission_util.dart';
 import '../utils/setting_conf_utils.dart';
 
@@ -83,6 +82,7 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   selectedDirectory(String key) async {
+    // requestPermission();
     if (Platform.isAndroid) {
       bool isGranted = await checkStoragePermission();
       if (!isGranted) {
