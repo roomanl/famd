@@ -1,10 +1,12 @@
 # famd
-flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器。
+flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器
 
 [使用说明](https://www.bilibili.com/video/BV1nH4y1Z7aG)
-https://www.bilibili.com/video/BV1nH4y1Z7aG
+https://www.bilibili.com/video/BV1nH4y1Z7aG   
 
-#### 初学者的第一个flutter应用,代码写的乱七八糟的。参考价值不大，可借鉴开发思路。
+[下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)
+https://rootvip.cn/archives/66.html   
+
 
 ## 开发思路
 1、解析m3u8文件获取里面ts列表，m3u8的视频是由很多个ts文件组成的，所以首先就先要解析m3u8文件获取里面ts列表的下载地址  
