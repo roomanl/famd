@@ -4,8 +4,7 @@ flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下�
 [使用说明](https://www.bilibili.com/video/BV1nH4y1Z7aG)
 https://www.bilibili.com/video/BV1nH4y1Z7aG   
 
-[下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)
-https://rootvip.cn/archives/66.html   
+[下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  
 
 
 ## 开发思路
