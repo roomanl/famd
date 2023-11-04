@@ -31,7 +31,7 @@ flutter run -d linux
 ## 注意：
 1、windows版因为ffmpeg.exe太大，一直提交失败，所以没上传提交上来，请自行下载ffmpeg.exe放到 windows/bin/plugin/ffmpeg/ffmpeg.exe  
 2、Linux也是分CPU架构的，请自行找到aria2和ffmpeg对应的CPU架构文件，放在linux/bin/plugin中， 我只能在虚拟机里调试linux版，虚拟机装的linux是x86_64。因此这里只有x86_64的文件。  
-3、android版的aria2文件也是因为太大一直提交失败,请到https://github.com/devgianlu/aria2lib/tree/0de68dfb612b7309e7d2becbdf04ad5a6284fb2b找到src/main/jniLibs下的aria2文件放到本项目android目录下的src/main/jniLibs中即可。  
+3、android版的aria2文件也是因为太大一直提交失败,请到 https://github.com/devgianlu/aria2lib 找到src/main/jniLibs下的aria2文件放到本项目android目录下的src/main/jniLibs中即可。  
 4、IOS暂时不支持，手机版需要写一点原生代码，我不会IOS开发，因此目前本项目还没适配IOS。
 
 ## 截图
