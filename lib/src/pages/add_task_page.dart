@@ -101,15 +101,19 @@ class _AddTaskPageState extends State<AddTaskPage> {
     List<String> urls = _urlcontroller.text.split('\n');
     for (String url in urls) {
       List<String> info = url.split('\$');
-      if (info.length < 2) {
-        EasyLoading.showInfo('$url链接格式不正确，跳过！');
-        continue;
+      if (info.length != 2) {
+        EasyLoading.showInfo('$url链接格式不正确！');
+        return;
+      }
+      if (!info[1].startsWith('http')) {
+        EasyLoading.showInfo('${info[1]}不是有效的m3u8地址！');
+        return;
       }
       String m3u8name = '${_namecontroller.text}-${info[0]}';
       bool has = await hasM3u8Name(_namecontroller.text, info[0].trim());
       if (has) {
-        EasyLoading.showInfo('$m3u8name,已在列表中，跳过！');
-        continue;
+        EasyLoading.showInfo('$m3u8name,已在列表中！');
+        return;
       }
       M3u8Task task = M3u8Task(
           id: uuid.v4(),
