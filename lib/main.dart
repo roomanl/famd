@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import './src/pages/start_page.dart';
-import 'src/common/const.dart';
+import 'src/common/color.dart';
+import 'src/states/app_states.dart';
+import 'src/utils/setting_conf_utils.dart';
 
 void main() async {
   if (Platform.isWindows || Platform.isLinux) {
@@ -29,11 +31,14 @@ void main() async {
         statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
+  final _themeCtrl = Get.put(CustomThemeController());
+  CustomThemeColor themeColor = await getThemeColor();
+  _themeCtrl.updateMainColor(themeColor.color);
   runApp(GetMaterialApp(
     theme: ThemeData(
       useMaterial3: true,
-      fontFamily: mainFont,
-      colorSchemeSeed: mainColor,
+      fontFamily: "FangYuan2",
+      colorSchemeSeed: themeColor.color,
     ),
     home: const StartPage(),
     builder: EasyLoading.init(),

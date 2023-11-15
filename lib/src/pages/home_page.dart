@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/get_utils.dart';
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   AppBar? _buildAppBar() {
     return _appCtrl.showNavigationDrawer.isTrue
         ? AppBar(
-            backgroundColor: mainColor,
+            backgroundColor: _themeCtrl.mainColor.value,
             title: const Text(
               'Famd',
               style: TextStyle(
@@ -137,7 +138,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
         : [
             Obx(() => NavigationRail(
                   labelType: NavigationRailLabelType.none,
-                  backgroundColor: mainColor,
+                  backgroundColor: _themeCtrl.mainColor.value,
                   unselectedIconTheme: const IconThemeData(color: textColor),
                   selectedIconTheme: const IconThemeData(color: activeColor),
                   unselectedLabelTextStyle: labelStyle,
@@ -211,6 +212,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   final MyPageView.PageController _pageController =
       MyPageView.PageController(initialPage: 1);
   final _appCtrl = Get.put(AppController());
+  final _themeCtrl = Get.put(CustomThemeController());
   late bool isStartServer = false;
   late int startCount = 0;
   static const Color textColor = Color(0xffcfd1d7);

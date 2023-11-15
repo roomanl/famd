@@ -77,6 +77,25 @@ class _AppinfoPageState extends State<AppinfoPage> {
                 ],
               ),
             ),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                children: [
+                  const Text('主页：'),
+                  InkWell(
+                    onTap: () {
+                      openWebUrl(HOME_PAGE);
+                    },
+                    child: const Text(
+                      HOME_PAGE,
+                      style: TextStyle(
+                        color: KONGQUELAN,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

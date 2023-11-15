@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:get/get_utils/get_utils.dart';
+import '../common/color.dart';
 import '../common/const.dart';
+import '../states/app_states.dart';
 import '../utils/permission_util.dart';
 import '../utils/setting_conf_utils.dart';
 
@@ -39,8 +43,7 @@ class _SettingPageState extends State<SettingPage> {
                   children: <Widget>[
                     const Text(
                       '下载目录',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: TextStyle(fontSize: 18),
                     ),
                     Text(
                       settingConf[SETTING_DOWN_PATH_KEY]!,
@@ -59,13 +62,45 @@ class _SettingPageState extends State<SettingPage> {
             ],
           ),
           const Divider(thickness: 1, height: 1),
+          const SizedBox(height: 10),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      '主题色',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      settingConf[SETTING_THEME_COLOR_KEY]!,
+                      style: const TextStyle(
+                          fontSize: 12, color: Color.fromARGB(100, 0, 0, 0)),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  selectThemeColor();
+                },
+                child: const Text('更改'),
+              ),
+            ],
+          ),
+          const Divider(thickness: 1, height: 1),
         ],
       ),
     );
   }
 
+  final _themeCtrl = Get.put(CustomThemeController());
+
   Map<String, String> settingConf = {
     SETTING_DOWN_PATH_KEY: '',
+    SETTING_THEME_COLOR_KEY: '',
   };
 
   @override
@@ -76,8 +111,10 @@ class _SettingPageState extends State<SettingPage> {
 
   init() async {
     String downPath = await getDownPath();
+    CustomThemeColor themeColor = await getThemeColor();
     setState(() {
       settingConf[SETTING_DOWN_PATH_KEY] = downPath;
+      settingConf[SETTING_THEME_COLOR_KEY] = themeColor.label;
     });
   }
 
@@ -92,12 +129,55 @@ class _SettingPageState extends State<SettingPage> {
     }
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null) {
-      print(selectedDirectory);
+      // print(selectedDirectory);
       setConf(key, selectedDirectory);
       setState(() {
         settingConf[key] = selectedDirectory;
       });
     }
+  }
+
+  selectThemeColor() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text("选择主题色"),
+            children: [
+              ...themeColors.map((CustomThemeColor themeColor) {
+                return SimpleDialogOption(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(themeColor.label),
+                      ),
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: themeColor.color,
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    setConf(SETTING_THEME_COLOR_KEY, themeColor.label);
+                    _themeCtrl.updateMainColor(themeColor.color);
+                    Get.changeTheme(ThemeData(
+                      useMaterial3: true,
+                      fontFamily: "FangYuan2",
+                      colorSchemeSeed: themeColor.color,
+                    ));
+                    setState(() {
+                      settingConf[SETTING_THEME_COLOR_KEY] = themeColor.label;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                );
+              }),
+            ],
+          );
+        });
   }
 
   @override

@@ -22,7 +22,7 @@ class _StartPageState extends State<StartPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: mainColor, //
+        color: _themeCtrl.mainColor.value, //
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +42,8 @@ class _StartPageState extends State<StartPage> {
               Expanded(
                 child: ElevatedButton(
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(mainColor),
+                      backgroundColor:
+                          MaterialStateProperty.all(_themeCtrl.mainColor.value),
                       foregroundColor: MaterialStateProperty.all(Colors.white),
                       elevation: MaterialStateProperty.all(20),
                       shape: MaterialStateProperty.all(
@@ -77,6 +78,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   final _appCtrl = Get.put(AppController());
+  final _themeCtrl = Get.put(CustomThemeController());
   late int count = 0;
   late bool isStartServer = false;
   String startBtnText = '启动Aria2服务';

@@ -3,21 +3,18 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
+import '../common/color.dart';
 import '../entity/m3u8_task.dart';
 import '../entity/task_info.dart';
 import '../utils/task_prefs_util.dart';
 
-class CustomTheme extends ChangeNotifier {
-  Color mainColor = const Color.fromRGBO(18, 161, 130, 1);
-  String mainFont = 'FangYuan2';
-  changeMainColor(color) {
-    mainColor = color;
-    notifyListeners();
-  }
-
-  changeMainFont(font) {
-    mainFont = font;
-    notifyListeners();
+class CustomThemeController extends GetxController {
+  Rx<Color> mainColor = themeColors[0].color.obs;
+  String? mainFont = 'FangYuan2';
+  updateMainColor(color) {
+    mainColor.update((val) {
+      mainColor.value = color;
+    });
   }
 }
 

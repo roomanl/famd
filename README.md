@@ -1,7 +1,7 @@
 # famd
 flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器
 
-[安装包下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  
+[安装包下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  大文件上传到github太难了，新版本会优先上传到这里
 
 [2.5版介绍](https://www.bilibili.com/video/BV1sc411Z7FT/)
 https://www.bilibili.com/video/BV1sc411Z7FT  

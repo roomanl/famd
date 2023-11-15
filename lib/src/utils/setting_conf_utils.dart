@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../common/color.dart';
 import '../common/const.dart';
 import 'file_utils.dart';
 
@@ -28,4 +29,14 @@ Future<bool> setDownPath(data) async {
 getAria2DefDownPath() async {
   String downloadsDir = await getAppRootDir() + '/downloads';
   return downloadsDir;
+}
+
+Future<CustomThemeColor> getThemeColor() async {
+  final SharedPreferences prefs = await _prefs;
+  String? label = prefs.getString(SETTING_THEME_COLOR_KEY);
+  int index = themeColors.indexWhere((element) => element.label == label);
+  if (index < 0) {
+    return themeColors[0];
+  }
+  return themeColors[index];
 }
