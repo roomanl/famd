@@ -9,6 +9,9 @@ import 'native_channel_utils.dart';
 
 var logger = Logger();
 
+/**
+ * 解密ts文件
+ */
 Future<bool> aseDecryptTs(
     String tsPath, String savePath, String keystr, String? ivstr) async {
   ivstr ??= '0x00000000000000000000000000000000';
@@ -44,6 +47,9 @@ Future<bool> aseDecryptTs(
   return false;
 }
 
+/**
+ * 安卓解密 
+ * */
 Future<bool> androidAseDecryptTs(
     String tsPath, String savePath, String keystr, String? ivstr) async {
   ivstr ??= '0x00000000000000000000000000000000';

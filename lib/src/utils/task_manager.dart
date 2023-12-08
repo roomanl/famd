@@ -293,9 +293,9 @@ class TaskManager {
   listNotifications(String data) {
     if (data.contains('check-down-status')) {
       ///检查下载专题是否卡住
-      ///最后一次下载完回调的时间记录和当前时间相减，如果如果>10S判断为卡住
+      ///最后一次下载完回调的时间记录和当前时间相减，如果如果>30S判断为卡住
       ///在下载中不在解密中并且notificationsTime有时间才重试
-      if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 10000 &&
+      if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 30000 &&
           notificationsTime != 0 &&
           !isDecryptTsing &&
           !isMergeTsing &&

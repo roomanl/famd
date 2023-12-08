@@ -45,6 +45,7 @@ class Aria2Manager {
     });
   }
 
+/** */
   Future<String?> addUrl(String url, String filename, String downPath) async {
     var params = [
       [url],
@@ -53,18 +54,34 @@ class Aria2Manager {
     return await Aria2Http.addUrl(params);
   }
 
+  /**
+   * 获取下载速度
+   */
+
   getSpeed() async {
     if (!online) return;
     downSpeed = await Aria2Http.getSpeed();
   }
 
+  /**
+   * 强制暂停所有下载
+   */
+
   forcePauseAll() async {
     await Aria2Http.forcePauseAll();
   }
 
+  /**
+   * 清空下载结果
+   */
+
   purgeDownloadResult() async {
     await Aria2Http.purgeDownloadResult();
   }
+
+  /**
+   * 连接aria2
+   */
 
   void connection() async {
     var version = await Aria2Http.getVersion();
@@ -88,6 +105,9 @@ class Aria2Manager {
     // EventBusUtil().eventBus.fire(Aria2ServerEvent(online));
   }
 
+/**
+   * 监听websocket
+   */
   listenWebSocket() {
     webSocketChannel.stream.listen((data) {
       // logger.i(data);
@@ -97,14 +117,21 @@ class Aria2Manager {
     });
   }
 
+/**
+   * 监听通知
+   */
   listNotifications(String data) {
     EventBusUtil().eventBus.fire(ListAria2Notifications(data));
   }
 
+/** */
   void startServer() async {
     closeServer();
     var exe = await Aria2Conf.getAria2ExePath();
+    // print(exe);
     var conf = await Aria2Conf.getAria2ConfPath();
+    // print(conf);
+    // print(File(conf).existsSync());
     if (Platform.isLinux) {
       permission777(exe);
       permission777(conf);
@@ -134,14 +161,23 @@ class Aria2Manager {
     });
   }
 
+/**
+   * 初始化aria2配置
+   */
   initAria2Conf() async {
     await Aria2Conf.initAria2Conf();
   }
 
+/**
+   * 清空aria2配置
+   */
   clearSession() {
     Aria2Conf.clearSession();
   }
 
+/**
+   * 关闭aria2服务
+   */
   closeServer() {
     print('开始关闭服务');
     bool killSuccess = false;

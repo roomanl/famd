@@ -20,7 +20,7 @@ class M3u8Util {
     // var res = await Dio().get(m3u8url);
     var res = await http.get(parsuri);
     // logger.i(m3u8url);
-    // logger.i(res.statusCode);
+    // logger.i(res.body);
     // logger.i(res.body);
 
     // logger.i(resText);
@@ -68,6 +68,6 @@ class M3u8Util {
       int index = m3u8url.lastIndexOf("/");
       realUrl = m3u8url.substring(0, index + 1) + line;
     }
-    return realUrl;
+    return realUrl.trim();
   }
 }

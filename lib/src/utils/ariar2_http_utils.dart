@@ -39,7 +39,9 @@ getVersion() async {
       var resJson = json.decode(res.body);
       aria2Version = resJson['result']['version'];
     }
-  } catch (e) {}
+  } catch (e) {
+    print(e);
+  }
   //{"id":1,"jsonrpc":"2.0","result":{"enabledFeatures":["Async DNS","BitTorrent","Firefox3 Cookie","GZip","HTTPS","Message Digest","Metalink","XML-RPC","SFTP"],"version":"1.36.0"}}
   // print(aria2Version);
   return aria2Version;

@@ -11,6 +11,9 @@ final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 final prefsKey = 'm3u8_task_data';
 
+/**
+ * 获取任务列表
+ */
 Future<List<M3u8Task>> getM3u8TaskList() async {
   final SharedPreferences prefs = await _prefs;
   List<String>? list = prefs.getStringList(prefsKey);
@@ -27,6 +30,9 @@ Future<List<M3u8Task>> getM3u8TaskList() async {
   return taskList;
 }
 
+/**
+ * 更新任务列表
+ */
 Future<bool> updateM3u8TaskList(List<M3u8Task> list) async {
   final SharedPreferences prefs = await _prefs;
   List<String> strList = [];
@@ -38,6 +44,9 @@ Future<bool> updateM3u8TaskList(List<M3u8Task> list) async {
   return prefs.setStringList(prefsKey, strList);
 }
 
+/**
+ * 插入任务
+ */
 Future<bool> insertM3u8Task(M3u8Task task) async {
   final SharedPreferences prefs = await _prefs;
   List<M3u8Task> taskList = await getM3u8TaskList();
@@ -50,6 +59,9 @@ Future<bool> insertM3u8Task(M3u8Task task) async {
   return prefs.setStringList(prefsKey, strList);
 }
 
+/**
+ * 更新任务
+ */
 Future<bool> updateM3u8Task(M3u8Task task) async {
   final SharedPreferences prefs = await _prefs;
   List<M3u8Task> taskList = await getM3u8TaskList();
@@ -66,6 +78,9 @@ Future<bool> updateM3u8Task(M3u8Task task) async {
   return prefs.setStringList(prefsKey, strList);
 }
 
+/**
+ * 删除任务
+ */
 Future<bool> deleteM3u8Task(M3u8Task task) async {
   final SharedPreferences prefs = await _prefs;
   List<M3u8Task> taskList = await getM3u8TaskList();
@@ -79,6 +94,8 @@ Future<bool> deleteM3u8Task(M3u8Task task) async {
   return prefs.setStringList(prefsKey, strList);
 }
 
+/**
+ * 判断是否存在相同的m3u8name和subname */
 Future<bool> hasM3u8Name(String m3u8name, String subname) async {
   List<M3u8Task> taskList = await getM3u8TaskList();
   for (M3u8Task item in taskList) {
@@ -89,6 +106,9 @@ Future<bool> hasM3u8Name(String m3u8name, String subname) async {
   return false;
 }
 
+/**
+ * 清空任务
+ */
 Future<bool> clearM3u8Task() async {
   final SharedPreferences prefs = await _prefs;
   return prefs.remove(prefsKey);
