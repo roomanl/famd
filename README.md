@@ -1,8 +1,13 @@
 # famd
-flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器
+flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器  
+## 下载地址
+[安卓与PC版下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  
+大文件上传到github太难了，新版本会优先上传到这里！   
 
-[安装包下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  大文件上传到github太难了，新版本会优先上传到这里
+[安卓版google play下载](https://play.google.com/store/apps/details?id=cn.rootvip.famd)  
+google play为付费下载，付费版与免费版功能一模一样！  
 
+## 视频介绍
 [2.5版介绍](https://www.bilibili.com/video/BV1sc411Z7FT/)
 https://www.bilibili.com/video/BV1sc411Z7FT  
 
@@ -33,10 +38,4 @@ flutter run -d linux
 2、Linux也是分CPU架构的，请自行找到aria2和ffmpeg对应的CPU架构文件，放在linux/bin/plugin中， 我只能在虚拟机里调试linux版，虚拟机装的linux是x86_64。因此这里只有x86_64的文件。  
 3、android版的aria2文件也是因为太大一直提交失败,请到 https://github.com/devgianlu/aria2lib 找到src/main/jniLibs下的aria2文件放到本项目android目录下的src/main/jniLibs中即可。  
 4、IOS暂时不支持，手机版需要写一点原生代码，我不会IOS开发，因此目前本项目还没适配IOS。
-
-## 截图
-![](https://sddman.oss-cn-shenzhen.aliyuncs.com/flutter/famd/win/1.jpg)
-![](https://sddman.oss-cn-shenzhen.aliyuncs.com/flutter/famd/win/2.jpg)
-![](https://sddman.oss-cn-shenzhen.aliyuncs.com/flutter/famd/win/3.jpg)
-![](https://sddman.oss-cn-shenzhen.aliyuncs.com/flutter/famd/win/4.jpg)
 
