@@ -63,7 +63,7 @@ class M3u8Util {
     if (line.startsWith('http')) {
       realUrl = line;
     } else if (line.startsWith('/')) {
-      realUrl = "${parsuri.scheme}//${parsuri.host}$line";
+      realUrl = "${parsuri.scheme}://${parsuri.host}$line";
     } else {
       int index = m3u8url.lastIndexOf("/");
       realUrl = m3u8url.substring(0, index + 1) + line;
