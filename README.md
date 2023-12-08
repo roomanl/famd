@@ -5,7 +5,7 @@ flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下�
 大文件上传到github太难了，新版本会优先上传到这里！   
 
 [安卓版google play下载](https://play.google.com/store/apps/details?id=cn.rootvip.famd)  
-google play为付费下载，付费版与免费版功能一模一样！  
+google play为付费下载，付费版与免费版功能一模一样，如果您想支持我，可下载付费版！  
 
 ## 视频介绍
 [2.5版介绍](https://www.bilibili.com/video/BV1sc411Z7FT/)
