@@ -168,30 +168,6 @@ class TaskManager {
     }
   }
 
-  /// 下载完一个TS后会调用listNotifications来把TS标记为已下载
-  /// 但是有极小的概率TS下载完后没有调用listNotifications
-  /// 导致updataTaskInfo中tsSuccess + tsFail永远小于tsTotal，然后软件就会卡在这里不动
-  /// checkTsFileNum则是检查磁盘目录中已下载的TS数量
-  /// 如果磁盘目录中已下载的的TS数量等于tsTotal，也调用decryptTs开始解密TS，防止软件卡住不动
-  /// 此方法30S调用一次
-  // checkTsFileNum() async {
-  //   try {
-  //     /// 还是那个问题，对文件的操作在不同的平台存在不同的问题
-  //     /// 比如android没权限会报错
-  //     /// 所以为了防止操作文件时报错，导致程序执行不下去，在文件操作中捕捉异常
-  //     if (!isDowning || isDecryptTsing) return;
-  //     List<FileSystemEntity> fileList =
-  //         getDirFile(getTsSaveDir(tasking, downPath));
-  //     List<FileSystemEntity> list =
-  //         fileList.where((file) => file.path.endsWith('.ts')).toList();
-  //     List<FileSystemEntity> arialist =
-  //         fileList.where((file) => file.path.endsWith('.aria2')).toList();
-  //     if (list.length == taskInfo?.tsTotal && arialist.isEmpty) {
-  //       await decryptTs();
-  //     }
-  //   } catch (e) {}
-  // }
-
   decryptTs() async {
     if (!isDowning || isDecryptTsing || isMergeTsing) return;
     isDecryptTsing = true;
@@ -292,7 +268,7 @@ class TaskManager {
 
   listNotifications(String data) {
     if (data.contains('check-down-status')) {
-      ///检查下载专题是否卡住
+      ///检查下载状态是否卡住
       ///最后一次下载完回调的时间记录和当前时间相减，如果如果>30S判断为卡住
       ///在下载中不在解密中并且notificationsTime有时间才重试
       if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 30000 &&

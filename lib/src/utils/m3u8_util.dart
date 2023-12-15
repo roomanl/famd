@@ -33,7 +33,8 @@ class M3u8Util {
       if (line.endsWith('.ts') ||
           line.endsWith('.image') ||
           line.endsWith('.png') ||
-          line.endsWith('.jpg')) {
+          line.endsWith('.jpg') ||
+          line.contains('.ts?')) {
         tsList.add(getRealUrl(line));
       } else if (line.startsWith('#EXT-X-KEY')) {
         getKey(line);

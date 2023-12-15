@@ -45,7 +45,7 @@ class Aria2Manager {
     });
   }
 
-/** */
+  /// 添加下载任务
   Future<String?> addUrl(String url, String filename, String downPath) async {
     var params = [
       [url],
@@ -54,35 +54,23 @@ class Aria2Manager {
     return await Aria2Http.addUrl(params);
   }
 
-  /**
-   * 获取下载速度
-   */
-
+  /// 获取下载速度
   getSpeed() async {
     if (!online) return;
     downSpeed = await Aria2Http.getSpeed();
   }
 
-  /**
-   * 强制暂停所有下载
-   */
-
+  /// 强制暂停所有下载
   forcePauseAll() async {
     await Aria2Http.forcePauseAll();
   }
 
-  /**
-   * 清空下载结果
-   */
-
+  /// 清空下载结果
   purgeDownloadResult() async {
     await Aria2Http.purgeDownloadResult();
   }
 
-  /**
-   * 连接aria2
-   */
-
+  /// 连接aria2
   void connection() async {
     var version = await Aria2Http.getVersion();
     if (version != '0') {
@@ -105,9 +93,7 @@ class Aria2Manager {
     // EventBusUtil().eventBus.fire(Aria2ServerEvent(online));
   }
 
-/**
-   * 监听websocket
-   */
+  /// 监听websocket
   listenWebSocket() {
     webSocketChannel.stream.listen((data) {
       // logger.i(data);
@@ -117,14 +103,12 @@ class Aria2Manager {
     });
   }
 
-/**
-   * 监听通知
-   */
+  /// 监听通知
   listNotifications(String data) {
     EventBusUtil().eventBus.fire(ListAria2Notifications(data));
   }
 
-/** */
+  /// 启动aria2服务
   void startServer() async {
     closeServer();
     var exe = await Aria2Conf.getAria2ExePath();

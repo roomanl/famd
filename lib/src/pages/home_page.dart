@@ -206,7 +206,8 @@ class _HomePageState extends State<HomePage> with WindowListener {
     NavDestination('添加任务', Icon(Icons.add)),
     NavDestination('任务管理', Icon(Icons.home_rounded)),
     NavDestination('设置', Icon(Icons.settings)),
-    NavDestination('关于', Icon(Icons.info))
+    NavDestination('关于', Icon(Icons.info)),
+    // NavDestination('资源', Icon(Icons.search_rounded))
   ];
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final MyPageView.PageController _pageController =
