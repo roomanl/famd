@@ -4,7 +4,6 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
-import '../utils/event_bus_util.dart';
 import '../utils/task_prefs_util.dart';
 
 class AddTaskPage extends StatefulWidget {

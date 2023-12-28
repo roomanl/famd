@@ -27,6 +27,12 @@ class _DownManagerPageState extends State<DownManagerPage>
       const TextStyle(fontSize: 12, color: Color.fromRGBO(0, 0, 0, 0.5));
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     init();
@@ -169,12 +175,12 @@ class _DownManagerPageState extends State<DownManagerPage>
                               ),
                             ],
                           ),
-                          Text(
-                            task.m3u8url,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Color.fromARGB(100, 0, 0, 0)),
-                          ),
+                          // Text(
+                          //   task.m3u8url,
+                          //   style: const TextStyle(
+                          //       fontSize: 12,
+                          //       color: Color.fromARGB(100, 0, 0, 0)),
+                          // ),
                         ],
                       ),
                     );
@@ -206,12 +212,12 @@ class _DownManagerPageState extends State<DownManagerPage>
                                   ),
                                 ],
                               ),
-                              Text(
-                                task.m3u8url,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color.fromARGB(100, 0, 0, 0)),
-                              ),
+                              // Text(
+                              //   task.m3u8url,
+                              //   style: const TextStyle(
+                              //       fontSize: 12,
+                              //       color: Color.fromARGB(100, 0, 0, 0)),
+                              // ),
                             ],
                           ),
                           const Padding(

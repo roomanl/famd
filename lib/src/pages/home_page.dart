@@ -3,21 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_utils/get_utils.dart';
-import 'package:get/instance_manager.dart';
 import 'package:window_manager/window_manager.dart';
-import '../common/const.dart';
 import '../components/page_view.dart' as MyPageView;
 import '../states/app_states.dart';
 import '../utils/app_update.dart';
 import '../utils/aria2_manager.dart';
-import '../utils/event_bus_util.dart';
 import 'add_task_page.dart';
 import 'appinfo_page.dart';
 import 'down_manager.dart';
 import 'setting_page.dart';
+import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,7 +38,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
         ),
       ),
       endDrawer: NavigationDrawer(
-        onDestinationSelected: handleScreenChanged,
+        onDestinationSelected: _handleScreenChanged,
         selectedIndex: -1,
         children: <Widget>[
           Padding(
@@ -100,21 +95,31 @@ class _HomePageState extends State<HomePage> with WindowListener {
             ),
             actions: <Widget>[
               SizedBox(
-                width: 60,
+                width: 50,
                 child: Obx(() => _buildWifiIcon()),
               ),
               SizedBox(
-                width: 60,
+                width: 50,
                 child: IconButton(
                   color: const Color.fromRGBO(255, 255, 255, 1),
-                  icon: const Icon(Icons.add_rounded),
+                  icon: const Icon(Icons.add_circle_outline_rounded),
                   onPressed: () {
                     _changePageView(0);
                   },
                 ),
               ),
               SizedBox(
-                width: 60,
+                width: 50,
+                child: IconButton(
+                  color: const Color.fromRGBO(255, 255, 255, 1),
+                  icon: const Icon(Icons.explore_rounded),
+                  onPressed: () {
+                    _openM3u8ResourcePage();
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 50,
                 child: IconButton(
                   color: const Color.fromRGBO(255, 255, 255, 1),
                   icon: const Icon(Icons.tune_rounded),
@@ -143,7 +148,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   selectedIconTheme: const IconThemeData(color: activeColor),
                   unselectedLabelTextStyle: labelStyle,
                   selectedLabelTextStyle: labelStyle,
-                  onDestinationSelected: _changePageView,
+                  onDestinationSelected: _handleScreenChanged,
                   destinations: destinations.map(
                     (NavDestination destination) {
                       return NavigationRailDestination(
@@ -203,11 +208,11 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   List<NavDestination> destinations = const <NavDestination>[
-    NavDestination('添加任务', Icon(Icons.add)),
+    NavDestination('添加任务', Icon(Icons.add_circle_outline_rounded)),
     NavDestination('任务管理', Icon(Icons.home_rounded)),
     NavDestination('设置', Icon(Icons.settings)),
     NavDestination('关于', Icon(Icons.info)),
-    // NavDestination('资源', Icon(Icons.search_rounded))
+    NavDestination('探索', Icon(Icons.explore_rounded))
   ];
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final MyPageView.PageController _pageController =
@@ -304,13 +309,20 @@ class _HomePageState extends State<HomePage> with WindowListener {
     // _pageController.jumpToPage(index);
   }
 
-  void handleScreenChanged(int selectedScreen) {
+  void _handleScreenChanged(int selectedScreen) {
     if (selectedScreen == 4) {
+      _openM3u8ResourcePage();
+    } else if (selectedScreen == 5) {
       checkAppUpdate(context, true);
     } else {
       _changePageView(selectedScreen);
       scaffoldKey.currentState!.closeEndDrawer();
     }
+  }
+
+  void _openM3u8ResourcePage() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => const SearchPage()));
   }
 }
 
