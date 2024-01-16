@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import '../states/app_states.dart';
 import '../common/const.dart';
 import '../utils/task_prefs_util.dart';
 import '../entity/m3u8_task.dart';
+import '../utils/http.dart';
 
 class SearchVodResultPage extends StatefulWidget {
   final String vodName;
@@ -68,8 +68,8 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
 
   getVodDetail() async {
     EasyLoading.show();
-    var res =
-        await http.get(Uri.parse(M3U8_DETAIL_SEARCH_API + _vodId.toString()));
+    var res = await sslClient()
+        .get(Uri.parse(M3U8_DETAIL_SEARCH_API + _vodId.toString()));
     EasyLoading.dismiss();
     if (res.statusCode != 200) {
       EasyLoading.showError('服务器错误！');

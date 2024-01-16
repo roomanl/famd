@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'file_utils.dart';
 import 'native_channel_utils.dart';
 
 bytesToSize(bytes) {
@@ -39,4 +39,11 @@ playerVideo(String path) {
   } else {
     EasyLoading.showToast('功能未实现');
   }
+}
+
+writeCrashLog(String txt) async {
+  String logsFile = await getAppRootDir() + '/logs/log.log';
+  appendWriteLinesToFile(logsFile,
+      "\r\n======================================${DateTime.now()}==================================\r\n");
+  appendWriteLinesToFile(logsFile, txt);
 }

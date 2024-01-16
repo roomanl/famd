@@ -38,6 +38,14 @@ writeLinesToFile(String path, String text) {
   file.writeAsStringSync(text, flush: true);
 }
 
+appendWriteLinesToFile(String path, String text) {
+  File file = File(path);
+  if (!file.existsSync()) {
+    file.createSync(recursive: true);
+  }
+  file.writeAsStringSync(text, flush: true, mode: FileMode.append);
+}
+
 deleteDir(String dir) {
   Directory directory = Directory(dir);
   if (directory.existsSync()) {

@@ -6,7 +6,8 @@ const String FAMD_GITHUB_URL = 'https://github.com/roomanl/famd';
 const String HOME_PAGE = 'https://rootvip.cn';
 const String APP_CHECK_VERSION_URL =
     'https://oss.rootvip.cn/famd/app/version.json';
+//资源搜索API为maccms10 API，可自己搭建maccms10影视采集网站，然后替换下面的域名
 const String M3U8_WD_SEARCH_API =
-    'http://159.75.74.81:9501/api.php/provide/vod/?ac=list&wd=';
+    'https://xxxx.com/api.php/provide/vod/?ac=list&wd=';
 const String M3U8_DETAIL_SEARCH_API =
-    'http://159.75.74.81:9501/api.php/provide/vod/?ac=detail&ids=';
+    'https://xxxx.com/api.php/provide/vod/?ac=detail&ids=';

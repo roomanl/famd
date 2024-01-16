@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'search_vod_result_page.dart';
 import '../states/app_states.dart';
 import '../common/const.dart';
+import '../utils/http.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -97,9 +97,10 @@ class _SearchPageState extends State<SearchPage> {
   searchVodList() async {
     if (_serachController.text.isEmpty) return;
     EasyLoading.show(status: '搜索中...');
-    var res =
-        await http.get(Uri.parse(M3U8_WD_SEARCH_API + _serachController.text));
+    var res = await sslClient()
+        .get(Uri.parse(M3U8_WD_SEARCH_API + _serachController.text));
     EasyLoading.dismiss();
+    // print(res.body);
     if (res.statusCode != 200) {
       EasyLoading.showError('服务器错误！');
       return;

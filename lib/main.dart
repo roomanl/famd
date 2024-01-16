@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import './src/pages/start_page.dart';
 import 'src/common/color.dart';
 import 'src/states/app_states.dart';
+import 'src/utils/common_utils.dart';
 import 'src/utils/setting_conf_utils.dart';
 
 void main() async {
@@ -34,13 +36,20 @@ void main() async {
   final _themeCtrl = Get.put(CustomThemeController());
   CustomThemeColor themeColor = await getThemeColor();
   _themeCtrl.updateMainColor(themeColor.color);
-  runApp(GetMaterialApp(
-    theme: ThemeData(
-      useMaterial3: true,
-      fontFamily: "FangYuan2",
-      colorSchemeSeed: themeColor.color,
-    ),
-    home: const StartPage(),
-    builder: EasyLoading.init(),
-  ));
+  FlutterError.onError = (FlutterErrorDetails details) {
+    writeCrashLog(details.toString());
+  };
+  runZonedGuarded(() {
+    runApp(GetMaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: "FangYuan2",
+        colorSchemeSeed: themeColor.color,
+      ),
+      home: const StartPage(),
+      builder: EasyLoading.init(),
+    ));
+  }, (Object obj, StackTrace stack) {
+    writeCrashLog(obj.toString());
+  });
 }
