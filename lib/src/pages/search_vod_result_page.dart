@@ -60,7 +60,7 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
   @override
   void initState() {
     super.initState();
-    _vodName = widget.vodName;
+    _vodName = widget.vodName.replaceAll(" ", "");
     _vodId = widget.vodId;
     _tabController = TabController(length: 0, vsync: this);
     getVodDetail();
@@ -110,16 +110,17 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
       return;
     }
     String m3u8name = '$_vodName-${episode["label"]}';
-    bool has = await hasM3u8Name(_vodName!, episode["label"].trim());
+    bool has =
+        await hasM3u8Name(_vodName!, episode["label"].replaceAll(" ", ""));
     if (has) {
       EasyLoading.showInfo('$m3u8name,已在列表中！');
       return;
     }
     M3u8Task task = M3u8Task(
         id: uuid.v4(),
-        subname: episode["label"].trim(),
-        m3u8url: episode['url'].trim(),
-        m3u8name: _vodName!.trim(),
+        subname: episode["label"].replaceAll(" ", ""),
+        m3u8url: episode['url'].replaceAll(" ", ""),
+        m3u8name: _vodName!,
         status: 1);
     await insertM3u8Task(task);
     await _taskCtrl.updateTaskList();

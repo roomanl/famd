@@ -3,8 +3,13 @@ import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'common_utils.dart';
 import 'file_utils.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 tsMergeTs(dtslistpath, mp4path) async {
+  logger.i(dtslistpath);
+  logger.i(mp4path);
   File file = File(mp4path);
   if (file.existsSync()) {
     file.deleteSync();
@@ -36,6 +41,11 @@ tsMergeTs(dtslistpath, mp4path) async {
   } else if (Platform.isAndroid) {
     final session = await FFmpegKit.execute(args.join(' '));
     final returnCode = await session.getReturnCode();
+    logger.i(returnCode);
+    final failStackTrace = await session.getFailStackTrace();
+    logger.i(failStackTrace);
+    final output = await session.getOutput();
+    logger.i(output);
     if (ReturnCode.isSuccess(returnCode)) {
       return true;
     }

@@ -109,16 +109,17 @@ class _AddTaskPageState extends State<AddTaskPage> {
         return;
       }
       String m3u8name = '${_namecontroller.text}-${info[0]}';
-      bool has = await hasM3u8Name(_namecontroller.text, info[0].trim());
+      bool has =
+          await hasM3u8Name(_namecontroller.text, info[0].replaceAll(" ", ""));
       if (has) {
         EasyLoading.showInfo('$m3u8name,已在列表中！');
         return;
       }
       M3u8Task task = M3u8Task(
           id: uuid.v4(),
-          subname: info[0].trim(),
-          m3u8url: info[1].trim(),
-          m3u8name: _namecontroller.text.trim(),
+          subname: info[0].replaceAll(" ", ""),
+          m3u8url: info[1].replaceAll(" ", ""),
+          m3u8name: _namecontroller.text.replaceAll(" ", ""),
           status: 1);
       await insertM3u8Task(task);
     }
