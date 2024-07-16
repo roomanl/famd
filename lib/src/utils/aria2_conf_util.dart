@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../common/const.dart';
 import 'file_utils.dart';
 import 'native_channel_utils.dart';
+import 'package:http/http.dart' as http;
 
 getAria2rootPath() async {
   return await getPlugAssetsDir('aria2');
@@ -40,6 +41,11 @@ Future<String> getAria2UrlConf() async {
 }
 
 initAria2Conf() async {
+  String? trackerList;
+  var res = await http.get(Uri.parse(ARIA2_Tracker_List));
+  if (res.statusCode == 200) {
+    trackerList = res.body;
+  }
   String rootPath = await getAria2rootPath();
   String confPath = await getAria2ConfPath();
   List<String> aria2ConfLines = await readDefAria2Conf();
@@ -58,7 +64,9 @@ initAria2Conf() async {
   confLines.add('input-file=$sessionFile');
   confLines.add('save-session=$sessionFile');
   for (String line in aria2ConfLines) {
-    if (!line.startsWith('dir=') &&
+    if (line.startsWith('bt-tracker') && trackerList != null) {
+      confLines.add('bt-tracker=$trackerList');
+    } else if (!line.startsWith('dir=') &&
         !line.startsWith('log=') &&
         !line.startsWith('input-file=') &&
         !line.startsWith('save-session=')) {

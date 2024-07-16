@@ -1,6 +1,10 @@
 const String SETTING_DOWN_PATH_KEY = 'downPath';
 const String SETTING_THEME_COLOR_KEY = 'themeColor';
 
+//Tracker服务器
+const String ARIA2_Tracker_List =
+    'https://bitbucket.org/xiu2/trackerslistcollection/raw/master/best_aria2.txt';
+
 const String ARIA2_URL_VALUE = 'http://127.0.0.1:{port}/jsonrpc';
 const String FAMD_GITHUB_URL = 'https://github.com/roomanl/famd';
 const String HOME_PAGE = 'https://rootvip.cn';
