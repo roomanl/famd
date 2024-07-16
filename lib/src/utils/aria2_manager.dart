@@ -129,17 +129,17 @@ class Aria2Manager {
       processResult.stdout
           .transform(utf8.decoder)
           .transform(LineSplitter())
-          .listen((event) {
-        if (event.trim().isNotEmpty) {
-          logger.i(event);
+          .listen((line) {
+        if (line.trim().isNotEmpty) {
+          logger.i(line);
         }
       });
       processResult.stderr
           .transform(utf8.decoder)
           .transform(LineSplitter())
-          .listen((event) {
-        if (event.trim().isNotEmpty) {
-          logger.i("Error: $event");
+          .listen((line) {
+        if (line.trim().isNotEmpty) {
+          logger.i("Error: $line");
         }
       });
     });

@@ -12,14 +12,18 @@ import 'src/utils/common_utils.dart';
 import 'src/utils/setting_conf_utils.dart';
 
 void main() async {
+  final _themeCtrl = Get.put(CustomThemeController());
+  CustomThemeColor themeColor = await getThemeColor();
+  _themeCtrl.updateMainColor(themeColor.color);
+
   if (Platform.isWindows || Platform.isLinux) {
     WidgetsFlutterBinding.ensureInitialized();
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = const WindowOptions(
-      size: Size(800, 600),
-      minimumSize: Size(400, 600),
+    WindowOptions windowOptions = WindowOptions(
+      size: const Size(800, 600),
+      minimumSize: const Size(400, 600),
       center: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: themeColor.color,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
     );
@@ -28,14 +32,12 @@ void main() async {
       await windowManager.focus();
     });
   } else if (Platform.isAndroid) {
-    SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+        statusBarColor: themeColor.color,
         statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
-  final _themeCtrl = Get.put(CustomThemeController());
-  CustomThemeColor themeColor = await getThemeColor();
-  _themeCtrl.updateMainColor(themeColor.color);
+
   FlutterError.onError = (FlutterErrorDetails details) {
     writeCrashLog(details.toString());
   };
