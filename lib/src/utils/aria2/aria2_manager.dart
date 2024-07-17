@@ -6,17 +6,17 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
-import '../states/app_states.dart';
+import '../../states/app_states.dart';
 import 'aria2_conf_util.dart' as Aria2Conf;
 import 'ariar2_http_utils.dart' as Aria2Http;
-import 'common_utils.dart';
-import 'event_bus_util.dart';
+import '../common_utils.dart';
 
 class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();
   factory Aria2Manager() => _instance;
 
   final _appCtrl = Get.put(AppController());
+  final _taskCtrl = Get.put(TaskController());
   var webSocketChannel = null;
   var jsonRpcClient = null;
   late Logger logger = Logger();
@@ -38,9 +38,7 @@ class Aria2Manager {
 
       /// 每10S通知一次任务管理检查下载状态，是否卡住
       if (online && timerCount % 10 == 0) {
-        EventBusUtil()
-            .eventBus
-            .fire(ListAria2Notifications('check-down-status'));
+        _taskCtrl.updateAria2Notifications('check-down-status');
       }
     });
   }
@@ -90,7 +88,6 @@ class Aria2Manager {
       webSocketChannel = null;
     }
     _appCtrl.updateAria2Online(online);
-    // EventBusUtil().eventBus.fire(Aria2ServerEvent(online));
   }
 
   /// 监听websocket
@@ -105,7 +102,7 @@ class Aria2Manager {
 
   /// 监听通知
   listNotifications(String data) {
-    EventBusUtil().eventBus.fire(ListAria2Notifications(data));
+    _taskCtrl.updateAria2Notifications(data);
   }
 
   /// 启动aria2服务

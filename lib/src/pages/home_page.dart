@@ -7,7 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import '../components/page_view.dart' as MyPageView;
 import '../states/app_states.dart';
 import '../utils/app_update.dart';
-import '../utils/aria2_manager.dart';
+import '../utils/aria2/aria2_manager.dart';
 import 'add_task_page.dart';
 import 'appinfo_page.dart';
 import 'down_manager.dart';

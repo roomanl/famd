@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'search_vod_result_page.dart';
 import '../states/app_states.dart';
 import '../common/const.dart';
-import '../utils/http.dart';
+import '../utils/http/http.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

@@ -7,7 +7,7 @@ import '../states/app_states.dart';
 import '../common/const.dart';
 import '../utils/task_prefs_util.dart';
 import '../entity/m3u8_task.dart';
-import '../utils/http.dart';
+import '../utils/http/http.dart';
 
 class SearchVodResultPage extends StatefulWidget {
   final String vodName;

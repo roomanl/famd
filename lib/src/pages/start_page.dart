@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import '../common/const.dart';
 import '../states/app_states.dart';
-import '../utils/aria2_manager.dart';
+import '../utils/aria2/aria2_manager.dart';
 import '../utils/common_utils.dart';
 import '../utils/native_channel_utils.dart';
 import './home_page.dart';

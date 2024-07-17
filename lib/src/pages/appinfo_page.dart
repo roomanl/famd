@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../common/color.dart';
 import '../common/const.dart';
 import '../utils/app_update.dart';
-import '../utils/ariar2_http_utils.dart';
+import '../utils/aria2/ariar2_http_utils.dart';
 import '../utils/common_utils.dart';
 
 class AppinfoPage extends StatefulWidget {

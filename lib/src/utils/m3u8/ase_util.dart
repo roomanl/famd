@@ -5,7 +5,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:logger/logger.dart';
 import "package:pointycastle/export.dart";
 
-import 'native_channel_utils.dart';
+import '../native_channel_utils.dart';
 
 var logger = Logger();
 

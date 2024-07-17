@@ -4,18 +4,17 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/instance_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import '../entity/m3u8_task.dart';
-import '../entity/task_info.dart';
-import '../states/app_states.dart';
-import 'ase_util.dart';
-import 'aria2_manager.dart';
-import 'setting_conf_utils.dart';
-import 'event_bus_util.dart';
-import 'ffmpeg_util.dart';
-import 'm3u8_util.dart';
-import 'task_prefs_util.dart';
-import 'common_utils.dart';
-import 'file_utils.dart';
+import '../../entity/m3u8_task.dart';
+import '../../entity/task_info.dart';
+import '../../states/app_states.dart';
+import '../m3u8/ase_util.dart';
+import '../aria2/aria2_manager.dart';
+import '../setting_conf_utils.dart';
+import '../m3u8/ffmpeg_util.dart';
+import '../m3u8/m3u8_util.dart';
+import '../task_prefs_util.dart';
+import '../common_utils.dart';
+import '../file_utils.dart';
 
 class TaskManager {
   var logger = Logger();
@@ -32,8 +31,8 @@ class TaskManager {
   final _taskCtrl = Get.put(TaskController());
 
   TaskManager() {
-    EventBusUtil().eventBus.on<ListAria2Notifications>().listen((event) {
-      listNotifications(event.data);
+    _taskCtrl.aria2Notifications.listen((data) {
+      listNotifications(data);
     });
   }
 
