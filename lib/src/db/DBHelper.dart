@@ -1,6 +1,7 @@
+import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi/windows/sqflite_ffi_setup.dart';
-import 'package:path/path.dart' as path;
+import '../common/const.dart';
 
 class DBHelper {
   static DBHelper? _dbHelper;
@@ -11,7 +12,6 @@ class DBHelper {
   }
 
   Database? _db;
-  static const String table_M3u8Task = "M3u8Task";
 
   Future<Database> get database async {
     if (_db != null) {
@@ -38,15 +38,29 @@ class DBHelper {
             //创建时操作
             onCreate: (db, version) async {
               print("创建数据库");
-              return await db.execute("CREATE TABLE $table_M3u8Task ("
-                  "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                  "m3u8name STRING,"
-                  "subname STRING,"
-                  "m3u8url STRING,"
-                  "keyurl STRING,"
-                  "iv STRING,"
-                  "status INTEGER"
-                  ")");
+              await db.execute('''
+                  CREATE TABLE $DB_TABLE_NAME['m3u8task'] (
+                  id STRING PRIMARY KEY,
+                  m3u8name STRING,
+                  subname STRING,
+                  m3u8url STRING,
+                  keyurl STRING,
+                  iv STRING,
+                  status INTEGER)
+                ''');
+              await db.execute('''
+                  CREATE TABLE $DB_TABLE_NAME['tsinfo'] (
+                  id STRING PRIMARY KEY,
+                  pid STRING,
+                  tsurl STRING,
+                  filename STRING)
+                ''');
+              await db.execute('''
+                  CREATE TABLE $DB_TABLE_NAME['sysconf'] (
+                  id STRING PRIMARY KEY,
+                  name STRING,
+                  value STRING)
+                ''');
             }));
   }
 }

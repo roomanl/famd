@@ -20,9 +20,9 @@ class M3u8Util {
     // var res = await Dio().get(m3u8url);
     var res = await http.get(parsuri);
     // logger.i(m3u8url);
+    // logger.i(res.statusCode);
     // logger.i(res.body);
-    // logger.i(res.body);
-
+    // return false;
     // logger.i(resText);
     if (res.statusCode != 200) {
       return false;

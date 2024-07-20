@@ -118,7 +118,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
       M3u8Task task = M3u8Task(
           id: uuid.v4(),
           subname: info[0].replaceAll(" ", ""),
-          m3u8url: info[1].replaceAll(" ", ""),
+          m3u8url: info[1]
+              .replaceAll(" ", "")
+              .replaceAll("\r\n", "")
+              .replaceAll("\r", "")
+              .replaceAll("\n", ""),
           m3u8name: _namecontroller.text.replaceAll(" ", ""),
           status: 1);
       await insertM3u8Task(task);

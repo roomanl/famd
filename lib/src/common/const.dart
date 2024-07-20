@@ -15,3 +15,9 @@ const String M3U8_WD_SEARCH_API =
     'https://xxxx.com/api.php/provide/vod/?ac=list&wd=';
 const String M3U8_DETAIL_SEARCH_API =
     'https://xxxx.com/api.php/provide/vod/?ac=detail&ids=';
+
+const DB_TABLE_NAME = {
+  'm3u8task': 'm3u8task',
+  'tsinfo': 'tsinfo',
+  'sysconf': 'sysconf'
+};
