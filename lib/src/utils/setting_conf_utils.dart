@@ -1,40 +1,56 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+
+import 'package:famd/src/db/DBSysConf.dart';
+import 'package:famd/src/entity/sys_conf.dart';
 import '../common/color.dart';
 import '../common/const.dart';
 import 'file_utils.dart';
 
-final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+final DBSysConf dbSysConf = DBSysConf();
+
+Future<List<SysConf>> getAllConf() async {
+  return await dbSysConf.queryAll();
+}
 
 Future<String?> getConf(String key) async {
-  final SharedPreferences prefs = await _prefs;
-  return prefs.getString(key);
+  SysConf? conf = await dbSysConf.queryFirstByName(key);
+  return conf?.getValue;
 }
 
 Future<bool> setConf(String key, String data) async {
-  final SharedPreferences prefs = await _prefs;
-  return prefs.setString(key, data);
+  SysConf conf = SysConf(
+    name: key,
+    value: data,
+  );
+  int result = await dbSysConf.insert(conf);
+  return result > 0;
 }
 
 Future<String> getDownPath() async {
-  final SharedPreferences prefs = await _prefs;
-  String? path = prefs.getString(SETTING_DOWN_PATH_KEY);
-  return path ?? await getAria2DefDownPath();
+  SysConf? conf = await dbSysConf.queryFirstByName(SYS_CONF_KEY['downPath']!);
+  if (conf == null) {
+    return await getAria2DefDownPath();
+  }
+  return conf.getValue;
 }
 
 Future<bool> setDownPath(data) async {
-  final SharedPreferences prefs = await _prefs;
-  return prefs.setString(SETTING_DOWN_PATH_KEY, data);
+  return await setConf(SYS_CONF_KEY['downPath']!, data);
 }
 
 getAria2DefDownPath() async {
-  String downloadsDir = await getAppRootDir() + '/downloads';
+  String downloadsDir =
+      await getAppRootDir() + '${Platform.pathSeparator}downloads';
   return downloadsDir;
 }
 
 Future<CustomThemeColor> getThemeColor() async {
-  final SharedPreferences prefs = await _prefs;
-  String? label = prefs.getString(SETTING_THEME_COLOR_KEY);
-  int index = themeColors.indexWhere((element) => element.label == label);
+  SysConf? conf = await dbSysConf.queryFirstByName(SYS_CONF_KEY['themeColor']!);
+  if (conf == null) {
+    return themeColors[0];
+  }
+  int index =
+      themeColors.indexWhere((element) => element.label == conf.getValue);
   if (index < 0) {
     return themeColors[0];
   }

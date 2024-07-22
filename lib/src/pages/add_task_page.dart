@@ -1,10 +1,10 @@
+import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../entity/m3u8_task.dart';
 import '../states/app_states.dart';
-import '../utils/task_prefs_util.dart';
+import '../utils/task/task_utils.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({super.key});
@@ -16,7 +16,6 @@ class AddTaskPage extends StatefulWidget {
 class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _urlcontroller = TextEditingController();
   final TextEditingController _namecontroller = TextEditingController();
-  var uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +82,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   final _appCtrl = Get.put(AppController());
   final _taskCtrl = Get.put(TaskController());
+  late String downPath;
 
   @override
   void initState() {
     super.initState();
-    // _urlcontroller.text =
-    //     '第70集\$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8';
+    init();
+  }
+
+  init() async {
+    downPath = await getDownPath();
   }
 
   void addTask() async {
@@ -96,7 +99,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
       EasyLoading.showInfo('URL或名称不能为空');
       return;
     }
-
     List<String> urls = _urlcontroller.text.split('\n');
     for (String url in urls) {
       List<String> info = url.split('\$');
@@ -116,7 +118,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
         return;
       }
       M3u8Task task = M3u8Task(
-          id: uuid.v4(),
           subname: info[0].replaceAll(" ", ""),
           m3u8url: info[1]
               .replaceAll(" ", "")
@@ -124,6 +125,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               .replaceAll("\r", "")
               .replaceAll("\n", ""),
           m3u8name: _namecontroller.text.replaceAll(" ", ""),
+          downdir: downPath,
           status: 1);
       await insertM3u8Task(task);
     }

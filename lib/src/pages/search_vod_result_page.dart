@@ -1,11 +1,11 @@
+import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import '../states/app_states.dart';
 import '../common/const.dart';
-import '../utils/task_prefs_util.dart';
+import '../utils/task/task_utils.dart';
 import '../entity/m3u8_task.dart';
 import '../utils/http/http.dart';
 
@@ -51,11 +51,11 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
 
   String? _vodName;
   int? _vodId;
+  late String downPath;
   var m3u8Res = [];
   final _themeCtrl = Get.put(CustomThemeController());
   final _taskCtrl = Get.put(TaskController());
   late TabController _tabController;
-  var uuid = Uuid();
 
   @override
   void initState() {
@@ -63,7 +63,12 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
     _vodName = widget.vodName.replaceAll(" ", "");
     _vodId = widget.vodId;
     _tabController = TabController(length: 0, vsync: this);
+    init();
     getVodDetail();
+  }
+
+  init() async {
+    downPath = await getDownPath();
   }
 
   getVodDetail() async {
@@ -117,10 +122,10 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
       return;
     }
     M3u8Task task = M3u8Task(
-        id: uuid.v4(),
         subname: episode["label"].replaceAll(" ", ""),
         m3u8url: episode['url'].replaceAll(" ", ""),
         m3u8name: _vodName!,
+        downdir: downPath,
         status: 1);
     await insertM3u8Task(task);
     await _taskCtrl.updateTaskList();

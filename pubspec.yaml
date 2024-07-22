@@ -42,7 +42,6 @@ dependencies:
   encrypt: ^5.0.1
   pointycastle: ^3.7.3
   http: ^1.1.0
-  shared_preferences: ^2.2.0
   uuid: ^3.0.6
   path_provider: ^2.1.0
   package_info_plus: ^4.1.0
@@ -53,6 +52,7 @@ dependencies:
   permission_handler: 9.1.0
   device_info_plus: ^9.1.0
   url_launcher: ^6.1.14
+  sqlite3_flutter_libs: ^0.5.24
   sqflite_common_ffi: ^2.3.3
   # webview_flutter: ^4.4.2
   # webview_win_floating: ^2.2.2

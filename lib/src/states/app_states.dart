@@ -6,7 +6,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import '../common/color.dart';
 import '../entity/m3u8_task.dart';
 import '../entity/task_info.dart';
-import '../utils/task_prefs_util.dart';
+import '../utils/task/task_utils.dart';
 
 class CustomThemeController extends GetxController {
   Rx<Color> mainColor = themeColors[0].color.obs;

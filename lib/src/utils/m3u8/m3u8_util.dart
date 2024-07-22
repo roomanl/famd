@@ -1,11 +1,15 @@
+import 'package:famd/src/entity/m3u8_task.dart';
+import 'package:famd/src/entity/ts_info.dart';
+import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class M3u8Util {
   //https://hd.ijycnd.com/play/Qe1PQDZd/index.m3u8
+  late M3u8Task task;
   String m3u8url = '';
   late Uri parsuri;
-  late List<String> tsList = [];
+  late List<TsInfo> tsList = [];
   late Logger logger;
   late String IV = '';
   late String keyUrl = '';
@@ -14,7 +18,7 @@ class M3u8Util {
     // init();
   }
 
-  init() async {
+  parse() async {
     tsList = [];
     parsuri = Uri.parse(m3u8url);
     // var res = await Dio().get(m3u8url);
@@ -29,21 +33,51 @@ class M3u8Util {
     }
     String resText = res.body;
     List<String> lines = resText.split('\n');
+    int tsCount = 0;
     for (String line in lines) {
       if (line.endsWith('.ts') ||
           line.endsWith('.image') ||
           line.endsWith('.png') ||
           line.endsWith('.jpg') ||
           line.contains('.ts?')) {
-        tsList.add(getRealUrl(line));
+        tsCount++;
+        String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
+        TsInfo tsInfo =
+            TsInfo(pid: task.getId!, tsurl: line, filename: filename);
+        tsList.add(tsInfo);
+        insertTsInfo(tsInfo);
       } else if (line.startsWith('#EXT-X-KEY')) {
         getKey(line);
       } else if (line.contains('.m3u8')) {
         m3u8url = getRealUrl(line);
         // print(m3u8url);
-        return init();
+        return parse();
       }
     }
+    return true;
+  }
+
+  parseByTaskId(int id) async {
+    M3u8Task? task = await getM3u8TaskById(id);
+    if (task == null) {
+      return false;
+    }
+    return parseByTask(task);
+  }
+
+  parseByTask(M3u8Task task) async {
+    this.task = task;
+    List<TsInfo> tsList = await getTsListByPid(task.getId!);
+    m3u8url = task.getM3u8url;
+    if (tsList.isEmpty || (task.getKeyurl != null && task.getIv == null)) {
+      deleteTsByPid(task.getId!);
+      logger.i('开始解析M3U8！');
+      return parse();
+    }
+    logger.i('已经解析过M3U8，跳过解析！');
+    this.tsList = tsList;
+    IV = task.getIv!;
+    keyUrl = task.getKeyurl!;
     return true;
   }
 

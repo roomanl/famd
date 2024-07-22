@@ -8,7 +8,7 @@ import '../states/app_states.dart';
 
 import '../utils/common_utils.dart';
 import '../utils/file_utils.dart';
-import '../utils/task_prefs_util.dart';
+import '../utils/task/task_utils.dart';
 import '../utils/task/task_manager.dart';
 
 class DownManagerPage extends StatefulWidget {

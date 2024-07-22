@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:famd/src/entity/ts_info.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/instance_manager.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,7 @@ import '../aria2/aria2_manager.dart';
 import '../setting_conf_utils.dart';
 import '../m3u8/ffmpeg_util.dart';
 import '../m3u8/m3u8_util.dart';
-import '../task_prefs_util.dart';
+import '../task/task_utils.dart';
 import '../common_utils.dart';
 import '../file_utils.dart';
 
@@ -74,7 +75,7 @@ class TaskManager {
     downPath = await getDownPath();
 
     M3u8Util m3u8 = M3u8Util(m3u8url: tasking.m3u8url);
-    bool success = await m3u8.init();
+    bool success = await m3u8.parseByTask(tasking);
     if (!success) {
       errDownFinish();
       return;
@@ -83,16 +84,16 @@ class TaskManager {
     tasking.keyurl = m3u8.keyUrl;
     tasking.downdir = downPath;
 
-    List<String> tsList = m3u8.tsList;
+    List<TsInfo> tsList = m3u8.tsList;
     String saveDir = getTsSaveDir(tasking, downPath);
 
     taskInfo?.tsTotal = tsList.length;
 
     List<TsTask>? tsTaskList = [];
     for (int i = 0; i < tsList.length; i++) {
-      String url = tsList[i];
+      String url = tsList[i].getTsurl;
       // print(url);
-      String filename = '${i.toString().padLeft(4, '0')}.ts';
+      String filename = tsList[i].getFilename;
       TsTask tsTask;
       if (isResetDown(tasking, downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);

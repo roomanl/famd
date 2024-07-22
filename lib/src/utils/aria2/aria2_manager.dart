@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:get/instance_manager.dart';
-import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
@@ -27,7 +26,6 @@ class Aria2Manager {
   late String aria2Version = '0';
   late Future<Process> cmdProcess;
   late int processPid = 0;
-  var uuid = Uuid();
   late int timerCount = 0;
 
   Aria2Manager._internal() {

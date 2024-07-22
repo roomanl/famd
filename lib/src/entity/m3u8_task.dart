@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class M3u8Task {
-  String id;
+  int? id;
   String m3u8name;
   String subname;
   String m3u8url;
@@ -9,9 +9,9 @@ class M3u8Task {
   String? iv;
   String? downdir;
   int? status; //1未下载2下载中3下载完成4下载失败
-  String get getId => this.id;
+  int? get getId => this.id;
 
-  set setId(String id) => this.id = id;
+  set setId(int id) => this.id = id;
 
   get getM3u8name => this.m3u8name;
 
@@ -41,7 +41,7 @@ class M3u8Task {
 
   set setStatus(status) => this.status = status;
   M3u8Task(
-      {required this.id,
+      {this.id,
       required this.m3u8name,
       required this.subname,
       required this.m3u8url,

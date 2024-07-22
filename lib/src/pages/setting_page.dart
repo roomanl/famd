@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:famd/src/entity/sys_conf.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/get_utils.dart';
 import '../common/color.dart';
 import '../common/const.dart';
 import '../states/app_states.dart';
@@ -46,7 +46,7 @@ class _SettingPageState extends State<SettingPage> {
                       style: TextStyle(fontSize: 18),
                     ),
                     Text(
-                      settingConf[SETTING_DOWN_PATH_KEY]!,
+                      settingConf[SYS_CONF_KEY['downPath']] ?? '',
                       style: const TextStyle(
                           fontSize: 12, color: Color.fromARGB(100, 0, 0, 0)),
                     ),
@@ -55,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  selectedDirectory(SETTING_DOWN_PATH_KEY);
+                  selectedDirectory(SYS_CONF_KEY['downPath']!);
                 },
                 child: const Text('更改'),
               ),
@@ -75,7 +75,7 @@ class _SettingPageState extends State<SettingPage> {
                       style: TextStyle(fontSize: 18),
                     ),
                     Text(
-                      settingConf[SETTING_THEME_COLOR_KEY]!,
+                      settingConf[SYS_CONF_KEY['themeColor']] ?? '',
                       style: const TextStyle(
                           fontSize: 12, color: Color.fromARGB(100, 0, 0, 0)),
                     ),
@@ -98,10 +98,7 @@ class _SettingPageState extends State<SettingPage> {
 
   final _themeCtrl = Get.put(CustomThemeController());
 
-  Map<String, String> settingConf = {
-    SETTING_DOWN_PATH_KEY: '',
-    SETTING_THEME_COLOR_KEY: '',
-  };
+  Map<String, String> settingConf = {};
 
   @override
   void initState() {
@@ -113,8 +110,8 @@ class _SettingPageState extends State<SettingPage> {
     String downPath = await getDownPath();
     CustomThemeColor themeColor = await getThemeColor();
     setState(() {
-      settingConf[SETTING_DOWN_PATH_KEY] = downPath;
-      settingConf[SETTING_THEME_COLOR_KEY] = themeColor.label;
+      settingConf[SYS_CONF_KEY['downPath']!] = downPath;
+      settingConf[SYS_CONF_KEY['themeColor']!] = themeColor.label;
     });
   }
 
@@ -161,7 +158,7 @@ class _SettingPageState extends State<SettingPage> {
                     ],
                   ),
                   onPressed: () {
-                    setConf(SETTING_THEME_COLOR_KEY, themeColor.label);
+                    setConf(SYS_CONF_KEY['themeColor']!, themeColor.label);
                     _themeCtrl.updateMainColor(themeColor.color);
                     Get.changeTheme(ThemeData(
                       useMaterial3: true,
@@ -169,7 +166,8 @@ class _SettingPageState extends State<SettingPage> {
                       colorSchemeSeed: themeColor.color,
                     ));
                     setState(() {
-                      settingConf[SETTING_THEME_COLOR_KEY] = themeColor.label;
+                      settingConf[SYS_CONF_KEY['themeColor']!] =
+                          themeColor.label;
                     });
                     Navigator.of(context).pop();
                   },

@@ -1,20 +1,22 @@
 import 'dart:convert';
 
 class TsInfo {
-  String id;
-  String pid;
+  int? id;
+  int pid;
   String tsurl;
   String filename;
 
-  String get getId => this.id;
-  set setId(String id) => this.id = id;
-  String get getPid => this.pid;
-  set setPid(String pid) => this.pid = pid;
+  int? get getId => this.id;
+  set setId(int id) => this.id = id;
+  int get getPid => this.pid;
+  set setPid(int pid) => this.pid = pid;
   String get getTsurl => this.tsurl;
   set setTsurl(String tsurl) => this.tsurl = tsurl;
+  String get getFilename => this.filename;
+  set setFilename(String filename) => this.filename = filename;
 
   TsInfo({
-    required this.id,
+    this.id,
     required this.pid,
     required this.tsurl,
     required this.filename,

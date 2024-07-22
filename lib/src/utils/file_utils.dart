@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import '../entity/m3u8_task.dart';
@@ -128,4 +126,17 @@ String getMp4Path(M3u8Task task, String? downPath) {
 String getTsListTxtPath(M3u8Task task, String? downPath) {
   String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.ts';
   return fileListPath;
+}
+
+getDBFilePath() async {
+  String pathSeparator = Platform.pathSeparator;
+  if (Platform.isWindows || Platform.isLinux) {
+    String appPath = Platform.resolvedExecutable;
+    String dbDir = 'data${pathSeparator}databases';
+    List<String> pathList = appPath.split(pathSeparator);
+    pathList[pathList.length - 1] = dbDir;
+    return pathList.join(pathSeparator);
+  }
+  String rootDir = await getAppRootDir();
+  return '$rootDir${pathSeparator}databases';
 }

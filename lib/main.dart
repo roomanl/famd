@@ -10,6 +10,7 @@ import 'src/common/color.dart';
 import 'src/states/app_states.dart';
 import 'src/utils/common_utils.dart';
 import 'src/utils/setting_conf_utils.dart';
+import 'package:famd/src/db/DBHelper.dart';
 
 void main() async {
   final _themeCtrl = Get.put(CustomThemeController());
@@ -41,6 +42,7 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     writeCrashLog(details.toString());
   };
+  DBHelper.getInstance().database;
   runZonedGuarded(() {
     runApp(GetMaterialApp(
       theme: ThemeData(

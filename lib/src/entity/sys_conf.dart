@@ -1,19 +1,19 @@
 import 'dart:convert';
 
 class SysConf {
-  String id;
+  int? id;
   String name;
   String value;
 
-  String get getId => this.id;
-  set setId(String id) => this.id = id;
+  int? get getId => this.id;
+  set setId(int id) => this.id = id;
   String get getName => this.name;
   set setName(String name) => this.name = name;
   String get getValue => this.value;
   set setValue(String value) => this.value = value;
 
   SysConf({
-    required this.id,
+    this.id,
     required this.name,
     required this.value,
   });
