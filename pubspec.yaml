@@ -54,6 +54,7 @@ dependencies:
   url_launcher: ^6.1.14
   sqlite3_flutter_libs: ^0.5.24
   sqflite_common_ffi: ^2.3.3
+  connectivity_plus: ^6.0.3
   # webview_flutter: ^4.4.2
   # webview_win_floating: ^2.2.2
 

@@ -1,11 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
-import '../common/const.dart';
 import '../states/app_states.dart';
 import '../utils/aria2/aria2_manager.dart';
 import '../utils/common_utils.dart';
-import '../utils/native_channel_utils.dart';
 import './home_page.dart';
 
 class StartPage extends StatefulWidget {
@@ -109,10 +108,28 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       appVersion = v;
     });
+    if (!await checkNetwork()) {
+      return;
+    }
     appStatesListener();
     await Aria2Manager().initAria2Conf();
     startAria2();
     // openHomePage(true);
+  }
+
+  checkNetwork() async {
+    try {
+      final Connectivity connectivity = Connectivity();
+      final result = await connectivity.checkConnectivity();
+      if (result.length == 1 && result.contains(ConnectivityResult.none)) {
+        updateStartBtnText('未连接网络');
+        return false;
+      }
+      return true;
+    } catch (e) {
+      updateStartBtnText('网络连接异常');
+      return false;
+    }
   }
 
   appStatesListener() {
@@ -132,24 +149,29 @@ class _StartPageState extends State<StartPage> {
           MaterialPageRoute(builder: (BuildContext context) => HomePage()));
     } else if (isStartServer && count > 20) {
       ///监听aria2服务状态，20S内没监听到aria2服务在线判定为启动失败
-      setState(() {
-        startBtnText = '启动失败!';
-      });
+      updateStartBtnText('启动失败!');
       isStartServer = false;
       count = 0;
     }
   }
 
   startAria2() async {
+    if (!await checkNetwork()) {
+      return;
+    }
     if (isStartServer) {
       return;
     }
     if (!Aria2Manager().online) {
-      setState(() {
-        startBtnText = 'Aria2启动中...';
-      });
+      updateStartBtnText('Aria2启动中...');
       isStartServer = true;
       Aria2Manager().startServer();
     }
+  }
+
+  updateStartBtnText(text) {
+    setState(() {
+      startBtnText = text;
+    });
   }
 }

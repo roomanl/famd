@@ -42,10 +42,12 @@ Future<String> getAria2UrlConf() async {
 
 initAria2Conf() async {
   String? trackerList;
-  var res = await http.get(Uri.parse(ARIA2_Tracker_List));
-  if (res.statusCode == 200) {
-    trackerList = res.body;
-  }
+  try {
+    var res = await http.get(Uri.parse(ARIA2_Tracker_List));
+    if (res.statusCode == 200) {
+      trackerList = res.body;
+    }
+  } catch (e) {}
   String rootPath = await getAria2rootPath();
   String confPath = await getAria2ConfPath();
   List<String> aria2ConfLines = await readDefAria2Conf();
