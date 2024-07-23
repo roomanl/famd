@@ -7,22 +7,29 @@ import 'package:logger/logger.dart';
 class M3u8Util {
   //https://hd.ijycnd.com/play/Qe1PQDZd/index.m3u8
   late M3u8Task task;
-  String m3u8url = '';
-  late Uri parsuri;
-  late List<TsInfo> tsList = [];
-  late Logger logger;
-  late String IV = '';
-  late String keyUrl = '';
-  M3u8Util({required this.m3u8url}) {
-    logger = Logger();
+  String _m3u8url = '';
+  late Uri _parsuri;
+  late List<TsInfo> _tsList = [];
+  late Logger _logger;
+  late String _iv;
+  late String _keyUrl;
+  late String _keyValue;
+
+  get getTsList => _tsList;
+  get getKeyValue => _keyValue;
+  get getKeyUrl => _keyUrl;
+  get getIv => _iv;
+
+  M3u8Util() {
+    _logger = Logger();
     // init();
   }
 
-  parse() async {
-    tsList = [];
-    parsuri = Uri.parse(m3u8url);
+  _parse() async {
+    _tsList = [];
+    _parsuri = Uri.parse(_m3u8url);
     // var res = await Dio().get(m3u8url);
-    var res = await http.get(parsuri);
+    var res = await http.get(_parsuri);
     // logger.i(m3u8url);
     // logger.i(res.statusCode);
     // logger.i(res.body);
@@ -44,16 +51,17 @@ class M3u8Util {
         String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
         TsInfo tsInfo =
             TsInfo(pid: task.getId!, tsurl: line, filename: filename);
-        tsList.add(tsInfo);
+        _tsList.add(tsInfo);
         insertTsInfo(tsInfo);
       } else if (line.startsWith('#EXT-X-KEY')) {
-        getKey(line);
+        _getKey(line);
       } else if (line.contains('.m3u8')) {
-        m3u8url = getRealUrl(line);
+        _m3u8url = _getRealUrl(line);
         // print(m3u8url);
-        return parse();
+        return _parse();
       }
     }
+    await getKeyValue();
     return true;
   }
 
@@ -68,41 +76,53 @@ class M3u8Util {
   parseByTask(M3u8Task task) async {
     this.task = task;
     List<TsInfo> tsList = await getTsListByPid(task.getId!);
-    m3u8url = task.getM3u8url;
+    _m3u8url = task.getM3u8url;
     if (tsList.isEmpty || (task.getKeyurl != null && task.getIv == null)) {
       deleteTsByPid(task.getId!);
-      logger.i('开始解析M3U8！');
-      return parse();
+      _logger.i('开始解析M3U8！');
+      return _parse();
     }
-    logger.i('已经解析过M3U8，跳过解析！');
-    this.tsList = tsList;
-    IV = task.getIv!;
-    keyUrl = task.getKeyurl!;
+    _logger.i('已经解析过M3U8，跳过解析！');
+    _tsList = tsList;
+    _iv = task.getIv!;
+    _keyUrl = task.getKeyurl!;
     return true;
   }
 
-  getKey(String line) {
+  _getKey(String line) {
     List<String> lines = line.split(',');
     if (lines.length > 2) {
-      IV = lines[2].split('=')[1];
+      _iv = lines[2].split('=')[1];
     }
     String keyPath = lines[1].split('=')[1].replaceAll('"', '');
-    keyUrl = getRealUrl(keyPath);
+    _keyUrl = _getRealUrl(keyPath);
     // logger.i(IV);
     // logger.i(keyUrl);
   }
 
-  getRealUrl(line) {
+  _getRealUrl(line) {
     // print(line);
     String realUrl = '';
     if (line.startsWith('http')) {
       realUrl = line;
     } else if (line.startsWith('/')) {
-      realUrl = "${parsuri.scheme}://${parsuri.host}$line";
+      realUrl = "${_parsuri.scheme}://${_parsuri.host}$line";
     } else {
-      int index = m3u8url.lastIndexOf("/");
-      realUrl = m3u8url.substring(0, index + 1) + line;
+      int index = _m3u8url.lastIndexOf("/");
+      realUrl = _m3u8url.substring(0, index + 1) + line;
     }
     return realUrl.trim();
+  }
+
+  getKeyValueStr(String? keyUrl) async {
+    try {
+      if (_keyUrl.isNotEmpty) {
+        var keyres = await http.get(Uri.parse(keyUrl ?? _keyUrl));
+        if (keyres.statusCode == 200) {
+          _keyValue = keyres.body;
+        }
+      }
+    } catch (e) {}
+    return _keyValue;
   }
 }

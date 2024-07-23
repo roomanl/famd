@@ -60,7 +60,7 @@ class TaskController extends GetxController {
     taskList = [];
     finishTaskList = [];
     for (M3u8Task task in list) {
-      if (task.status == 1 || task.status == 2) {
+      if (task.getStatus == 1 || task.getStatus == 2) {
         taskList.add(task);
       } else {
         finishTaskList.add(task);

@@ -14,6 +14,8 @@ https://www.bilibili.com/video/BV1sc411Z7FT
 [1.0版介绍](https://www.bilibili.com/video/BV1nH4y1Z7aG)
 https://www.bilibili.com/video/BV1nH4y1Z7aG   
 
+## 注意
+只支持http或https的M3U8地址下载
 
 ## 开发思路
 1、解析m3u8文件获取里面ts列表，m3u8的视频是由很多个ts文件组成的，所以首先就先要解析m3u8文件获取里面ts列表的下载地址  

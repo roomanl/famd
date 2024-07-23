@@ -51,6 +51,7 @@ class DBHelper {
                   subname STRING,
                   m3u8url STRING,
                   keyurl STRING,
+                  keyvalue STRING,
                   iv STRING,
                   downdir STRING,
                   status INTEGER)

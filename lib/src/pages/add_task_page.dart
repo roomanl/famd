@@ -107,7 +107,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         return;
       }
       if (!info[1].startsWith('http')) {
-        EasyLoading.showInfo('${info[1]}不是有效的m3u8地址！');
+        EasyLoading.showInfo('${info[1]}不是有效的m3u8地址（只支持http或https的M3U8地址）');
         return;
       }
       String m3u8name = '${_namecontroller.text}-${info[0]}';

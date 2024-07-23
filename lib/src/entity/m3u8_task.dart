@@ -1,65 +1,84 @@
 import 'dart:convert';
 
 class M3u8Task {
-  int? id;
-  String m3u8name;
-  String subname;
-  String m3u8url;
-  String? keyurl;
-  String? iv;
-  String? downdir;
-  int? status; //1未下载2下载中3下载完成4下载失败
-  int? get getId => this.id;
+  late int? _id;
+  late String _m3u8name;
+  late String _subname;
+  late String _m3u8url;
+  late String? _keyurl;
+  late String? _keyvalue;
+  late String? _iv;
+  late String? _downdir;
+  late int? _status; //1未下载2下载中3下载完成4下载失败
 
-  set setId(int id) => this.id = id;
+  get getId => _id;
 
-  get getM3u8name => this.m3u8name;
+  set setId(id) => _id = id;
 
-  set setM3u8name(m3u8name) => this.m3u8name = m3u8name;
+  get getM3u8name => _m3u8name;
 
-  get getSubname => this.subname;
+  set setM3u8name(m3u8name) => _m3u8name = m3u8name;
 
-  set setSubname(subname) => this.subname = subname;
+  get getSubname => _subname;
 
-  get getM3u8url => this.m3u8url;
+  set setSubname(subname) => _subname = subname;
 
-  set setM3u8url(m3u8url) => this.m3u8url = m3u8url;
+  get getM3u8url => _m3u8url;
 
-  get getKeyurl => this.keyurl;
+  set setM3u8url(m3u8url) => _m3u8url = m3u8url;
 
-  set setKeyurl(keyurl) => this.keyurl = keyurl;
+  get getKeyurl => _keyurl;
 
-  get getIv => this.iv;
+  set setKeyurl(keyurl) => _keyurl = keyurl;
 
-  set setIv(iv) => this.iv = iv;
+  get getIv => _iv;
 
-  get getDowndir => this.downdir;
+  set setIv(iv) => _iv = iv;
 
-  set setDowndir(downdir) => this.downdir = downdir;
+  get getDowndir => _downdir;
 
-  get getStatus => this.status;
+  set setDowndir(downdir) => _downdir = downdir;
 
-  set setStatus(status) => this.status = status;
+  get getStatus => _status;
+
+  set setStatus(status) => _status = status;
+
+  String? get getKeyvalue => _keyvalue;
+
+  set setKeyvalue(keyvalue) => _keyvalue = keyvalue;
+
   M3u8Task(
-      {this.id,
-      required this.m3u8name,
-      required this.subname,
-      required this.m3u8url,
-      this.keyurl,
-      this.iv,
-      this.downdir,
-      this.status});
+      {int? id,
+      required String m3u8name,
+      required String subname,
+      required String m3u8url,
+      String? keyurl,
+      String? keyvalue,
+      String? iv,
+      String? downdir,
+      int? status}) {
+    _id = id;
+    _m3u8name = m3u8name;
+    _subname = subname;
+    _m3u8url = m3u8url;
+    _keyurl = keyurl;
+    _keyvalue = keyvalue;
+    _iv = iv;
+    _downdir = downdir;
+    _status = status;
+  }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'm3u8name': m3u8name,
-      'subname': subname,
-      'm3u8url': m3u8url,
-      'keyurl': keyurl,
-      'iv': iv,
-      'downdir': downdir,
-      'status': status,
+      'id': _id,
+      'm3u8name': _m3u8name,
+      'subname': _subname,
+      'm3u8url': _m3u8url,
+      'keyurl': _keyurl,
+      'iv': _iv,
+      'downdir': _downdir,
+      'status': _status,
+      'keyvalue': _keyvalue,
     };
   }
 
@@ -72,7 +91,8 @@ class M3u8Task {
         keyurl: map['keyurl'],
         iv: map['iv'],
         downdir: map['downdir'],
-        status: map['status']?.toInt());
+        status: map['status']?.toInt(),
+        keyvalue: map['keyvalue']);
   }
 
   String toJson() => json.encode(toMap());
@@ -82,6 +102,6 @@ class M3u8Task {
 
   @override
   String toString() {
-    return '{id:$id, m3u8name:$m3u8name, subname:$subname, m3u8url:$m3u8url, keyurl:$keyurl, iv:$iv, downdir:$downdir, status:$status}';
+    return '{id:$_id, m3u8name:$_m3u8name, subname:$_subname, m3u8url:$_m3u8url, keyurl:$_keyurl, iv:$_iv, downdir:$_downdir, status:$_status, keyvalue:$_keyvalue}';
   }
 }
