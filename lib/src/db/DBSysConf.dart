@@ -14,11 +14,11 @@ class DBSysConf {
   Future<int> insert(SysConf params) async {
     // print("插入的数据:${params.toJson()}");
     final db = await _db;
-    SysConf? conf = await queryFirstByName(params.getName);
+    SysConf? conf = await queryFirstByName(params.name);
     if (conf == null) {
       return await db.insert(tableName, params.toMap());
     } else {
-      conf.value = params.getValue;
+      conf.value = params.value;
       return await update(conf);
     }
   }
@@ -48,7 +48,7 @@ class DBSysConf {
   }
 
   Future<int> update(SysConf params) async {
-    if (params.getId == null) {
+    if (params.id == null) {
       return 0;
     }
     final db = await _db;
@@ -56,7 +56,7 @@ class DBSysConf {
       tableName,
       params.toMap(),
       where: 'id = ?',
-      whereArgs: [params.getId],
+      whereArgs: [params.id],
     );
   }
 }

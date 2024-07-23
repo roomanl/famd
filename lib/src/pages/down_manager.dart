@@ -19,71 +19,6 @@ class DownManagerPage extends StatefulWidget {
 
 class _DownManagerPageState extends State<DownManagerPage>
     with TickerProviderStateMixin {
-  final TaskController _taskCtrl = Get.find();
-  late final TabController _tabController;
-  final logger = Logger();
-  final TaskManager _taskManager = TaskManager();
-  final textStyle =
-      const TextStyle(fontSize: 12, color: Color.fromRGBO(0, 0, 0, 0.5));
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    init();
-  }
-
-  init() async {
-    _tabController = TabController(length: 2, vsync: this);
-    await _taskCtrl.updateTaskList();
-    await _taskManager.restTask(_taskCtrl.taskList);
-  }
-
-  startTask() {
-    _taskManager.startAria2Task();
-  }
-
-  deleteTask(M3u8Task task, bool delFile) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('提示'),
-          content: const Text('您确定要删除吗？'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () async {
-                await deleteM3u8Task(task);
-                if (delFile) {
-                  String mp4Path =
-                      '${task.getDowndir}/${task.getM3u8name}/${task.getM3u8name}-${task.getSubname}.mp4';
-                  String tsPath =
-                      '${task.getDowndir}/${task.getM3u8name}/${task.getSubname}';
-                  deleteFile(mp4Path);
-                  deleteDir(tsPath);
-                }
-                await _taskCtrl.updateTaskList();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +42,7 @@ class _DownManagerPageState extends State<DownManagerPage>
               tooltip: '重新下载',
               onPressed: () async {
                 _taskManager.downFinish();
-                await _taskManager.restTask(_taskCtrl.taskList);
+                await _taskManager.resetTask(_taskCtrl.taskList);
                 await _taskCtrl.updateTaskList();
                 startTask();
               },
@@ -119,7 +54,7 @@ class _DownManagerPageState extends State<DownManagerPage>
               icon: const Icon(Icons.delete_forever),
               tooltip: '清空任务',
               onPressed: () async {
-                await _taskManager.restTask(_taskCtrl.taskList);
+                await _taskManager.resetTask(_taskCtrl.taskList);
                 await clearM3u8Task();
                 _taskCtrl.updateTaskList();
               },
@@ -145,7 +80,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                 itemBuilder: (BuildContext context, int index) {
                   M3u8Task task = _taskCtrl.taskList[index];
                   // task.status = 2;
-                  if (task.getStatus == 1) {
+                  if (task.status == 1) {
                     return Container(
                       padding: const EdgeInsets.all(10),
                       child: Column(
@@ -156,7 +91,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  '${task.getM3u8name}-${task.getSubname}',
+                                  '${task.m3u8name}-${task.subname}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -184,7 +119,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                         ],
                       ),
                     );
-                  } else if (task.getStatus == 2) {
+                  } else if (task.status == 2) {
                     return Container(
                       padding: const EdgeInsets.all(10),
                       child: Column(
@@ -199,7 +134,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(
-                                      '${task.getM3u8name}-${task.getSubname}',
+                                      '${task.m3u8name}-${task.subname}',
                                       style: const TextStyle(
                                           color: Color.fromRGBO(0, 0, 0, 0.7),
                                           fontSize: 16),
@@ -288,34 +223,45 @@ class _DownManagerPageState extends State<DownManagerPage>
                 itemBuilder: (BuildContext context, int index) {
                   M3u8Task task = _taskCtrl.finishTaskList[index];
                   // String statusText = task.status == 3 ? '下载完成' : '下载失败';
-                  Widget statusIcon = task.getStatus == 3
+                  Widget statusIcon = task.status == 3
                       ? IconButton(
                           icon: const Icon(
                             Icons.play_circle_outline,
                             color: FENLV,
                           ),
                           onPressed: () async {
-                            String mp4Path = getMp4Path(task, task.getDowndir);
+                            String mp4Path = getMp4Path(task, task.downdir);
                             playerVideo(mp4Path);
                           },
                         )
-                      : const Icon(
-                          Icons.error_outline_rounded,
-                          color: SHANCHAHONG,
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.restart_alt_outlined,
+                            color: SHANCHAHONG,
+                          ),
+                          onPressed: () async {
+                            _taskManager.resetFailTask(task.id!);
+                          },
                         );
+                  Widget statusText = task.status == 3
+                      ? const Text('成功',
+                          style: TextStyle(fontSize: 12, color: FENLV))
+                      : const Text('失败',
+                          style: TextStyle(fontSize: 12, color: SHANCHAHONG));
                   return Container(
                     padding: const EdgeInsets.all(10),
                     child: Row(
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            '${task.getM3u8name}-${task.getSubname}',
+                            '${task.m3u8name}-${task.subname}',
                             style: const TextStyle(
                               fontSize: 16,
                               color: Color.fromRGBO(0, 0, 0, 0.7),
                             ),
                           ),
                         ),
+                        statusText,
                         statusIcon,
                         IconButton(
                           icon: const Icon(
@@ -337,6 +283,71 @@ class _DownManagerPageState extends State<DownManagerPage>
           ),
         ],
       ),
+    );
+  }
+
+  final TaskController _taskCtrl = Get.find();
+  late final TabController _tabController;
+  final logger = Logger();
+  final TaskManager _taskManager = TaskManager();
+  final textStyle =
+      const TextStyle(fontSize: 12, color: Color.fromRGBO(0, 0, 0, 0.5));
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  init() async {
+    _tabController = TabController(length: 2, vsync: this);
+    await _taskCtrl.updateTaskList();
+    await _taskManager.resetTask(_taskCtrl.taskList);
+  }
+
+  startTask() {
+    _taskManager.startAria2Task();
+  }
+
+  deleteTask(M3u8Task task, bool delFile) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('提示'),
+          content: const Text('您确定要删除吗？'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('确定'),
+              onPressed: () async {
+                await deleteM3u8Task(task);
+                if (delFile) {
+                  String mp4Path =
+                      '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
+                  String tsPath =
+                      '${task.downdir}/${task.m3u8name}/${task.subname}';
+                  deleteFile(mp4Path);
+                  deleteDir(tsPath);
+                }
+                await _taskCtrl.updateTaskList();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

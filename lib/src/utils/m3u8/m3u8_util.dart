@@ -1,7 +1,6 @@
 import 'package:famd/src/entity/m3u8_task.dart';
 import 'package:famd/src/entity/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -10,22 +9,17 @@ class M3u8Util {
   late String _m3u8url;
   late Uri _parsuri;
   late Logger _logger;
-  String? _iv;
-  String? _keyUrl;
-  String? _keyValue;
-  List<TsInfo> _tsList = [];
-
-  get getTsList => _tsList;
-  get getKeyValue => _keyValue;
-  get getKeyUrl => _keyUrl;
-  get getIv => _iv;
+  String? iv;
+  String? keyUrl;
+  String? keyValue;
+  List<TsInfo> tsList = [];
 
   M3u8Util() {
     _logger = Logger();
   }
 
   _parse() async {
-    _tsList = [];
+    tsList = [];
     _parsuri = Uri.parse(_m3u8url);
     // var res = await Dio().get(m3u8url);
     var res = await http.get(_parsuri);
@@ -48,9 +42,8 @@ class M3u8Util {
           line.contains('.ts?')) {
         tsCount++;
         String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
-        TsInfo tsInfo =
-            TsInfo(pid: _task.getId!, tsurl: line, filename: filename);
-        _tsList.add(tsInfo);
+        TsInfo tsInfo = TsInfo(pid: _task.id!, tsurl: line, filename: filename);
+        tsList.add(tsInfo);
         insertTsInfo(tsInfo);
       } else if (line.startsWith('#EXT-X-KEY')) {
         _getKey(line);
@@ -60,7 +53,7 @@ class M3u8Util {
         return _parse();
       }
     }
-    await getKeyValueStr(null);
+    await keyValueStr(null);
     return true;
   }
 
@@ -74,30 +67,31 @@ class M3u8Util {
 
   parseByTask(M3u8Task task) async {
     _task = task;
-    List<TsInfo> tsList = await getTsListByPid(task.getId!);
-    _m3u8url = task.getM3u8url;
+    List<TsInfo> tsList = await getTsListByPid(task.id!);
+    _m3u8url = task.m3u8url;
     if (tsList.isEmpty ||
-        (task.getKeyurl ?? "").isEmpty ||
-        (task.getIv ?? "").isEmpty ||
-        (task.getKeyvalue ?? "").isEmpty) {
-      deleteTsByPid(task.getId!);
+        (task.keyurl ?? "").isEmpty ||
+        (task.iv ?? "").isEmpty ||
+        (task.keyvalue ?? "").isEmpty) {
+      deleteTsByPid(task.id!);
       _logger.i('开始解析M3U8！');
       return _parse();
     }
     _logger.i('已经解析过M3U8，跳过解析！');
-    _tsList = tsList;
-    _iv = task.getIv!;
-    _keyUrl = task.getKeyurl!;
+    this.tsList = tsList;
+    iv = task.iv!;
+    keyUrl = task.keyurl!;
+    keyValue = task.keyvalue!;
     return true;
   }
 
   _getKey(String line) {
     List<String> lines = line.split(',');
     if (lines.length > 2) {
-      _iv = lines[2].split('=')[1];
+      iv = lines[2].split('=')[1];
     }
     String keyPath = lines[1].split('=')[1].replaceAll('"', '');
-    _keyUrl = _getRealUrl(keyPath);
+    keyUrl = _getRealUrl(keyPath);
     // logger.i(IV);
     // logger.i(keyUrl);
   }
@@ -116,13 +110,13 @@ class M3u8Util {
     return realUrl.trim();
   }
 
-  getKeyValueStr(String? keyUrl) async {
+  keyValueStr(String? url) async {
     try {
-      var keyres = await http.get(Uri.parse(keyUrl ?? _keyUrl!));
+      var keyres = await http.get(Uri.parse(url ?? keyUrl!));
       if (keyres.statusCode == 200) {
-        _keyValue = keyres.body;
+        keyValue = keyres.body;
       }
     } catch (e) {}
-    return _keyValue;
+    return keyValue;
   }
 }

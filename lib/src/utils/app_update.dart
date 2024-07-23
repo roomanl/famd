@@ -7,8 +7,7 @@ import 'package:http/http.dart' as http;
 import '../common/const.dart';
 import 'common_utils.dart';
 
-/**
- * 检查更新 */
+/// 检查更新
 checkAppUpdate(context, openDialog) async {
   if (openDialog) {
     EasyLoading.show(status: '正在检查更新...');
@@ -25,8 +24,7 @@ checkAppUpdate(context, openDialog) async {
   }
 }
 
-/**
- * 版本更新 */
+/// 版本更新
 checkAppVsersion(vJson, context, openDialog) async {
   final oldVersion = await getAppVersion();
   final newVsersion = vJson['version'];
@@ -71,9 +69,7 @@ checkAppVsersion(vJson, context, openDialog) async {
   }
 }
 
-/**
- * 最新版本提示
- */
+/// 最新版本提示
 latestVersionToast() {
   EasyLoading.showToast('已经是最新版本');
 }

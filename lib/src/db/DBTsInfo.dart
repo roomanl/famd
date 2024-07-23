@@ -39,7 +39,7 @@ class DBTsInfo {
   }
 
   Future<int> update(TsInfo params) async {
-    if (params.getId == null) {
+    if (params.id == null) {
       return 0;
     }
     final db = await _db;
@@ -47,7 +47,7 @@ class DBTsInfo {
       tableName,
       params.toMap(),
       where: 'id = ?',
-      whereArgs: [params.getId],
+      whereArgs: [params.id],
     );
   }
 

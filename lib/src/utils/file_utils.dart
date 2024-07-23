@@ -112,20 +112,19 @@ String getDtsSaveDir(M3u8Task task, String? downPath) {
 }
 
 String getDtsDir(M3u8Task task, String? downPath, String dirname) {
-  String saveDir = '$downPath/${task.getM3u8name}/${task.getSubname}/$dirname';
+  String saveDir = '$downPath/${task.m3u8name}/${task.subname}/$dirname';
   createDir(saveDir);
   return saveDir;
 }
 
 String getMp4Path(M3u8Task task, String? downPath) {
   String mp4Path =
-      '$downPath/${task.getM3u8name}/${task.getM3u8name}-${task.getSubname}.mp4';
+      '$downPath/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
   return mp4Path;
 }
 
 String getTsListTxtPath(M3u8Task task, String? downPath) {
-  String fileListPath =
-      '$downPath/${task.getM3u8name}/${task.getSubname}/file.ts';
+  String fileListPath = '$downPath/${task.m3u8name}/${task.subname}/file.ts';
   return fileListPath;
 }
 

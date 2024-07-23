@@ -77,8 +77,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ]),
     );
   }
-// 第70集$https://hd.ijycnd.com/play/PdRDwjza/index.m3u8
-// 第71集$https://hd.ijycnd.com/play/zbqm5Byb/index.m3u8
 
   final _appCtrl = Get.put(AppController());
   final _taskCtrl = Get.put(TaskController());

@@ -6,15 +6,6 @@ class TsInfo {
   String tsurl;
   String filename;
 
-  int? get getId => this.id;
-  set setId(int id) => this.id = id;
-  int get getPid => this.pid;
-  set setPid(int pid) => this.pid = pid;
-  String get getTsurl => this.tsurl;
-  set setTsurl(String tsurl) => this.tsurl = tsurl;
-  String get getFilename => this.filename;
-  set setFilename(String filename) => this.filename = filename;
-
   TsInfo({
     this.id,
     required this.pid,
@@ -33,15 +24,16 @@ class TsInfo {
 
   factory TsInfo.fromMap(Map<String, dynamic> map) {
     return TsInfo(
-      id: map['id'] ?? '',
-      pid: map['pid'] ?? '',
-      tsurl: map['tsurl'] ?? '',
-      filename: map['filename'] ?? '',
+      id: map['id']?.toInt(),
+      pid: map['pid'].toInt(),
+      tsurl: map['tsurl'].toString(),
+      filename: map['filename'].toString(),
     );
   }
   String toJson() => json.encode(toMap());
   factory TsInfo.fromJson(String source) => TsInfo.fromMap(json.decode(source));
 
+  @override
   String toString() {
     return '{id: $id, pid: $pid, tsurl: $tsurl, filename: $filename}';
   }

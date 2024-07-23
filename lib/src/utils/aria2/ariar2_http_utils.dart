@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
-import 'aria2_conf_util.dart' as Aria2Conf;
+import 'aria2_conf_util.dart' as aria2_conf;
 
-final Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
-var uuid = Uuid();
+final Future<String> _aria2url = aria2_conf.getAria2UrlConf();
+const uuid = Uuid();
 
 Future<String?> addUrl(params) async {
   try {

@@ -16,12 +16,12 @@ class Aria2Manager {
 
   final _appCtrl = Get.put(AppController());
   final _taskCtrl = Get.put(TaskController());
-  var webSocketChannel = null;
-  var jsonRpcClient = null;
+  WebSocketChannel? webSocketChannel;
+  json_rpc.Client? jsonRpcClient;
   late Logger logger = Logger();
   late Timer timer;
   late bool online = false;
-  late Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
+  late final Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
   late int downSpeed = 0;
   late String aria2Version = '0';
   late Future<Process> cmdProcess;
@@ -29,7 +29,7 @@ class Aria2Manager {
   late int timerCount = 0;
 
   Aria2Manager._internal() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       connection();
       getSpeed();
       timerCount++;
@@ -54,6 +54,7 @@ class Aria2Manager {
   getSpeed() async {
     if (!online) return;
     downSpeed = await Aria2Http.getSpeed();
+    _appCtrl.updateAria2Speed(downSpeed);
   }
 
   /// 强制暂停所有下载
@@ -76,7 +77,7 @@ class Aria2Manager {
         String url = aria2url.replaceAll('http', 'ws');
         final wsUrl = Uri.parse(url);
         webSocketChannel = WebSocketChannel.connect(wsUrl);
-        jsonRpcClient = json_rpc.Client(webSocketChannel.cast<String>());
+        jsonRpcClient = json_rpc.Client(webSocketChannel!.cast<String>());
         listenWebSocket();
       }
     } else {
@@ -90,7 +91,7 @@ class Aria2Manager {
 
   /// 监听websocket
   listenWebSocket() {
-    webSocketChannel.stream.listen((data) {
+    webSocketChannel?.stream.listen((data) {
       // logger.i(data);
       listNotifications(data);
     }, onError: (error) {
@@ -123,7 +124,7 @@ class Aria2Manager {
       processResult.exitCode.then((value) => print(value));
       processResult.stdout
           .transform(utf8.decoder)
-          .transform(LineSplitter())
+          .transform(const LineSplitter())
           .listen((line) {
         if (line.trim().isNotEmpty) {
           logger.i(line);
@@ -131,7 +132,7 @@ class Aria2Manager {
       });
       processResult.stderr
           .transform(utf8.decoder)
-          .transform(LineSplitter())
+          .transform(const LineSplitter())
           .listen((line) {
         if (line.trim().isNotEmpty) {
           logger.i("Error: $line");
@@ -140,23 +141,17 @@ class Aria2Manager {
     });
   }
 
-/**
-   * 初始化aria2配置
-   */
+  /// 初始化aria2配置
   initAria2Conf() async {
     await Aria2Conf.initAria2Conf();
   }
 
-/**
-   * 清空aria2配置
-   */
+  /// 清空aria2配置
   clearSession() {
     Aria2Conf.clearSession();
   }
 
-/**
-   * 关闭aria2服务
-   */
+  /// 关闭aria2服务
   closeServer() {
     print('开始关闭服务');
     bool killSuccess = false;
@@ -171,30 +166,3 @@ class Aria2Manager {
     print('关闭服务:' + killSuccess.toString());
   }
 }
-
-  // addUrls(List<String> urls, String saveDir) async {
-  //   List data = [];
-  //   List<TsTask>? tsTaskList = [];
-  //   for (int i = 0; i < urls.length; i++) {
-  //     String url = urls[i];
-  //     String filename = i.toString().padLeft(4, '0') + '.ts';
-  //     Map itemTask = {
-  //       'jsonrpc': '2.0',
-  //       'id': i,
-  //       "method": 'aria2.addUri',
-  //       "params": [
-  //         [url],
-  //         {'out': filename, 'dir': saveDir}
-  //       ]
-  //     };
-  //     TsTask tsTask = TsTask(tsName: filename, tsUrl: url, savePath: saveDir);
-  //     tsTaskList.add(tsTask);
-  //     data.add(itemTask);
-  //   }
-  //   var res = await Dio().post(aria2url, data: data);
-  //   List<dynamic> jsonArray = jsonDecode(res.toString());
-  //   jsonArray.asMap().forEach((index, item) {
-  //     tsTaskList[index].gid = item['result'];
-  //   });
-  //   return tsTaskList;
-  // }

@@ -12,8 +12,7 @@ class DBM3u8Task {
   Future<int> insert(M3u8Task params) async {
     // print("插入的数据:${params.toJson()}");
     final db = await _db;
-    M3u8Task? task =
-        await queryFirstByName(params.getM3u8name, params.getSubname);
+    M3u8Task? task = await queryFirstByName(params.m3u8name, params.subname);
     if (task == null) {
       return await db.insert(tableName, params.toMap());
     }
@@ -59,7 +58,7 @@ class DBM3u8Task {
   }
 
   Future<int> update(M3u8Task params) async {
-    if (params.getId == null) {
+    if (params.id == null) {
       return 0;
     }
     final db = await _db;
@@ -67,7 +66,7 @@ class DBM3u8Task {
       tableName,
       params.toMap(),
       where: 'id = ?',
-      whereArgs: [params.getId],
+      whereArgs: [params.id],
     );
   }
 

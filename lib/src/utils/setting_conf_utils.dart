@@ -14,7 +14,7 @@ Future<List<SysConf>> getAllConf() async {
 
 Future<String?> getConf(String key) async {
   SysConf? conf = await dbSysConf.queryFirstByName(key);
-  return conf?.getValue;
+  return conf?.value;
 }
 
 Future<bool> setConf(String key, String data) async {
@@ -31,7 +31,7 @@ Future<String> getDownPath() async {
   if (conf == null) {
     return await getAria2DefDownPath();
   }
-  return conf.getValue;
+  return conf.value;
 }
 
 Future<bool> setDownPath(data) async {
@@ -49,8 +49,7 @@ Future<CustomThemeColor> getThemeColor() async {
   if (conf == null) {
     return themeColors[0];
   }
-  int index =
-      themeColors.indexWhere((element) => element.label == conf.getValue);
+  int index = themeColors.indexWhere((element) => element.label == conf.value);
   if (index < 0) {
     return themeColors[0];
   }

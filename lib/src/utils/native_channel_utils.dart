@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 const MethodChannel _channel =
-    const MethodChannel('cn.rootvip.flutter_native_channel/native_methods');
+    MethodChannel('cn.rootvip.flutter_native_channel/native_methods');
 
 Future<String> nativeLibraryDir() async {
   return await _channel.invokeMethod('nativeLibraryDir');

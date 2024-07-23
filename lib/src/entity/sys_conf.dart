@@ -5,13 +5,6 @@ class SysConf {
   String name;
   String value;
 
-  int? get getId => this.id;
-  set setId(int id) => this.id = id;
-  String get getName => this.name;
-  set setName(String name) => this.name = name;
-  String get getValue => this.value;
-  set setValue(String value) => this.value = value;
-
   SysConf({
     this.id,
     required this.name,
@@ -32,11 +25,12 @@ class SysConf {
 
   factory SysConf.fromMap(Map<String, dynamic> map) {
     return SysConf(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      value: map['value'] ?? '',
+      id: map['id']?.toInt(),
+      name: map['name'].toString(),
+      value: map['value'].toString(),
     );
   }
+  @override
   String toString() {
     return '{id: $id, name: $name, value: $value}';
   }

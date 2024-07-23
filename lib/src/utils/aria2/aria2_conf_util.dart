@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../common/const.dart';
 import '../file_utils.dart';

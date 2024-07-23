@@ -22,7 +22,7 @@ Future<bool> insertM3u8Task(M3u8Task task) async {
 }
 
 Future<bool> updateM3u8Task(M3u8Task task) async {
-  if (task.getId == null) {
+  if (task.id == null) {
     return false;
   }
   int result = await dbm3u8task.update(task);
@@ -30,11 +30,11 @@ Future<bool> updateM3u8Task(M3u8Task task) async {
 }
 
 Future<bool> deleteM3u8Task(M3u8Task task) async {
-  if (task.getId == null) {
+  if (task.id == null) {
     return false;
   }
-  deleteTsByPid(task.getId!);
-  int result = await dbm3u8task.deleteById(task.getId!);
+  deleteTsByPid(task.id!);
+  int result = await dbm3u8task.deleteById(task.id!);
   return result > 0;
 }
 

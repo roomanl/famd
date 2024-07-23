@@ -31,24 +31,38 @@ class TaskManager {
   ///记录下载回调时间
   late int notificationsTime = 0;
   final _taskCtrl = Get.put(TaskController());
+  final _appCtrl = Get.put(AppController());
 
   TaskManager() {
     _taskCtrl.aria2Notifications.listen((data) {
       listNotifications(data);
     });
+    _appCtrl.aria2Speed.listen((speed) {
+      _taskInfo.speed = bytesToSize(speed);
+    });
   }
 
-  restTask(List<M3u8Task> taskList) async {
+  resetTask(List<M3u8Task> taskList) async {
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
     Aria2Manager().clearSession();
     for (M3u8Task task in taskList) {
-      if (task.getStatus == 2) {
-        task.setStatus = 1;
+      if (task.status == 2) {
+        task.status = 1;
         await updateM3u8Task(task);
       }
     }
     _taskCtrl.updateTaskList();
+  }
+
+  resetFailTask(int id) async {
+    M3u8Task? task = await getM3u8TaskById(id);
+    if (task != null) {
+      task.status = 1;
+      await updateM3u8Task(task);
+      _taskCtrl.updateTaskList();
+      EasyLoading.showInfo('任务已重新添加到下载中');
+    }
   }
 
   startAria2Task({M3u8Task? task}) async {
@@ -60,7 +74,7 @@ class TaskManager {
         return;
       }
       for (M3u8Task task in _taskCtrl.taskList) {
-        if (task.getStatus == 2) {
+        if (task.status == 2) {
           EasyLoading.showInfo('已经在下载中');
           return;
         }
@@ -70,7 +84,7 @@ class TaskManager {
     }
     _isDowning = true;
     _tasking = task ?? _taskCtrl.taskList[0];
-    _tasking.setStatus = 2;
+    _tasking.status = 2;
     await updateM3u8Task(_tasking);
     _taskCtrl.updateTaskList();
     _downPath = await getDownPath();
@@ -81,35 +95,32 @@ class TaskManager {
       errDownFinish();
       return;
     }
-    _tasking.setIv = _m3u8util.getIv;
-    _tasking.setKeyurl = _m3u8util.getKeyUrl;
-    _tasking.setKeyvalue = _m3u8util.getKeyValue;
-    _tasking.setDowndir = _downPath;
+    _tasking.iv = _m3u8util.iv;
+    _tasking.keyurl = _m3u8util.keyUrl;
+    _tasking.keyvalue = _m3u8util.keyValue;
+    _tasking.downdir = _downPath;
     await updateM3u8Task(_tasking);
 
-    List<TsInfo> tsList = _m3u8util.getTsList;
+    List<TsInfo> tsList = _m3u8util.tsList;
     String saveDir = getTsSaveDir(_tasking, _downPath);
 
     _taskInfo.tsTotal = tsList.length;
 
     List<TsTask>? tsTaskList = [];
     for (int i = 0; i < tsList.length; i++) {
-      String url = tsList[i].getTsurl;
+      String url = tsList[i].tsurl;
       // print(url);
-      String filename = tsList[i].getFilename;
-      TsTask tsTask;
+      String filename = tsList[i].filename;
+      TsTask tsTask = TsTask(tsName: filename, tsUrl: url, savePath: saveDir);
       if (isResetDown(_tasking, _downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
-        if (gid != null) {
-          tsTask =
-              TsTask(tsName: filename, tsUrl: url, savePath: saveDir, gid: gid);
+        if ((gid ?? "").isNotEmpty) {
+          tsTask.gid = gid;
         } else {
-          tsTask =
-              TsTask(tsName: filename, tsUrl: url, savePath: saveDir, staus: 3);
+          tsTask.staus = 3;
         }
       } else {
-        tsTask =
-            TsTask(tsName: filename, tsUrl: url, savePath: saveDir, staus: 2);
+        tsTask.staus = 2;
       }
       tsTaskList.add(tsTask);
     }
@@ -132,7 +143,7 @@ class TaskManager {
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
     _isDowning = false;
-    _tasking.setStatus = 1;
+    _tasking.status = 1;
     _restCount++;
     _taskCtrl.updateDownStatusInfo("重试$_restCount");
     startAria2Task(task: _tasking);
@@ -158,7 +169,7 @@ class TaskManager {
     _taskInfo.progress =
         tsTotal == 0 ? '0%' : '${(progress * 100).toStringAsFixed(2)}%';
 
-    _taskInfo.speed = bytesToSize(Aria2Manager().downSpeed);
+    // _taskInfo.speed = bytesToSize(Aria2Manager().downSpeed);
 
     if (tsSuccess + tsFail == tsTotal) {
       if (tsFail > 0) {
@@ -178,10 +189,10 @@ class TaskManager {
     _taskCtrl.updateDownStatusInfo("解密中...");
     _taskInfo.tsDecrty = '解密中...';
     List<String> decryptTsList = [];
-    if (!(_tasking.getKeyurl ?? "").isEmpty) {
-      String? keystr = _tasking.getKeyvalue;
+    if ((_tasking.keyurl ?? "").isNotEmpty) {
+      String? keystr = _tasking.keyvalue;
       if ((keystr ?? "").isEmpty) {
-        keystr = await _m3u8util.getKeyValueStr(_tasking.getKeyurl);
+        keystr = await _m3u8util.keyValueStr(_tasking.keyurl);
       }
       if ((keystr ?? "").isEmpty) {
         errDownFinish();
@@ -197,11 +208,11 @@ class TaskManager {
         bool decryptSuccess = false;
         if (Platform.isWindows || Platform.isLinux) {
           decryptSuccess = await aseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), _tasking.getIv);
+              tsPath, tsSavePath, keystr.toString(), _tasking.iv);
         } else if (Platform.isAndroid) {
           ///flutter解码方式在android特别慢，这里调用android原生来解码
           decryptSuccess = await androidAseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), _tasking.getIv);
+              tsPath, tsSavePath, keystr.toString(), _tasking.iv);
         }
         if (decryptSuccess) {
           // _taskInfo.tsDecrty++;
@@ -243,7 +254,7 @@ class TaskManager {
     if (success) {
       _taskCtrl.updateDownStatusInfo("合并完成");
       _taskInfo.mergeStatus = '合并完成';
-      _tasking.setStatus = 3;
+      _tasking.status = 3;
       await updateM3u8Task(_tasking);
       String folderPath = getDtsDir(_tasking, _downPath, '');
       // '$_downPath/${_tasking.m3u8name}/${_tasking.subname}';
@@ -257,8 +268,8 @@ class TaskManager {
   }
 
   errDownFinish() async {
-    EasyLoading.showError('${_tasking.getM3u8name}-${_tasking.getSubname}下载失败');
-    _tasking.setStatus = 4;
+    EasyLoading.showError('${_tasking.m3u8name}-${_tasking.subname}下载失败');
+    _tasking.status = 4;
     await updateM3u8Task(_tasking);
     downFinish();
     await _taskCtrl.updateTaskList();

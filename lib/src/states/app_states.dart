@@ -22,6 +22,7 @@ class AppController extends GetxController {
   RxInt pageIndex = 1.obs;
   RxBool aria2Online = false.obs;
   RxBool showNavigationDrawer = false.obs;
+  RxInt aria2Speed = 0.obs;
 
   // @override
   // void onInit() {
@@ -38,6 +39,12 @@ class AppController extends GetxController {
   updateAria2Online(bool online) {
     aria2Online.update((val) {
       aria2Online.value = online;
+    });
+  }
+
+  updateAria2Speed(int speed) {
+    aria2Speed.update((val) {
+      aria2Speed.value = speed;
     });
   }
 
@@ -60,7 +67,7 @@ class TaskController extends GetxController {
     taskList = [];
     finishTaskList = [];
     for (M3u8Task task in list) {
-      if (task.getStatus == 1 || task.getStatus == 2) {
+      if (task.status == 1 || task.status == 2) {
         taskList.add(task);
       } else {
         finishTaskList.add(task);
