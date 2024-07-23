@@ -4,7 +4,6 @@ import 'package:famd/src/entity/ts_info.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import '../../entity/m3u8_task.dart';
 import '../../entity/task_info.dart';
@@ -19,15 +18,15 @@ import '../common_utils.dart';
 import '../file_utils.dart';
 
 class TaskManager {
-  var logger = Logger();
-  late bool isDowning = false;
-  late bool isDecryptTsing = false;
-  late bool isMergeTsing = false;
-  late TaskInfo? taskInfo = TaskInfo();
-  late M3u8Task tasking;
-  late int restCount = 0;
-  late String? downPath;
-  late M3u8Util m3u8util;
+  final _logger = Logger();
+  late M3u8Task _tasking;
+  late M3u8Util _m3u8util;
+  late String _downPath;
+  bool _isDowning = false;
+  bool _isDecryptTsing = false;
+  bool _isMergeTsing = false;
+  TaskInfo _taskInfo = TaskInfo();
+  int _restCount = 0;
 
   ///记录下载回调时间
   late int notificationsTime = 0;
@@ -53,8 +52,8 @@ class TaskManager {
   }
 
   startAria2Task({M3u8Task? task}) async {
-    if (isDowning) return;
-    taskInfo = TaskInfo();
+    if (_isDowning) return;
+    _taskInfo = TaskInfo();
     if (task == null) {
       if (_taskCtrl.taskList.isEmpty) {
         EasyLoading.showInfo('列表中没有任务');
@@ -66,31 +65,32 @@ class TaskManager {
           return;
         }
       }
-      _taskCtrl.updateTaskInfo(taskInfo);
+      _taskCtrl.updateTaskInfo(_taskInfo);
       _taskCtrl.updateDownStatusInfo("正在开始任务...");
     }
-    isDowning = true;
-    tasking = task ?? _taskCtrl.taskList[0];
-    tasking.setStatus = 2;
-    await updateM3u8Task(tasking);
+    _isDowning = true;
+    _tasking = task ?? _taskCtrl.taskList[0];
+    _tasking.setStatus = 2;
+    await updateM3u8Task(_tasking);
     _taskCtrl.updateTaskList();
-    downPath = await getDownPath();
+    _downPath = await getDownPath();
 
-    m3u8util = M3u8Util();
-    bool success = await m3u8util.parseByTask(tasking);
+    _m3u8util = M3u8Util();
+    bool success = await _m3u8util.parseByTask(_tasking);
     if (!success) {
       errDownFinish();
       return;
     }
-    tasking.setIv = m3u8util.getIv;
-    tasking.setKeyurl = m3u8util.getKeyUrl;
-    tasking.setKeyvalue = m3u8util.getKeyValue;
-    tasking.setDowndir = downPath;
+    _tasking.setIv = _m3u8util.getIv;
+    _tasking.setKeyurl = _m3u8util.getKeyUrl;
+    _tasking.setKeyvalue = _m3u8util.getKeyValue;
+    _tasking.setDowndir = _downPath;
+    await updateM3u8Task(_tasking);
 
-    List<TsInfo> tsList = m3u8util.getTsList;
-    String saveDir = getTsSaveDir(tasking, downPath);
+    List<TsInfo> tsList = _m3u8util.getTsList;
+    String saveDir = getTsSaveDir(_tasking, _downPath);
 
-    taskInfo?.tsTotal = tsList.length;
+    _taskInfo.tsTotal = tsList.length;
 
     List<TsTask>? tsTaskList = [];
     for (int i = 0; i < tsList.length; i++) {
@@ -98,7 +98,7 @@ class TaskManager {
       // print(url);
       String filename = tsList[i].getFilename;
       TsTask tsTask;
-      if (isResetDown(tasking, downPath, filename)) {
+      if (isResetDown(_tasking, _downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
         if (gid != null) {
           tsTask =
@@ -113,138 +113,140 @@ class TaskManager {
       }
       tsTaskList.add(tsTask);
     }
-    taskInfo?.tsTaskList = tsTaskList;
+    _taskInfo.tsTaskList = tsTaskList;
 
-    await updateM3u8Task(tasking);
-    updataTaskInfo();
-    _taskCtrl.updateTaskInfo(taskInfo);
+    await updateM3u8Task(_tasking);
+    _updataTaskInfo();
+    _taskCtrl.updateTaskInfo(_taskInfo);
     _taskCtrl.updateDownStatusInfo("下载中...");
     // EasyLoading.showSuccess('任务启动成功');
   }
 
-  restStartAria2Task() async {
+  _restStartAria2Task() async {
     //有下载失败的分片，重试5次，超过5次不再重试
-    if (restCount >= 5) {
-      await decryptTs();
+    if (_restCount >= 5) {
+      await _decryptTs();
       return;
     }
     // EasyLoading.showInfo('第$restCount次重新下载失败文件');
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
-    isDowning = false;
-    tasking.setStatus = 1;
-    restCount++;
-    _taskCtrl.updateDownStatusInfo("重试$restCount");
-    startAria2Task(task: tasking);
+    _isDowning = false;
+    _tasking.setStatus = 1;
+    _restCount++;
+    _taskCtrl.updateDownStatusInfo("重试$_restCount");
+    startAria2Task(task: _tasking);
   }
 
-  updataTaskInfo() async {
-    if (!isDowning || isDecryptTsing || isMergeTsing) return;
+  _updataTaskInfo() async {
+    if (!_isDowning || _isDecryptTsing || _isMergeTsing) return;
     double progress = 0;
     int tsSuccess = 0;
     int tsFail = 0;
-    taskInfo?.tsTaskList?.asMap().forEach((index, item) {
-      TsTask? tsTask = taskInfo?.tsTaskList?[index];
+    _taskInfo.tsTaskList?.asMap().forEach((index, item) {
+      TsTask? tsTask = _taskInfo.tsTaskList?[index];
       if (tsTask?.staus == 2) {
         tsSuccess++;
       } else if (tsTask?.staus == 3) {
         tsFail++;
       }
     });
-    taskInfo?.tsSuccess = tsSuccess;
-    taskInfo?.tsFail = tsFail;
-    int tsTotal = taskInfo?.tsTotal ?? 0;
+    _taskInfo.tsSuccess = tsSuccess;
+    _taskInfo.tsFail = tsFail;
+    int tsTotal = _taskInfo.tsTotal ?? 0;
     progress = tsSuccess / tsTotal;
-    taskInfo?.progress =
+    _taskInfo.progress =
         tsTotal == 0 ? '0%' : '${(progress * 100).toStringAsFixed(2)}%';
 
-    taskInfo?.speed = bytesToSize(Aria2Manager().downSpeed);
+    _taskInfo.speed = bytesToSize(Aria2Manager().downSpeed);
 
     if (tsSuccess + tsFail == tsTotal) {
       if (tsFail > 0) {
-        restStartAria2Task();
+        _restStartAria2Task();
       } else if (tsSuccess > 0) {
-        await decryptTs();
+        await _decryptTs();
       } else {
         errDownFinish();
       }
     }
   }
 
-  decryptTs() async {
-    if (!isDowning || isDecryptTsing || isMergeTsing) return;
-    isDecryptTsing = true;
+  _decryptTs() async {
+    if (!_isDowning || _isDecryptTsing || _isMergeTsing) return;
+    _isDecryptTsing = true;
     // EasyLoading.showInfo('开始解密ts文件');
     _taskCtrl.updateDownStatusInfo("解密中...");
-    taskInfo?.tsDecrty = '解密中...';
+    _taskInfo.tsDecrty = '解密中...';
     List<String> decryptTsList = [];
-    if (tasking.getKeyurl!.isNotEmpty) {
-      String? keystr = tasking.getKeyvalue;
-      if (keystr!.isEmpty) {
-        keystr = await m3u8util.getKeyValueStr(tasking.getKeyurl);
+    if (!(_tasking.getKeyurl ?? "").isEmpty) {
+      String? keystr = _tasking.getKeyvalue;
+      if ((keystr ?? "").isEmpty) {
+        keystr = await _m3u8util.getKeyValueStr(_tasking.getKeyurl);
       }
-      if (keystr!.isEmpty) {
+      if ((keystr ?? "").isEmpty) {
         errDownFinish();
         return;
       }
-      for (var index = 0; index < taskInfo!.tsTaskList!.length; index++) {
-        // taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
-        TsTask? tsTask = taskInfo?.tsTaskList?[index];
-        String tsPath = '${getTsSaveDir(tasking, downPath)}/${tsTask!.tsName}';
+      for (var index = 0; index < _taskInfo.tsTaskList!.length; index++) {
+        // _taskInfo.tsTaskList?.asMap().forEach((index, item) async {
+        TsTask? tsTask = _taskInfo.tsTaskList?[index];
+        String tsPath =
+            '${getTsSaveDir(_tasking, _downPath)}/${tsTask!.tsName}';
         String tsSavePath =
-            '${getDtsSaveDir(tasking, downPath)}/${tsTask.tsName}';
+            '${getDtsSaveDir(_tasking, _downPath)}/${tsTask.tsName}';
         bool decryptSuccess = false;
         if (Platform.isWindows || Platform.isLinux) {
           decryptSuccess = await aseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), tasking.getIv);
+              tsPath, tsSavePath, keystr.toString(), _tasking.getIv);
         } else if (Platform.isAndroid) {
           ///flutter解码方式在android特别慢，这里调用android原生来解码
           decryptSuccess = await androidAseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), tasking.getIv);
+              tsPath, tsSavePath, keystr.toString(), _tasking.getIv);
         }
         if (decryptSuccess) {
-          // taskInfo?.tsDecrty++;
+          // _taskInfo.tsDecrty++;
           decryptTsList.add('file \'$tsSavePath\'');
         }
-        taskInfo?.tsDecrty = (index + 1).toString();
-        _taskCtrl.updateTaskInfo(taskInfo);
+        _taskInfo.tsDecrty = (index + 1).toString();
+        _taskCtrl.updateTaskInfo(_taskInfo);
         // });
       }
     } else {
-      taskInfo?.tsTaskList?.asMap().forEach((index, item) async {
-        TsTask? tsTask = taskInfo?.tsTaskList?[index];
-        String tsPath = '${getTsSaveDir(tasking, downPath)}/${tsTask!.tsName}';
+      _taskInfo.tsTaskList?.asMap().forEach((index, item) async {
+        TsTask? tsTask = _taskInfo.tsTaskList?[index];
+        String tsPath =
+            '${getTsSaveDir(_tasking, _downPath)}/${tsTask!.tsName}';
         decryptTsList.add('file \'$tsPath\'');
       });
     }
     if (decryptTsList.isNotEmpty) {
-      String fileListPath = getTsListTxtPath(tasking, downPath);
+      String fileListPath = getTsListTxtPath(_tasking, _downPath);
       File(fileListPath)
           .writeAsStringSync(decryptTsList.join('\n'), flush: true);
-      taskInfo?.tsDecrty = '解密完成';
+      _taskInfo.tsDecrty = '解密完成';
       _taskCtrl.updateDownStatusInfo("解密完成");
-      mergeTs(downPath, fileListPath);
+      mergeTs(fileListPath);
     } else {
-      taskInfo?.tsDecrty = '解密失败';
+      _taskInfo.tsDecrty = '解密失败';
       _taskCtrl.updateDownStatusInfo("解密失败");
       errDownFinish();
     }
   }
 
-  mergeTs(downPath, fileListPath) async {
-    isMergeTsing = true;
+  mergeTs(fileListPath) async {
+    _isMergeTsing = true;
     _taskCtrl.updateDownStatusInfo("合并中...");
-    taskInfo?.mergeStatus = '合并中...';
-    _taskCtrl.updateTaskInfo(taskInfo);
-    String mp4Path = getMp4Path(tasking, downPath);
+    _taskInfo.mergeStatus = '合并中...';
+    _taskCtrl.updateTaskInfo(_taskInfo);
+    String mp4Path = getMp4Path(_tasking, _downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
       _taskCtrl.updateDownStatusInfo("合并完成");
-      taskInfo?.mergeStatus = '合并完成';
-      tasking.setStatus = 3;
-      await updateM3u8Task(tasking);
-      String folderPath = getDtsDir(tasking, downPath, '');
-      // '$downPath/${tasking.m3u8name}/${tasking.subname}';
+      _taskInfo.mergeStatus = '合并完成';
+      _tasking.setStatus = 3;
+      await updateM3u8Task(_tasking);
+      String folderPath = getDtsDir(_tasking, _downPath, '');
+      // '$_downPath/${_tasking.m3u8name}/${_tasking.subname}';
       deleteDir(folderPath);
       downFinish();
       await _taskCtrl.updateTaskList();
@@ -255,19 +257,19 @@ class TaskManager {
   }
 
   errDownFinish() async {
-    EasyLoading.showError('${tasking.getM3u8name}-${tasking.getSubname}下载失败');
-    tasking.setStatus = 4;
-    await updateM3u8Task(tasking);
+    EasyLoading.showError('${_tasking.getM3u8name}-${_tasking.getSubname}下载失败');
+    _tasking.setStatus = 4;
+    await updateM3u8Task(_tasking);
     downFinish();
     await _taskCtrl.updateTaskList();
     startAria2Task();
   }
 
   downFinish() {
-    isDowning = false;
-    isDecryptTsing = false;
-    isMergeTsing = false;
-    restCount = 0;
+    _isDowning = false;
+    _isDecryptTsing = false;
+    _isMergeTsing = false;
+    _restCount = 0;
     notificationsTime = 0;
   }
 
@@ -278,13 +280,13 @@ class TaskManager {
       ///在下载中不在解密中并且notificationsTime有时间才重试
       if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 30000 &&
           notificationsTime != 0 &&
-          !isDecryptTsing &&
-          !isMergeTsing &&
-          isDowning) {
-        logger.i("卡住");
+          !_isDecryptTsing &&
+          !_isMergeTsing &&
+          _isDowning) {
+        _logger.i("卡住");
 
         ///卡住的话重试
-        restStartAria2Task();
+        _restStartAria2Task();
       }
     } else {
       ///每次下载完回调纪录一次时间
@@ -293,8 +295,8 @@ class TaskManager {
       if (data.contains('aria2.onDown')) {
         String gid = jsonData['params'][0]['gid'];
         int taskIndex = -1;
-        taskInfo?.tsTaskList?.asMap().forEach((index, item) {
-          if (taskInfo?.tsTaskList?[index].gid == gid) {
+        _taskInfo.tsTaskList?.asMap().forEach((index, item) {
+          if (_taskInfo.tsTaskList?[index].gid == gid) {
             taskIndex = index;
             return;
           }
@@ -302,30 +304,30 @@ class TaskManager {
         // logger.i(taskIndex);
         if (taskIndex < 0) return;
         if (jsonData['method'] == 'aria2.onDownloadStart') {
-          taskInfo?.tsTaskList?[taskIndex].staus = 1;
+          _taskInfo.tsTaskList?[taskIndex].staus = 1;
         } else if (jsonData['method'] == 'aria2.onDownloadPause') {
-          taskInfo?.tsTaskList?[taskIndex].staus = 3;
+          _taskInfo.tsTaskList?[taskIndex].staus = 3;
         } else if (jsonData['method'] == 'aria2.onDownloadError') {
-          taskInfo?.tsTaskList?[taskIndex].staus = 3;
+          _taskInfo.tsTaskList?[taskIndex].staus = 3;
           // logger.i('下载失败：' + data);
         } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
-          taskInfo?.tsTaskList?[taskIndex].staus = 2;
+          _taskInfo.tsTaskList?[taskIndex].staus = 2;
           // logger.i('下载完成：' + jsonData['params'][0]['gid']);
         } else {
-          taskInfo?.tsTaskList?[taskIndex].staus = 3;
+          _taskInfo.tsTaskList?[taskIndex].staus = 3;
         }
-        updataTaskInfo();
-        _taskCtrl.updateTaskInfo(taskInfo);
+        _updataTaskInfo();
+        _taskCtrl.updateTaskInfo(_taskInfo);
       } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
     }
   }
 
   bool isResetDown(M3u8Task task, String? downPath, String tsName) {
-    String tsPath = '${getTsSaveDir(tasking, downPath)}/$tsName';
+    String tsPath = '${getTsSaveDir(_tasking, downPath)}/$tsName';
     if (!fileExistsSync(tsPath)) {
       return true;
     }
-    String tsTemPath = '${getTsSaveDir(tasking, downPath)}/$tsName.aria2';
+    String tsTemPath = '${getTsSaveDir(_tasking, downPath)}/$tsName.aria2';
     if (fileExistsSync(tsTemPath)) {
       deleteFile(tsPath);
       deleteFile(tsTemPath);

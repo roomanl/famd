@@ -84,15 +84,15 @@ class M3u8Task {
 
   factory M3u8Task.fromMap(Map<String, dynamic> map) {
     return M3u8Task(
-        id: map['id'] ?? '',
-        m3u8name: map['m3u8name'] ?? '',
-        subname: map['subname'] ?? '',
-        m3u8url: map['m3u8url'] ?? '',
-        keyurl: map['keyurl'],
-        iv: map['iv'],
-        downdir: map['downdir'],
+        id: map['id']?.toInt(),
+        m3u8name: map['m3u8name'].toString(),
+        subname: map['subname'].toString(),
+        m3u8url: map['m3u8url'].toString(),
+        keyurl: map['keyurl']?.toString(),
+        iv: map['iv']?.toString(),
+        downdir: map['downdir']?.toString(),
         status: map['status']?.toInt(),
-        keyvalue: map['keyvalue']);
+        keyvalue: map['keyvalue']?.toString());
   }
 
   String toJson() => json.encode(toMap());

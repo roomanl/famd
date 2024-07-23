@@ -1,19 +1,19 @@
 import 'package:famd/src/entity/m3u8_task.dart';
 import 'package:famd/src/entity/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class M3u8Util {
-  //https://hd.ijycnd.com/play/Qe1PQDZd/index.m3u8
-  late M3u8Task task;
-  String _m3u8url = '';
+  late M3u8Task _task;
+  late String _m3u8url;
   late Uri _parsuri;
-  late List<TsInfo> _tsList = [];
   late Logger _logger;
-  late String _iv;
-  late String _keyUrl;
-  late String _keyValue;
+  String? _iv;
+  String? _keyUrl;
+  String? _keyValue;
+  List<TsInfo> _tsList = [];
 
   get getTsList => _tsList;
   get getKeyValue => _keyValue;
@@ -22,7 +22,6 @@ class M3u8Util {
 
   M3u8Util() {
     _logger = Logger();
-    // init();
   }
 
   _parse() async {
@@ -50,7 +49,7 @@ class M3u8Util {
         tsCount++;
         String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
         TsInfo tsInfo =
-            TsInfo(pid: task.getId!, tsurl: line, filename: filename);
+            TsInfo(pid: _task.getId!, tsurl: line, filename: filename);
         _tsList.add(tsInfo);
         insertTsInfo(tsInfo);
       } else if (line.startsWith('#EXT-X-KEY')) {
@@ -61,7 +60,7 @@ class M3u8Util {
         return _parse();
       }
     }
-    await getKeyValue();
+    await getKeyValueStr(null);
     return true;
   }
 
@@ -74,10 +73,13 @@ class M3u8Util {
   }
 
   parseByTask(M3u8Task task) async {
-    this.task = task;
+    _task = task;
     List<TsInfo> tsList = await getTsListByPid(task.getId!);
     _m3u8url = task.getM3u8url;
-    if (tsList.isEmpty || (task.getKeyurl != null && task.getIv == null)) {
+    if (tsList.isEmpty ||
+        (task.getKeyurl ?? "").isEmpty ||
+        (task.getIv ?? "").isEmpty ||
+        (task.getKeyvalue ?? "").isEmpty) {
       deleteTsByPid(task.getId!);
       _logger.i('开始解析M3U8！');
       return _parse();
@@ -116,11 +118,9 @@ class M3u8Util {
 
   getKeyValueStr(String? keyUrl) async {
     try {
-      if (_keyUrl.isNotEmpty) {
-        var keyres = await http.get(Uri.parse(keyUrl ?? _keyUrl));
-        if (keyres.statusCode == 200) {
-          _keyValue = keyres.body;
-        }
+      var keyres = await http.get(Uri.parse(keyUrl ?? _keyUrl!));
+      if (keyres.statusCode == 200) {
+        _keyValue = keyres.body;
       }
     } catch (e) {}
     return _keyValue;
