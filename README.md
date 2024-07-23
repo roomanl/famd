@@ -1,5 +1,6 @@
 # famd
 flutter aria2 m3u8 downloader，使用flutter+aria2+m3u8开发的一个M3U8下载器  
+#### Android免费版与google play版签名相同，导致2个版本不能共存，所以新建master分支设为主分支，master分支会更改Android签名，之后的代码都提交到master主分支
 ## 下载地址
 [安卓与PC版下载地址（阿里云OSS）](https://rootvip.cn/archives/66.html)  
 大文件上传到github太难了，新版本会优先上传到这里！   
