@@ -1,6 +1,6 @@
 import 'package:famd/src/common/const.dart';
-import 'package:famd/src/db/DBHelper.dart';
-import 'package:famd/src/entity/ts_info.dart';
+import 'package:famd/src/utils/db/DBHelper.dart';
+import 'package:famd/src/models/ts_info.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBTsInfo {

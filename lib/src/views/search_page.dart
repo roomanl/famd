@@ -3,7 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'search_vod_result_page.dart';
-import '../states/app_states.dart';
+import '../view_models/app_states.dart';
 import '../common/const.dart';
 import '../utils/http/http.dart';
 

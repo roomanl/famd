@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
-import '../states/app_states.dart';
+import '../view_models/app_states.dart';
 import '../common/const.dart';
 import '../utils/task/task_utils.dart';
-import '../entity/m3u8_task.dart';
+import '../models/m3u8_task.dart';
 import '../utils/http/http.dart';
 
 class SearchVodResultPage extends StatefulWidget {

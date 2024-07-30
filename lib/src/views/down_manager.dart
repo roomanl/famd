@@ -3,8 +3,8 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
 import '../common/color.dart';
-import '../entity/m3u8_task.dart';
-import '../states/app_states.dart';
+import '../models/m3u8_task.dart';
+import '../view_models/app_states.dart';
 
 import '../utils/common_utils.dart';
 import '../utils/file_utils.dart';

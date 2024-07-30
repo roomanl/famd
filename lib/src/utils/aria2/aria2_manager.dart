@@ -5,7 +5,7 @@ import 'package:get/instance_manager.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
-import '../../states/app_states.dart';
+import '../../view_models/app_states.dart';
 import 'aria2_conf_util.dart' as Aria2Conf;
 import 'ariar2_http_utils.dart' as Aria2Http;
 import '../common_utils.dart';

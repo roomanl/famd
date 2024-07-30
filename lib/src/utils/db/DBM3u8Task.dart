@@ -1,6 +1,6 @@
 import 'package:famd/src/common/const.dart';
-import 'package:famd/src/db/DBHelper.dart';
-import 'package:famd/src/entity/m3u8_task.dart';
+import 'package:famd/src/utils/db/DBHelper.dart';
+import 'package:famd/src/models/m3u8_task.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBM3u8Task {

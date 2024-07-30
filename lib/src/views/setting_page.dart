@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:famd/src/entity/sys_conf.dart';
+import 'package:famd/src/models/sys_conf.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import '../common/color.dart';
 import '../common/const.dart';
-import '../states/app_states.dart';
+import '../view_models/app_states.dart';
 import '../utils/permission_util.dart';
 import '../utils/setting_conf_utils.dart';
 

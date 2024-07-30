@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:famd/src/entity/ts_info.dart';
+import 'package:famd/src/models/ts_info.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
-import '../../entity/m3u8_task.dart';
-import '../../entity/task_info.dart';
-import '../../states/app_states.dart';
+import '../../models/m3u8_task.dart';
+import '../../models/task_info.dart';
+import '../../view_models/app_states.dart';
 import '../m3u8/ase_util.dart';
 import '../aria2/aria2_manager.dart';
 import '../setting_conf_utils.dart';

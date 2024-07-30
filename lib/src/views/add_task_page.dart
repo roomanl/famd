@@ -2,8 +2,8 @@ import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../entity/m3u8_task.dart';
-import '../states/app_states.dart';
+import '../models/m3u8_task.dart';
+import '../view_models/app_states.dart';
 import '../utils/task/task_utils.dart';
 
 class AddTaskPage extends StatefulWidget {

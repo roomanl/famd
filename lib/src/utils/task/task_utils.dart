@@ -1,7 +1,7 @@
-import 'package:famd/src/db/DBM3u8Task.dart';
-import 'package:famd/src/db/DBTsInfo.dart';
-import 'package:famd/src/entity/m3u8_task.dart';
-import 'package:famd/src/entity/ts_info.dart';
+import 'package:famd/src/utils/db/DBM3u8Task.dart';
+import 'package:famd/src/utils/db/DBTsInfo.dart';
+import 'package:famd/src/models/m3u8_task.dart';
+import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/file_utils.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 

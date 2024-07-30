@@ -1,5 +1,5 @@
-import 'package:famd/src/entity/m3u8_task.dart';
-import 'package:famd/src/entity/ts_info.dart';
+import 'package:famd/src/models/m3u8_task.dart';
+import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';

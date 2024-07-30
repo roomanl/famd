@@ -5,12 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import './src/pages/start_page.dart';
+import 'src/views/start_page.dart';
 import 'src/common/color.dart';
-import 'src/states/app_states.dart';
+import 'src/view_models/app_states.dart';
 import 'src/utils/common_utils.dart';
 import 'src/utils/setting_conf_utils.dart';
-import 'package:famd/src/db/DBHelper.dart';
+import 'package:famd/src/utils/db/DBHelper.dart';
 
 void main() async {
   final _themeCtrl = Get.put(CustomThemeController());

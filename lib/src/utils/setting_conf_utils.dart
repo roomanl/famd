@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:famd/src/db/DBSysConf.dart';
-import 'package:famd/src/entity/sys_conf.dart';
+import 'package:famd/src/utils/db/DBSysConf.dart';
+import 'package:famd/src/models/sys_conf.dart';
 import '../common/color.dart';
 import '../common/const.dart';
 import 'file_utils.dart';
