@@ -246,8 +246,9 @@ class _DownManagerPageState extends State<DownManagerPage>
                   Widget statusText = task.status == 3
                       ? const Text('成功',
                           style: TextStyle(fontSize: 12, color: FENLV))
-                      : const Text('失败',
-                          style: TextStyle(fontSize: 12, color: SHANCHAHONG));
+                      : Text(task.remarks ?? '失败',
+                          style: const TextStyle(
+                              fontSize: 12, color: SHANCHAHONG));
                   return Container(
                     padding: const EdgeInsets.all(10),
                     child: Row(

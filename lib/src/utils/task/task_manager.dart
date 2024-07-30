@@ -92,7 +92,7 @@ class TaskManager {
     _m3u8util = M3u8Util();
     bool success = await _m3u8util.parseByTask(_tasking);
     if (!success) {
-      errDownFinish();
+      errDownFinish('解析失败');
       return;
     }
     _tasking.iv = _m3u8util.iv;
@@ -177,7 +177,7 @@ class TaskManager {
       } else if (tsSuccess > 0) {
         await _decryptTs();
       } else {
-        errDownFinish();
+        errDownFinish('下载失败');
       }
     }
   }
@@ -195,7 +195,7 @@ class TaskManager {
         keystr = await _m3u8util.keyValueStr(_tasking.keyurl);
       }
       if ((keystr ?? "").isEmpty) {
-        errDownFinish();
+        errDownFinish('解密失败');
         return;
       }
       for (var index = 0; index < _taskInfo.tsTaskList!.length; index++) {
@@ -240,7 +240,7 @@ class TaskManager {
     } else {
       _taskInfo.tsDecrty = '解密失败';
       _taskCtrl.updateDownStatusInfo("解密失败");
-      errDownFinish();
+      errDownFinish('解密失败');
     }
   }
 
@@ -263,13 +263,14 @@ class TaskManager {
       await _taskCtrl.updateTaskList();
       startAria2Task();
     } else {
-      errDownFinish();
+      errDownFinish('合并失败');
     }
   }
 
-  errDownFinish() async {
+  errDownFinish(String? remarks) async {
     EasyLoading.showError('${_tasking.m3u8name}-${_tasking.subname}下载失败');
     _tasking.status = 4;
+    _tasking.remarks = remarks;
     await updateM3u8Task(_tasking);
     downFinish();
     await _taskCtrl.updateTaskList();

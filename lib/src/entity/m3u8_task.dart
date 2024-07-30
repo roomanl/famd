@@ -10,6 +10,7 @@ class M3u8Task {
   String? iv;
   String? downdir;
   int? status; //1未下载2下载中3下载完成4下载失败
+  String? remarks;
 
   M3u8Task(
       {this.id,
@@ -20,7 +21,8 @@ class M3u8Task {
       this.keyvalue,
       this.iv,
       this.downdir,
-      this.status});
+      this.status,
+      this.remarks});
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,6 +35,7 @@ class M3u8Task {
       'downdir': downdir,
       'status': status,
       'keyvalue': keyvalue,
+      'remarks': remarks,
     };
   }
 
@@ -46,7 +49,8 @@ class M3u8Task {
         iv: map['iv']?.toString(),
         downdir: map['downdir']?.toString(),
         status: map['status']?.toInt(),
-        keyvalue: map['keyvalue']?.toString());
+        keyvalue: map['keyvalue']?.toString(),
+        remarks: map['remarks']?.toString());
   }
 
   String toJson() => json.encode(toMap());
@@ -56,6 +60,6 @@ class M3u8Task {
 
   @override
   String toString() {
-    return '{id:$id, m3u8name:$m3u8name, subname:$subname, m3u8url:$m3u8url, keyurl:$keyurl, iv:$iv, downdir:$downdir, status:$status, keyvalue:$keyvalue}';
+    return '{id:$id, m3u8name:$m3u8name, subname:$subname, m3u8url:$m3u8url, keyurl:$keyurl, iv:$iv, downdir:$downdir, status:$status, keyvalue:$keyvalue,remarks:$remarks}';
   }
 }

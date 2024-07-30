@@ -53,6 +53,7 @@ class DBHelper {
                   keyvalue STRING,
                   iv STRING,
                   downdir STRING,
+                  remarks STRING,
                   status INTEGER)
                 ''');
           await db.execute('''

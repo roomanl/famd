@@ -24,8 +24,8 @@ class M3u8Util {
     // var res = await Dio().get(m3u8url);
     var res = await http.get(_parsuri);
     // logger.i(m3u8url);
-    // logger.i(res.statusCode);
-    // logger.i(res.body);
+    //_logger.i(res.statusCode);
+    //_logger.i(res.body);
     // return false;
     // logger.i(resText);
     if (res.statusCode != 200) {
@@ -42,7 +42,8 @@ class M3u8Util {
           line.contains('.ts?')) {
         tsCount++;
         String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
-        TsInfo tsInfo = TsInfo(pid: _task.id!, tsurl: line, filename: filename);
+        TsInfo tsInfo = TsInfo(
+            pid: _task.id!, tsurl: _getRealUrl(line), filename: filename);
         tsList.add(tsInfo);
         insertTsInfo(tsInfo);
       } else if (line.startsWith('#EXT-X-KEY')) {
