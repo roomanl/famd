@@ -1,3 +1,4 @@
+import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -126,7 +127,8 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
         m3u8url: episode['url'].replaceAll(" ", ""),
         m3u8name: _vodName!,
         downdir: downPath,
-        status: 1);
+        status: 1,
+        createtime: now());
     await insertM3u8Task(task);
     await _taskCtrl.updateTaskList();
     EasyLoading.showToast('$m3u8name加入任务列表！');

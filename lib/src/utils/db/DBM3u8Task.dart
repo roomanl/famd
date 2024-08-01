@@ -50,7 +50,7 @@ class DBM3u8Task {
   Future<List<M3u8Task>> queryAll() async {
     final db = await _db;
     List<Map<String, dynamic>> list =
-        await db.query(tableName, orderBy: 'id ASC');
+        await db.query(tableName, orderBy: 'createtime ASC');
     if (list.isNotEmpty) {
       return list.map((item) => M3u8Task.fromMap(item)).toList();
     }

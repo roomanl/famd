@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import '../common_utils.dart';
-import '../file_utils.dart';
+import '../file/file_utils.dart';
 import 'package:logger/logger.dart';
 
 var logger = Logger();

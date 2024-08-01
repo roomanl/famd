@@ -11,6 +11,8 @@ class M3u8Task {
   String? downdir;
   int? status; //1未下载2下载中3下载完成4下载失败
   String? remarks;
+  String? filesize;
+  String? createtime;
 
   M3u8Task(
       {this.id,
@@ -22,7 +24,9 @@ class M3u8Task {
       this.iv,
       this.downdir,
       this.status,
-      this.remarks});
+      this.remarks,
+      this.filesize,
+      this.createtime});
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,6 +40,8 @@ class M3u8Task {
       'status': status,
       'keyvalue': keyvalue,
       'remarks': remarks,
+      'filesize': filesize,
+      'createtime': createtime
     };
   }
 
@@ -50,7 +56,9 @@ class M3u8Task {
         downdir: map['downdir']?.toString(),
         status: map['status']?.toInt(),
         keyvalue: map['keyvalue']?.toString(),
-        remarks: map['remarks']?.toString());
+        remarks: map['remarks']?.toString(),
+        filesize: map['filesize']?.toString(),
+        createtime: map['createtime']?.toString());
   }
 
   String toJson() => json.encode(toMap());
@@ -60,6 +68,19 @@ class M3u8Task {
 
   @override
   String toString() {
-    return '{id:$id, m3u8name:$m3u8name, subname:$subname, m3u8url:$m3u8url, keyurl:$keyurl, iv:$iv, downdir:$downdir, status:$status, keyvalue:$keyvalue,remarks:$remarks}';
+    return '''{
+    id:$id, 
+    m3u8name:$m3u8name, 
+    subname:$subname,
+     m3u8url:$m3u8url, 
+     keyurl:$keyurl, 
+     iv:$iv, 
+     downdir:$downdir, 
+     status:$status, 
+     keyvalue:$keyvalue,
+     remarks:$remarks,
+     filesize:$filesize,
+     createtime:$createtime
+    }''';
   }
 }

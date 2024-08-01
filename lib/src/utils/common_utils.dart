@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'file_utils.dart';
+import 'file/file_utils.dart';
 import 'native_channel_utils.dart';
 
 bytesToSize(bytes) {

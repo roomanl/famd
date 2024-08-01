@@ -1,4 +1,4 @@
-import 'package:famd/src/utils/file_utils.dart';
+import 'package:famd/src/utils/file/file_utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../common/const.dart';
@@ -54,7 +54,9 @@ class DBHelper {
                   iv STRING,
                   downdir STRING,
                   remarks STRING,
-                  status INTEGER)
+                  filesize STRING,
+                  status INTEGER,
+                  createtime STRING)
                 ''');
           await db.execute('''
                   CREATE TABLE ${DB_TABLE_NAME['tsinfo']} (

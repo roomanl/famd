@@ -4,7 +4,7 @@ import 'package:famd/src/utils/db/DBSysConf.dart';
 import 'package:famd/src/models/sys_conf.dart';
 import '../common/color.dart';
 import '../common/const.dart';
-import 'file_utils.dart';
+import 'file/file_utils.dart';
 
 final DBSysConf dbSysConf = DBSysConf();
 

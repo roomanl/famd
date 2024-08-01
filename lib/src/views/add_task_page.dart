@@ -1,3 +1,4 @@
+import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
@@ -124,7 +125,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
               .replaceAll("\n", ""),
           m3u8name: _namecontroller.text.replaceAll(" ", ""),
           downdir: downPath,
-          status: 1);
+          status: 1,
+          createtime: now());
       await insertM3u8Task(task);
     }
     await _taskCtrl.updateTaskList();

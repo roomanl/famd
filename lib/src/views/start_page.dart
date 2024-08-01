@@ -147,8 +147,8 @@ class _StartPageState extends State<StartPage> {
       Navigator.of(context).pop();
       Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) => HomePage()));
-    } else if (isStartServer && count > 20) {
-      ///监听aria2服务状态，20S内没监听到aria2服务在线判定为启动失败
+    } else if (isStartServer && count > 30) {
+      ///监听aria2服务状态，30S内没监听到aria2服务在线判定为启动失败
       updateStartBtnText('启动失败!');
       isStartServer = false;
       count = 0;

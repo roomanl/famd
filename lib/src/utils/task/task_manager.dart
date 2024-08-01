@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:famd/src/models/ts_info.dart';
+import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
@@ -15,7 +16,7 @@ import '../m3u8/ffmpeg_util.dart';
 import '../m3u8/m3u8_util.dart';
 import '../task/task_utils.dart';
 import '../common_utils.dart';
-import '../file_utils.dart';
+import '../file/file_utils.dart';
 
 class TaskManager {
   final _logger = Logger();
@@ -59,6 +60,7 @@ class TaskManager {
     M3u8Task? task = await getM3u8TaskById(id);
     if (task != null) {
       task.status = 1;
+      task.createtime = now();
       await updateM3u8Task(task);
       _taskCtrl.updateTaskList();
       EasyLoading.showInfo('任务已重新添加到下载中');
@@ -255,6 +257,7 @@ class TaskManager {
       _taskCtrl.updateDownStatusInfo("合并完成");
       _taskInfo.mergeStatus = '合并完成';
       _tasking.status = 3;
+      _tasking.filesize = getFileSize(mp4Path);
       await updateM3u8Task(_tasking);
       String folderPath = getDtsDir(_tasking, _downPath, '');
       // '$_downPath/${_tasking.m3u8name}/${_tasking.subname}';

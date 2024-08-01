@@ -1,15 +1,19 @@
+import 'package:famd/src/common/color.dart';
+import 'package:famd/src/components/text/text_danger.dart';
+import 'package:famd/src/components/text/text_info.dart';
+import 'package:famd/src/components/text/text_primary.dart';
+import 'package:famd/src/components/text/text_success.dart';
+import 'package:famd/src/components/text/text_warning.dart';
+import 'package:famd/src/models/m3u8_task.dart';
+import 'package:famd/src/utils/common_utils.dart';
+import 'package:famd/src/utils/file/file_utils.dart';
+import 'package:famd/src/utils/task/task_manager.dart';
+import 'package:famd/src/utils/task/task_utils.dart';
+import 'package:famd/src/view_models/app_states.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
-import '../common/color.dart';
-import '../models/m3u8_task.dart';
-import '../view_models/app_states.dart';
-
-import '../utils/common_utils.dart';
-import '../utils/file_utils.dart';
-import '../utils/task/task_utils.dart';
-import '../utils/task/task_manager.dart';
 
 class DownManagerPage extends StatefulWidget {
   const DownManagerPage({super.key});
@@ -79,7 +83,7 @@ class _DownManagerPageState extends State<DownManagerPage>
                 itemCount: _taskCtrl.taskList.length,
                 itemBuilder: (BuildContext context, int index) {
                   M3u8Task task = _taskCtrl.taskList[index];
-                  // task.status = 2;
+                  //task.status = 2;
                   if (task.status == 1) {
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -110,12 +114,15 @@ class _DownManagerPageState extends State<DownManagerPage>
                               ),
                             ],
                           ),
-                          // Text(
-                          //   task.m3u8url,
-                          //   style: const TextStyle(
-                          //       fontSize: 12,
-                          //       color: Color.fromARGB(100, 0, 0, 0)),
-                          // ),
+                          Row(
+                            children: <Widget>[
+                              const TextWarning(text: '等待下载'),
+                              const TextInfo(text: '  |  '),
+                              TextInfo(
+                                  text:
+                                      task.createtime ?? '0000-00-00 00:00:00'),
+                            ],
+                          ),
                         ],
                       ),
                     );
@@ -133,26 +140,14 @@ class _DownManagerPageState extends State<DownManagerPage>
                               Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(
-                                      '${task.m3u8name}-${task.subname}',
-                                      style: const TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.7),
-                                          fontSize: 16),
+                                    child: TextInfoLabel(
+                                      text: '${task.m3u8name}-${task.subname}',
                                     ),
                                   ),
-                                  Text(
-                                    _taskCtrl.downStatusInfo.value,
-                                    style: const TextStyle(
-                                        fontSize: 12, color: KONGQUELAN),
-                                  ),
+                                  TextPrimary(
+                                      text: _taskCtrl.downStatusInfo.value),
                                 ],
                               ),
-                              // Text(
-                              //   task.m3u8url,
-                              //   style: const TextStyle(
-                              //       fontSize: 12,
-                              //       color: Color.fromARGB(100, 0, 0, 0)),
-                              // ),
                             ],
                           ),
                           const Padding(
@@ -244,34 +239,42 @@ class _DownManagerPageState extends State<DownManagerPage>
                           },
                         );
                   Widget statusText = task.status == 3
-                      ? const Text('成功',
-                          style: TextStyle(fontSize: 12, color: FENLV))
-                      : Text(task.remarks ?? '失败',
-                          style: const TextStyle(
-                              fontSize: 12, color: SHANCHAHONG));
+                      ? const TextSuccess(text: '下载成功')
+                      : TextDanger(text: task.remarks ?? '下载失败');
                   return Container(
                     padding: const EdgeInsets.all(10),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            '${task.m3u8name}-${task.subname}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Color.fromRGBO(0, 0, 0, 0.7),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextInfoLabel(
+                                text: '${task.m3u8name}-${task.subname}',
+                              ),
                             ),
-                          ),
+                            statusIcon,
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: SHANCHAHONG,
+                              ),
+                              onPressed: () {
+                                deleteTask(task, true);
+                              },
+                            ),
+                          ],
                         ),
-                        statusText,
-                        statusIcon,
-                        IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                            color: SHANCHAHONG,
-                          ),
-                          onPressed: () {
-                            deleteTask(task, true);
-                          },
+                        Row(
+                          children: <Widget>[
+                            statusText,
+                            const TextInfo(text: '  |  '),
+                            TextInfo(
+                                text: task.createtime ?? '0000-00-00 00:00:00'),
+                            const TextInfo(text: '  |  '),
+                            TextInfo(text: task.filesize ?? '0M'),
+                          ],
                         ),
                       ],
                     ),

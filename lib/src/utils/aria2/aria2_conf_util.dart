@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../common/const.dart';
-import '../file_utils.dart';
+import '../file/file_utils.dart';
 import '../native_channel_utils.dart';
 import 'package:http/http.dart' as http;
 

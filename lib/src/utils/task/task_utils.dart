@@ -2,7 +2,7 @@ import 'package:famd/src/utils/db/DBM3u8Task.dart';
 import 'package:famd/src/utils/db/DBTsInfo.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/ts_info.dart';
-import 'package:famd/src/utils/file_utils.dart';
+import 'package:famd/src/utils/file/file_utils.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 
 final DBM3u8Task dbm3u8task = DBM3u8Task();
