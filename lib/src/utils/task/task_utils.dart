@@ -64,3 +64,15 @@ Future<bool> deleteTsByPid(int pid) async {
   int result = await dbTsInfo.deleteByPid(pid);
   return result > 0;
 }
+
+taskFullName(M3u8Task task) {
+  return '${task.m3u8name}-${task.subname}';
+}
+
+taskFullMp4Path(M3u8Task task) {
+  return '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
+}
+
+taskFullTsDir(M3u8Task task) {
+  return '${task.downdir}/${task.m3u8name}/${task.subname}';
+}

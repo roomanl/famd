@@ -98,7 +98,7 @@ class _SettingPageState extends State<SettingPage> {
 
   final _themeCtrl = Get.put(CustomThemeController());
 
-  Map<String, String> settingConf = {};
+  final settingConf = {};
 
   @override
   void initState() {

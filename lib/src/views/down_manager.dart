@@ -94,9 +94,9 @@ class _DownManagerPageState extends State<DownManagerPage>
                           Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(
-                                  '${task.m3u8name}-${task.subname}',
-                                  style: const TextStyle(fontSize: 16),
+                                child: TextInfo(
+                                  text: taskFullName(task),
+                                  fontSize: 16.0,
                                 ),
                               ),
                               const Icon(
@@ -116,11 +116,17 @@ class _DownManagerPageState extends State<DownManagerPage>
                           ),
                           Row(
                             children: <Widget>[
-                              const TextWarning(text: '等待下载'),
-                              const TextInfo(text: '  |  '),
+                              const TextWarning(
+                                text: '等待下载',
+                              ),
+                              const TextInfo(
+                                text: '  |  ',
+                                opacity: 0.4,
+                              ),
                               TextInfo(
-                                  text:
-                                      task.createtime ?? '0000-00-00 00:00:00'),
+                                text: task.createtime ?? '0000-00-00 00:00:00',
+                                opacity: 0.4,
+                              ),
                             ],
                           ),
                         ],
@@ -140,8 +146,9 @@ class _DownManagerPageState extends State<DownManagerPage>
                               Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: TextInfoLabel(
-                                      text: '${task.m3u8name}-${task.subname}',
+                                    child: TextInfo(
+                                      text: taskFullName(task),
+                                      fontSize: 16.0,
                                     ),
                                   ),
                                   TextPrimary(
@@ -161,13 +168,21 @@ class _DownManagerPageState extends State<DownManagerPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Text(
-                                        '速      度：${_taskCtrl.taskInfo.speed}/S',
-                                        style: textStyle),
-                                    Text('分 片  数：${_taskCtrl.taskInfo.tsTotal}',
-                                        style: textStyle),
-                                    Text('解密状态：${_taskCtrl.taskInfo.tsDecrty}',
-                                        style: textStyle),
+                                    TextInfo(
+                                      text:
+                                          '速      度：${_taskCtrl.taskInfo.speed}/S',
+                                      opacity: 0.4,
+                                    ),
+                                    TextInfo(
+                                      text:
+                                          '分 片  数：${_taskCtrl.taskInfo.tsTotal}',
+                                      opacity: 0.4,
+                                    ),
+                                    TextInfo(
+                                      text:
+                                          '解密状态：${_taskCtrl.taskInfo.tsDecrty}',
+                                      opacity: 0.4,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -176,25 +191,35 @@ class _DownManagerPageState extends State<DownManagerPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Text(
-                                        '下 载 进 度：${_taskCtrl.taskInfo.progress}',
-                                        style: textStyle),
+                                    TextInfo(
+                                      text:
+                                          '下 载 进 度：${_taskCtrl.taskInfo.progress}',
+                                      opacity: 0.4,
+                                    ),
                                     Row(
                                       children: <Widget>[
-                                        Text('分片下载数：', style: textStyle),
-                                        Text('${_taskCtrl.taskInfo.tsSuccess}',
-                                            style: const TextStyle(
-                                                fontSize: 12, color: FENLV)),
-                                        Text(' / ', style: textStyle),
-                                        Text('${_taskCtrl.taskInfo.tsFail}',
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: SHANCHAHONG)),
+                                        const TextInfo(
+                                          text: '分片下载数：',
+                                          opacity: 0.4,
+                                        ),
+                                        TextSuccess(
+                                          text:
+                                              '${_taskCtrl.taskInfo.tsSuccess}',
+                                        ),
+                                        const TextInfo(
+                                          text: ' / ',
+                                          opacity: 0.4,
+                                        ),
+                                        TextDanger(
+                                          text: '${_taskCtrl.taskInfo.tsFail}',
+                                        ),
                                       ],
                                     ),
-                                    Text(
-                                        '合 并 状 态：${_taskCtrl.taskInfo.mergeStatus}',
-                                        style: textStyle),
+                                    TextInfo(
+                                      text:
+                                          '合 并 状 态：${_taskCtrl.taskInfo.mergeStatus}',
+                                      opacity: 0.4,
+                                    ),
                                   ],
                                 ),
                               )
@@ -250,8 +275,9 @@ class _DownManagerPageState extends State<DownManagerPage>
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: TextInfoLabel(
-                                text: '${task.m3u8name}-${task.subname}',
+                              child: TextInfo(
+                                text: taskFullName(task),
+                                fontSize: 16.0,
                               ),
                             ),
                             statusIcon,
@@ -269,11 +295,22 @@ class _DownManagerPageState extends State<DownManagerPage>
                         Row(
                           children: <Widget>[
                             statusText,
-                            const TextInfo(text: '  |  '),
+                            const TextInfo(
+                              text: '  |  ',
+                              opacity: 0.4,
+                            ),
                             TextInfo(
-                                text: task.createtime ?? '0000-00-00 00:00:00'),
-                            const TextInfo(text: '  |  '),
-                            TextInfo(text: task.filesize ?? '0M'),
+                              text: task.createtime ?? '0000-00-00 00:00:00',
+                              opacity: 0.4,
+                            ),
+                            const TextInfo(
+                              text: '  |  ',
+                              opacity: 0.4,
+                            ),
+                            TextInfo(
+                              text: task.filesize ?? '0M',
+                              opacity: 0.4,
+                            ),
                           ],
                         ),
                       ],
@@ -338,10 +375,8 @@ class _DownManagerPageState extends State<DownManagerPage>
               onPressed: () async {
                 await deleteM3u8Task(task);
                 if (delFile) {
-                  String mp4Path =
-                      '${task.downdir}/${task.m3u8name}/${task.m3u8name}-${task.subname}.mp4';
-                  String tsPath =
-                      '${task.downdir}/${task.m3u8name}/${task.subname}';
+                  String mp4Path = taskFullMp4Path(task);
+                  String tsPath = taskFullTsDir(task);
                   deleteFile(mp4Path);
                   deleteDir(tsPath);
                 }

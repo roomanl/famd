@@ -28,6 +28,7 @@ class TaskManager {
   bool _isMergeTsing = false;
   TaskInfo _taskInfo = TaskInfo();
   int _restCount = 0;
+  var _tsGidIndex = {};
 
   ///记录下载回调时间
   late int notificationsTime = 0;
@@ -42,11 +43,14 @@ class TaskManager {
       _taskInfo.speed = bytesToSize(speed);
     });
   }
-
-  resetTask(List<M3u8Task> taskList) async {
+  cleanAria2() async {
     await Aria2Manager().forcePauseAll();
     await Aria2Manager().purgeDownloadResult();
     Aria2Manager().clearSession();
+  }
+
+  resetTask(List<M3u8Task> taskList) async {
+    await cleanAria2();
     for (M3u8Task task in taskList) {
       if (task.status == 2) {
         task.status = 1;
@@ -108,7 +112,9 @@ class TaskManager {
 
     _taskInfo.tsTotal = tsList.length;
 
-    List<TsTask>? tsTaskList = [];
+    _taskInfo.tsTaskList = [];
+    _tsGidIndex = {};
+    await cleanAria2();
     for (int i = 0; i < tsList.length; i++) {
       String url = tsList[i].tsurl;
       // print(url);
@@ -118,15 +124,15 @@ class TaskManager {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
         if ((gid ?? "").isNotEmpty) {
           tsTask.gid = gid;
+          _tsGidIndex[gid] = i;
         } else {
           tsTask.staus = 3;
         }
       } else {
         tsTask.staus = 2;
       }
-      tsTaskList.add(tsTask);
+      _taskInfo.tsTaskList?.add(tsTask);
     }
-    _taskInfo.tsTaskList = tsTaskList;
 
     await updateM3u8Task(_tasking);
     _updataTaskInfo();
@@ -310,29 +316,36 @@ class TaskManager {
       if (data.contains('aria2.onDown')) {
         String gid = jsonData['params'][0]['gid'];
         int taskIndex = -1;
-        _taskInfo.tsTaskList?.asMap().forEach((index, item) {
-          if (_taskInfo.tsTaskList?[index].gid == gid) {
-            taskIndex = index;
-            return;
-          }
-        });
-        // logger.i(taskIndex);
-        if (taskIndex < 0) return;
-        if (jsonData['method'] == 'aria2.onDownloadStart') {
-          _taskInfo.tsTaskList?[taskIndex].staus = 1;
-        } else if (jsonData['method'] == 'aria2.onDownloadPause') {
-          _taskInfo.tsTaskList?[taskIndex].staus = 3;
-        } else if (jsonData['method'] == 'aria2.onDownloadError') {
-          _taskInfo.tsTaskList?[taskIndex].staus = 3;
-          // logger.i('下载失败：' + data);
-        } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
-          _taskInfo.tsTaskList?[taskIndex].staus = 2;
-          // logger.i('下载完成：' + jsonData['params'][0]['gid']);
+        if (_tsGidIndex[gid] != null) {
+          taskIndex = _tsGidIndex[gid];
+          //print(taskIndex);
         } else {
-          _taskInfo.tsTaskList?[taskIndex].staus = 3;
+          _taskInfo.tsTaskList?.asMap().forEach((index, item) {
+            if (_taskInfo.tsTaskList?[index].gid == gid) {
+              taskIndex = index;
+              return;
+            }
+          });
         }
-        _updataTaskInfo();
-        _taskCtrl.updateTaskInfo(_taskInfo);
+        //print(jsonData['method']);
+        // logger.i(taskIndex);
+        if (taskIndex >= 0) {
+          if (jsonData['method'] == 'aria2.onDownloadStart') {
+            _taskInfo.tsTaskList?[taskIndex].staus = 1;
+          } else if (jsonData['method'] == 'aria2.onDownloadPause') {
+            _taskInfo.tsTaskList?[taskIndex].staus = 3;
+          } else if (jsonData['method'] == 'aria2.onDownloadError') {
+            _taskInfo.tsTaskList?[taskIndex].staus = 3;
+            // logger.i('下载失败：' + data);
+          } else if (jsonData['method'] == 'aria2.onDownloadComplete') {
+            _taskInfo.tsTaskList?[taskIndex].staus = 2;
+            // logger.i('下载完成：' + jsonData['params'][0]['gid']);
+          } else {
+            _taskInfo.tsTaskList?[taskIndex].staus = 3;
+          }
+          _updataTaskInfo();
+          _taskCtrl.updateTaskInfo(_taskInfo);
+        }
       } else if (jsonData['method'] == 'aria2.removeDownloadResult') {}
     }
   }
