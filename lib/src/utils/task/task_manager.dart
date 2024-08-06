@@ -23,9 +23,11 @@ class TaskManager {
   late M3u8Task _tasking;
   late M3u8Util _m3u8util;
   late String _downPath;
-  bool _isDowning = false;
-  bool _isDecryptTsing = false;
-  bool _isMergeTsing = false;
+  bool _isParseM3u8ing = false; //是否解析中
+  bool _isRestStart = false; //是否重试中
+  bool _isDowning = false; //是否下载中
+  bool _isDecryptTsing = false; //是否解密中
+  bool _isMergeTsing = false; //是否合并中
   TaskInfo _taskInfo = TaskInfo();
   int _restCount = 0;
   var _tsGidIndex = {};
@@ -73,17 +75,20 @@ class TaskManager {
 
   startAria2Task({M3u8Task? task}) async {
     if (_isDowning) return;
+    _isRestStart = false;
+    _isParseM3u8ing = true;
     _taskInfo = TaskInfo();
     if (task == null) {
       if (_taskCtrl.taskList.isEmpty) {
         EasyLoading.showInfo('列表中没有任务');
+        _isParseM3u8ing = false;
         return;
       }
-      for (M3u8Task task in _taskCtrl.taskList) {
-        if (task.status == 2) {
-          EasyLoading.showInfo('已经在下载中');
-          return;
-        }
+      bool downing = _taskCtrl.taskList.any((task) => task.status == 2);
+      if (downing) {
+        EasyLoading.showInfo('已经在下载中');
+        _isParseM3u8ing = false;
+        return;
       }
       _taskCtrl.updateTaskInfo(_taskInfo);
       _taskCtrl.updateDownStatusInfo("正在开始任务...");
@@ -138,10 +143,14 @@ class TaskManager {
     _updataTaskInfo();
     _taskCtrl.updateTaskInfo(_taskInfo);
     _taskCtrl.updateDownStatusInfo("下载中...");
+    _isParseM3u8ing = false;
     // EasyLoading.showSuccess('任务启动成功');
   }
 
   _restStartAria2Task() async {
+    //解析中，不重试
+    if (_isParseM3u8ing || _isRestStart) return;
+    _isRestStart = true;
     //有下载失败的分片，重试5次，超过5次不再重试
     if (_restCount >= 5) {
       await _decryptTs();
@@ -152,8 +161,10 @@ class TaskManager {
     await Aria2Manager().purgeDownloadResult();
     _isDowning = false;
     _tasking.status = 1;
-    _restCount++;
+    _restCount = _restCount + 1;
     _taskCtrl.updateDownStatusInfo("重试$_restCount");
+    //print("重试$_restCount");
+    _isRestStart = false;
     startAria2Task(task: _tasking);
   }
 
@@ -176,10 +187,9 @@ class TaskManager {
     progress = tsSuccess / tsTotal;
     _taskInfo.progress =
         tsTotal == 0 ? '0%' : '${(progress * 100).toStringAsFixed(2)}%';
-
-    // _taskInfo.speed = bytesToSize(Aria2Manager().downSpeed);
-
-    if (tsSuccess + tsFail == tsTotal) {
+    // _updateSpeed();
+    //不在解析中，才执行
+    if (tsSuccess + tsFail == tsTotal && !_isParseM3u8ing) {
       if (tsFail > 0) {
         _restStartAria2Task();
       } else if (tsSuccess > 0) {
@@ -188,6 +198,10 @@ class TaskManager {
         errDownFinish('下载失败');
       }
     }
+  }
+
+  _updateSpeed() {
+    _taskInfo.speed = bytesToSize(Aria2Manager().downSpeed);
   }
 
   _decryptTs() async {
@@ -327,7 +341,6 @@ class TaskManager {
             }
           });
         }
-        //print(jsonData['method']);
         // logger.i(taskIndex);
         if (taskIndex >= 0) {
           if (jsonData['method'] == 'aria2.onDownloadStart') {

@@ -1,4 +1,5 @@
 import 'package:famd/src/common/color.dart';
+import 'package:famd/src/components/dialog/confirm_dialog.dart';
 import 'package:famd/src/components/text/text_danger.dart';
 import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_primary.dart';
@@ -58,9 +59,7 @@ class _DownManagerPageState extends State<DownManagerPage>
               icon: const Icon(Icons.delete_forever),
               tooltip: '清空任务',
               onPressed: () async {
-                await _taskManager.resetTask(_taskCtrl.taskList);
-                await clearM3u8Task();
-                _taskCtrl.updateTaskList();
+                deleteAllTask();
               },
             ),
           ),
@@ -356,36 +355,39 @@ class _DownManagerPageState extends State<DownManagerPage>
     _taskManager.startAria2Task();
   }
 
-  deleteTask(M3u8Task task, bool delFile) {
-    showDialog(
+  deleteAllTask() {
+    showConfirmDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('提示'),
-          content: const Text('您确定要删除吗？'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () async {
-                await deleteM3u8Task(task);
-                if (delFile) {
-                  String mp4Path = taskFullMp4Path(task);
-                  String tsPath = taskFullTsDir(task);
-                  deleteFile(mp4Path);
-                  deleteDir(tsPath);
-                }
-                await _taskCtrl.updateTaskList();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+      content: "确定要删除所有任务以及本地文件吗？",
+      onConfirm: () async {
+        await _taskManager.resetTask(_taskCtrl.taskList);
+        await clearM3u8Task();
+        _taskCtrl.updateTaskList();
+        Navigator.of(context).pop();
+      },
+      onCancel: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  deleteTask(M3u8Task task, bool delFile) {
+    showConfirmDialog(
+      context: context,
+      content: "确定要删除此任务以及本地文件吗？",
+      onConfirm: () async {
+        await deleteM3u8Task(task);
+        if (delFile) {
+          String mp4Path = taskFullMp4Path(task);
+          String tsPath = taskFullTsDir(task);
+          deleteFile(mp4Path);
+          deleteDir(tsPath);
+        }
+        await _taskCtrl.updateTaskList();
+        Navigator.of(context).pop();
+      },
+      onCancel: () {
+        Navigator.of(context).pop();
       },
     );
   }

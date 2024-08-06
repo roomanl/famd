@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage"/>
     <uses-permission android:name="android.permission.ACTION_MANAGE_WRITE_SETTINGS" />
     <application
-        android:label="Famd M3U8下载器"
+        android:label="Famd M3U8下载器免费版"
         android:name="${applicationName}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:icon="@mipmap/ic_launcher"

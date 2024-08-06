@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                       width: 40, height: 40),
                 ),
                 Text(
-                  'Famd M3U8下载器',
+                  'Famd M3U8下载器免费版',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ],

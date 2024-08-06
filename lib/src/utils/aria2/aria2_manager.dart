@@ -127,7 +127,7 @@ class Aria2Manager {
           .transform(const LineSplitter())
           .listen((line) {
         if (line.trim().isNotEmpty) {
-          logger.i(line);
+          //logger.i(line);
         }
       });
       processResult.stderr
@@ -135,7 +135,7 @@ class Aria2Manager {
           .transform(const LineSplitter())
           .listen((line) {
         if (line.trim().isNotEmpty) {
-          logger.i("Error: $line");
+          //logger.i("Error: $line");
         }
       });
     });

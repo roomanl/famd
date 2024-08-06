@@ -29,12 +29,24 @@ class _StartPageState extends State<StartPage> {
               const Expanded(
                 child: Align(
                   alignment: Alignment.center,
-                  child: Text(
-                    'Famd M3u8下载器',
-                    style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 0.8),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 36),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Famd M3u8下载器',
+                        style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.8),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 36),
+                      ),
+                      Text(
+                        '免费版',
+                        style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.8),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 36),
+                      ),
+                    ],
                   ),
                 ),
               ),
