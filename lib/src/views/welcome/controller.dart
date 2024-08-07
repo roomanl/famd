@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/utils/aria2/aria2_manager.dart';
+import 'package:famd/src/views/home/index.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class WelcomeController extends GetxController {
@@ -22,11 +24,13 @@ class WelcomeController extends GetxController {
   void onClose() {
     if (_subscription != null) {
       _subscription?.cancel();
+      print('取消订阅');
     }
     super.onClose();
   }
 
   _init() async {
+    Aria2Manager().closeServer();
     if (!await _checkNetwork()) {
       return;
     }
@@ -61,11 +65,15 @@ class WelcomeController extends GetxController {
       _count++;
     }
     if (online) {
-      // Get.toNamed('/home');
-      Get.offNamed('/home');
+      Get.toNamed('/home');
+      // Get.offNamed('/home');
       // Navigator.of(Get.context!).pop();
-      // Navigator.of(Get.context!).push(
-      //     MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+      // Navigator.of(Get.context!).push(MaterialPageRoute(
+      //     builder: (BuildContext context) => const HomePage()));
+      if (_subscription != null) {
+        _subscription?.cancel();
+        print('取消订阅');
+      }
     } else if (_isStartServer && _count > 30) {
       ///监听aria2服务状态，30S内没监听到aria2服务在线判定为启动失败
       _updateStartBtnText('启动失败!');

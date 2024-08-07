@@ -28,6 +28,7 @@ class _DownManagerPageState extends State<DownManagerPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('任务管理'),
         actions: <Widget>[
           SizedBox(

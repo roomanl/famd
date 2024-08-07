@@ -29,6 +29,7 @@ class _SettingPageState extends State<SettingPage> {
         //     Navigator.pop(context);
         //   },
         // ),
+        automaticallyImplyLeading: false,
         title: const Text('设置'),
       ),
       body: ListView(

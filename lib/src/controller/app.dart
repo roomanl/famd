@@ -55,5 +55,6 @@ class AppController extends GetxController with WidgetsBindingObserver {
   void didChangeMetrics() {
     super.didChangeMetrics();
     updateShowNavigationDrawer(MediaQuery.of(Get.context!).size.width <= 500);
+    // print("didChangeMetrics");
   }
 }

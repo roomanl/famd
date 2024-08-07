@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/views/about/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -190,7 +191,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
         AddTaskPage(),
         DownManagerPage(),
         SettingPage(),
-        AppinfoPage(),
+        AboutPage(),
       ],
     );
   }

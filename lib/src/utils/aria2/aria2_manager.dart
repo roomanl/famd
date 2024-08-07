@@ -120,7 +120,7 @@ class Aria2Manager {
       permission777(exe);
       permission777(conf);
     }
-
+    print('开始启动服务');
     cmdProcess = Process.start(exe, ['--conf-path=$conf']);
     cmdProcess.then((processResult) {
       print(processResult.pid);
@@ -159,13 +159,17 @@ class Aria2Manager {
   closeServer() {
     print('开始关闭服务');
     bool killSuccess = false;
-    if (Platform.isWindows) {
-      final processResult =
-          Process.runSync('taskkill', ['/F', '/T', '/IM', 'm3u8aria2c.exe']);
-      killSuccess = processResult.exitCode == 0;
-    } else if (Platform.isLinux || Platform.isAndroid) {
-      final processResult = Process.runSync('killall', ['m3u8aria2c']);
-      killSuccess = processResult.exitCode == 0;
+    try {
+      if (Platform.isWindows) {
+        final processResult =
+            Process.runSync('taskkill', ['/F', '/T', '/IM', 'm3u8aria2c.exe']);
+        killSuccess = processResult.exitCode == 0;
+      } else if (Platform.isLinux || Platform.isAndroid) {
+        final processResult = Process.runSync('killall', ['m3u8aria2c']);
+        killSuccess = processResult.exitCode == 0;
+      }
+    } catch (e) {
+      logger.e(e);
     }
     print('关闭服务:' + killSuccess.toString());
   }

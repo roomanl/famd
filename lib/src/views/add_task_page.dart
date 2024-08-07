@@ -29,6 +29,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         //     Navigator.pop(context);
         //   },
         // ),
+        automaticallyImplyLeading: false,
         title: const Text('添加任务'),
       ),
       body: ListView(children: [
