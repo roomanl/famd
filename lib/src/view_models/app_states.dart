@@ -18,7 +18,7 @@ class CustomThemeController extends GetxController {
   }
 }
 
-class AppController extends GetxController {
+class AppController2 extends GetxController {
   RxInt pageIndex = 1.obs;
   RxBool aria2Online = false.obs;
   RxBool showNavigationDrawer = false.obs;
@@ -33,10 +33,12 @@ class AppController extends GetxController {
   updatePageIndex(int index) {
     pageIndex.update((val) {
       pageIndex.value = index;
+      // updateAria2Online(true);
     });
   }
 
   updateAria2Online(bool online) {
+    // print("==>" + online.toString());
     aria2Online.update((val) {
       aria2Online.value = online;
     });

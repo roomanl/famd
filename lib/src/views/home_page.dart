@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:famd/src/controller/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   AppBar? _buildAppBar() {
-    return _appCtrl.showNavigationDrawer.isTrue
+    return _appCtrl2.showNavigationDrawer.isTrue
         ? AppBar(
             backgroundColor: _themeCtrl.mainColor.value,
             title: const Text(
@@ -134,7 +135,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   List<Widget> _buildcontentPage() {
-    return _appCtrl.showNavigationDrawer.isTrue
+    return _appCtrl2.showNavigationDrawer.isTrue
         ? [
             Expanded(
               child: _buildViewPage(),
@@ -157,7 +158,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                       );
                     },
                   ).toList(),
-                  selectedIndex: _appCtrl.pageIndex.value,
+                  selectedIndex: _appCtrl2.pageIndex.value,
                   trailing: Expanded(
                     child: Align(
                       alignment: Alignment.bottomCenter,
@@ -195,6 +196,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   Widget _buildWifiIcon() {
+    // print(_appCtrl2.aria2Online.isTrue);
     Widget icon = _appCtrl.aria2Online.isTrue
         ? Image.asset('lib/resources/images/online.png', width: 25, height: 25)
         : Image.asset('lib/resources/images/offline.png',
@@ -217,7 +219,8 @@ class _HomePageState extends State<HomePage> with WindowListener {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final MyPageView.PageController _pageController =
       MyPageView.PageController(initialPage: 1);
-  final _appCtrl = Get.put(AppController());
+  final _appCtrl2 = Get.put(AppController2());
+  final _appCtrl = Get.find<AppController>();
   final _themeCtrl = Get.put(CustomThemeController());
   late bool isStartServer = false;
   late int startCount = 0;
@@ -247,7 +250,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
     // if (!showDrawer && scaffoldKey.currentState!.isEndDrawerOpen) {
     //   scaffoldKey.currentState!.closeEndDrawer();
     // }
-    _appCtrl.updateShowNavigationDrawer(showDrawer);
+    _appCtrl2.updateShowNavigationDrawer(showDrawer);
   }
 
   @override
@@ -266,7 +269,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
 
   taskStatesListener() {
     ///监听页码变化跳转页面
-    _appCtrl.pageIndex.listen((val) {
+    _appCtrl2.pageIndex.listen((val) {
       if (_pageController.hasClients && _pageController.page != val) {
         _pageController.jumpToPage(val);
       }
@@ -274,6 +277,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
 
     ///监听aria2服务状态
     _appCtrl.aria2Online.listen((val) {
+      // print(val);
       listenerAria2Status(val);
     });
   }
@@ -305,7 +309,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
     FocusScope.of(context).requestFocus(FocusNode());
 
     ///添加任务后需自动跳转到任务管理页，需要在别的页面更改页码，因此把页码交给状态管理
-    _appCtrl.updatePageIndex(index);
+    _appCtrl2.updatePageIndex(index);
     // _pageController.jumpToPage(index);
   }
 

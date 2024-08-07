@@ -79,7 +79,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
-  final _appCtrl = Get.put(AppController());
+  final _appCtrl = Get.put(AppController2());
   final _taskCtrl = Get.put(TaskController());
   late String downPath;
 

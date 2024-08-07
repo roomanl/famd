@@ -35,7 +35,7 @@ class TaskManager {
   ///记录下载回调时间
   late int notificationsTime = 0;
   final _taskCtrl = Get.put(TaskController());
-  final _appCtrl = Get.put(AppController());
+  final _appCtrl = Get.put(AppController2());
 
   TaskManager() {
     _taskCtrl.aria2Notifications.listen((data) {

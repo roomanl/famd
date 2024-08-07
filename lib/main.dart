@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:famd/src/bindings/app.dart';
+import 'package:famd/src/router/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -50,7 +52,10 @@ void main() async {
         fontFamily: "FangYuan2",
         colorSchemeSeed: themeColor.color,
       ),
-      home: const StartPage(),
+      // home: const StartPage(),
+      initialRoute: '/',
+      initialBinding: AppBinding(),
+      getPages: RoutePages.list,
       builder: EasyLoading.init(),
     ));
   }, (Object obj, StackTrace stack) {

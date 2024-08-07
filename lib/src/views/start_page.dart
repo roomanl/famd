@@ -88,7 +88,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  final _appCtrl = Get.put(AppController());
+  final _appCtrl = Get.put(AppController2());
   final _themeCtrl = Get.put(CustomThemeController());
   late int count = 0;
   late bool isStartServer = false;
