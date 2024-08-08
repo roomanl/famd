@@ -16,7 +16,7 @@ class Aria2Manager {
   factory Aria2Manager() => _instance;
 
   final _appCtrl2 = Get.put(AppController2());
-  final _taskCtrl = Get.put(TaskController());
+  final _taskCtrl = Get.put(TaskController2());
   final _appCtrl = Get.find<AppController>();
   WebSocketChannel? webSocketChannel;
   json_rpc.Client? jsonRpcClient;

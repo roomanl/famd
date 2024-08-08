@@ -12,6 +12,7 @@ class AppController extends GetxController with WidgetsBindingObserver {
   void onReady() {
     super.onReady();
     print("AppController onReady");
+    changWinSize();
     updateAppVersion();
   }
 
@@ -39,6 +40,10 @@ class AppController extends GetxController with WidgetsBindingObserver {
     });
   }
 
+  changWinSize() {
+    updateShowNavigationDrawer(MediaQuery.of(Get.context!).size.width <= 500);
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -54,7 +59,7 @@ class AppController extends GetxController with WidgetsBindingObserver {
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    updateShowNavigationDrawer(MediaQuery.of(Get.context!).size.width <= 500);
+    changWinSize();
     // print("didChangeMetrics");
   }
 }

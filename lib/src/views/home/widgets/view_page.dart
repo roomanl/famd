@@ -1,7 +1,6 @@
-import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/views/about/index.dart';
-import 'package:famd/src/views/add_task_page.dart';
-import 'package:famd/src/views/down_manager.dart';
+import 'package:famd/src/views/addtask/index.dart';
+import 'package:famd/src/views/downmanager/index.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/components/page_view.dart' as HomePageView;
 import 'package:famd/src/views/setting_page.dart';

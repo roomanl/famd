@@ -55,7 +55,7 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
   late String downPath;
   var m3u8Res = [];
   final _themeCtrl = Get.put(CustomThemeController());
-  final _taskCtrl = Get.put(TaskController());
+  final _taskCtrl = Get.put(TaskController2());
   late TabController _tabController;
 
   @override

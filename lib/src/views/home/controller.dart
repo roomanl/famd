@@ -6,9 +6,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/components/page_view.dart' as HomePageView;
 import 'package:logger/logger.dart';
+import 'package:window_manager/window_manager.dart';
 import 'model.dart';
 
-class HomeController extends GetxController with WidgetsBindingObserver {
+class HomeController extends GetxController
+    with WidgetsBindingObserver, WindowListener {
   final _appCtrl = Get.find<AppController>();
   final Logger _logger = Logger();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -18,7 +20,6 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final leftBarStyle = LeftBarStyle();
 
   RxInt viewPageIndex = 1.obs;
-  RxBool showNavigationDrawer = false.obs;
   bool _isAria2StartServer = false;
   int _startCount = 0;
 
@@ -34,6 +35,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
+    if (GetPlatform.isWindows || GetPlatform.isLinux) {
+      windowManager.addListener(this);
+    }
   }
 
   @override
@@ -47,6 +51,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   _init() async {
     _aria2OnlineListener();
     checkAppUpdate(Get.context!, false);
+    _appCtrl.changWinSize();
   }
 
   changePageView(int index) {
@@ -120,23 +125,28 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     scaffoldKey.currentState!.closeEndDrawer();
   }
 
-  updateShowNavigationDrawer(bool online) {
-    showNavigationDrawer.update((val) {
-      showNavigationDrawer.value = online;
-    });
-  }
-
   @override
   void onClose() {
-    super.onClose();
     WidgetsBinding.instance.removeObserver(this);
+    if (GetPlatform.isWindows || GetPlatform.isLinux) {
+      windowManager.removeListener(this);
+    }
+    super.onClose();
   }
 
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    _appCtrl.updateShowNavigationDrawer(
-        MediaQuery.of(Get.context!).size.width <= 500);
+    _appCtrl.changWinSize();
     // print("didChangeMetrics");
+  }
+
+  @override
+  void onWindowClose() {
+    ///关闭软件时关闭aria2服务
+    closAria2();
+    if (GetPlatform.isWindows || GetPlatform.isLinux) {
+      windowManager.removeListener(this);
+    }
   }
 }

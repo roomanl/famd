@@ -1,3 +1,5 @@
+import 'package:famd/src/views/addtask/binding.dart';
+import 'package:famd/src/views/addtask/index.dart';
 import 'package:famd/src/views/home/binding.dart';
 import 'package:famd/src/views/home/index.dart';
 import 'package:famd/src/views/search_page.dart';

@@ -34,7 +34,7 @@ class TaskManager {
 
   ///记录下载回调时间
   late int notificationsTime = 0;
-  final _taskCtrl = Get.put(TaskController());
+  final _taskCtrl = Get.put(TaskController2());
   final _appCtrl = Get.put(AppController2());
 
   TaskManager() {

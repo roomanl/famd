@@ -6,13 +6,10 @@ import 'package:window_manager/window_manager.dart';
 import 'controller.dart';
 import 'widgets/widgets.dart';
 
-class HomePage extends GetView<HomeController> with WindowListener {
+class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    if (GetPlatform.isWindows || GetPlatform.isLinux) {
-      windowManager.addListener(this);
-    }
     return GetBuilder<HomeController>(
       builder: (_) {
         return Obx(
@@ -53,14 +50,5 @@ class HomePage extends GetView<HomeController> with WindowListener {
               child: HomeViewPageWidget(),
             ),
           ];
-  }
-
-  @override
-  void onWindowClose() {
-    ///关闭软件时关闭aria2服务
-    Get.find<HomeController>().closAria2();
-    if (GetPlatform.isWindows || GetPlatform.isLinux) {
-      windowManager.removeListener(this);
-    }
   }
 }

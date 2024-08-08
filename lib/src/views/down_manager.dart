@@ -77,7 +77,7 @@ class _DownManagerPageState extends State<DownManagerPage>
         controller: _tabController,
         children: <Widget>[
           Center(
-            child: GetBuilder<TaskController>(
+            child: GetBuilder<TaskController2>(
               builder: (_) => ListView.separated(
                 padding: const EdgeInsets.all(8),
                 itemCount: _taskCtrl.taskList.length,
@@ -236,7 +236,7 @@ class _DownManagerPageState extends State<DownManagerPage>
             ),
           ),
           Center(
-            child: GetBuilder<TaskController>(
+            child: GetBuilder<TaskController2>(
               builder: (_) => ListView.separated(
                 padding: const EdgeInsets.all(8),
                 itemCount: _taskCtrl.finishTaskList.length,
@@ -327,7 +327,7 @@ class _DownManagerPageState extends State<DownManagerPage>
     );
   }
 
-  final TaskController _taskCtrl = Get.find();
+  final TaskController2 _taskCtrl = Get.find();
   late final TabController _tabController;
   final logger = Logger();
   final TaskManager _taskManager = TaskManager();

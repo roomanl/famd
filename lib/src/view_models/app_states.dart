@@ -57,7 +57,7 @@ class AppController2 extends GetxController {
   }
 }
 
-class TaskController extends GetxController {
+class TaskController2 extends GetxController {
   List<M3u8Task> taskList = [];
   List<M3u8Task> finishTaskList = [];
   TaskInfo taskInfo = TaskInfo();
