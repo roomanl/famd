@@ -4,8 +4,7 @@ import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:get/get.dart';
 
 class TaskController extends GetxController {
-  RxInt taskLength = 0.obs;
-  List<M3u8Task> taskList = [];
+  RxList<M3u8Task> taskList = RxList();
   RxList<M3u8Task> finishTaskList = RxList();
   RxString downStatusInfo = "".obs;
   RxString aria2Notifications = "".obs;
@@ -19,7 +18,7 @@ class TaskController extends GetxController {
 
   updateTaskList() async {
     List<M3u8Task> list = await getM3u8TaskList();
-    taskList = [];
+    taskList = RxList();
     finishTaskList = RxList();
     for (M3u8Task task in list) {
       if (task.status == 1 || task.status == 2) {
@@ -28,14 +27,7 @@ class TaskController extends GetxController {
         finishTaskList.add(task);
       }
     }
-    updateTaskLength();
-    // update();
-  }
-
-  updateTaskLength() {
-    taskLength.update((val) {
-      taskLength.value = taskList.length;
-    });
+    update();
   }
 
   updateTaskInfo(info) {

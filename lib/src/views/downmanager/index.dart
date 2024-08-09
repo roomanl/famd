@@ -9,19 +9,14 @@ class DownManagerPage extends GetView<DownManagerController> {
 
   @override
   Widget build(BuildContext context) {
-    // final appCtrl = Get.find<AppController>();
-    return GetBuilder<DownManagerController>(
-      builder: (_) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text('任务管理'),
-            actions: buildTopBarActions(),
-            bottom: buildTopBarBottom(),
-          ),
-          body: const TabBarViewWidget(),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('任务管理'),
+        actions: buildTopBarActions(),
+        bottom: buildTopBarBottom(),
+      ),
+      body: const TabBarViewWidget(),
     );
   }
 }

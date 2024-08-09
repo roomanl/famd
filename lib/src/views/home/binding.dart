@@ -4,6 +4,7 @@ import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/views/about/controller.dart';
 import 'package:famd/src/views/addtask/controller.dart';
 import 'package:famd/src/views/downmanager/controller.dart';
+import 'package:famd/src/views/setting/controller.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
@@ -16,6 +17,7 @@ class HomeBinding implements Bindings {
     Get.lazyPut<AboutController>(() => AboutController());
     Get.lazyPut<AddTaskController>(() => AddTaskController());
     Get.lazyPut<DownManagerController>(() => DownManagerController());
+    Get.lazyPut<SettingController>(() => SettingController());
     // Get.lazyPut<AppController>(() => AppController());
     // Get.lazyPut<ThemeController>(() => ThemeController());
   }

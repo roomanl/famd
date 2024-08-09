@@ -10,6 +10,7 @@ class TextInfo extends StatelessWidget {
   final TextDecoration decoration; // 文本装饰
   final FontWeight fontWeight; // 字体粗细
   final double opacity;
+  final double letterSpacing;
 
   const TextInfo({
     Key? key,
@@ -21,6 +22,7 @@ class TextInfo extends StatelessWidget {
     this.decoration = TextDecoration.none,
     this.fontWeight = FontWeight.normal,
     this.opacity = 0.7,
+    this.letterSpacing = 0,
   }) : super(key: key);
 
   @override
@@ -32,6 +34,7 @@ class TextInfo extends StatelessWidget {
         color: color ?? Color.fromRGBO(0, 0, 0, opacity),
         decoration: decoration,
         fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
       ),
       textAlign: textAlign,
       overflow: overflow,

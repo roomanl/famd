@@ -1,5 +1,7 @@
+import 'package:famd/src/components/dialog/confirm_dialog.dart';
 import 'package:famd/src/controller/task.dart';
 import 'package:famd/src/models/m3u8_task.dart';
+import 'package:famd/src/models/task_info.dart';
 import 'package:famd/src/utils/file/file_utils.dart';
 import 'package:famd/src/utils/task/task_manager.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
@@ -11,6 +13,9 @@ class DownManagerController extends GetxController
   final _taskCtrl = Get.find<TaskController>();
   late final TabController tabController;
   final TaskManager _taskManager = TaskManager();
+  TaskInfo taskInfo = TaskInfo();
+  RxString downStatusInfo = "".obs;
+  RxString aria2Notifications = "".obs;
 
   @override
   void onInit() {
@@ -39,10 +44,27 @@ class DownManagerController extends GetxController
     startTask();
   }
 
+  updateTaskInfo(info) {
+    taskInfo = info;
+    update();
+  }
+
+  updateDownStatusInfo(String info) {
+    downStatusInfo.update((val) {
+      downStatusInfo.value = info;
+    });
+  }
+
+  updateAria2Notifications(String info) {
+    aria2Notifications.update((val) {
+      aria2Notifications.value = info;
+    });
+  }
+
   deleteTask(M3u8Task task, bool delFile) {
-    Get.defaultDialog(
-      title: "提示",
-      middleText: "确定要删除此任务以及本地文件吗？",
+    showConfirmDialog(
+      context: Get.context!,
+      content: "确定要删除此任务以及本地文件吗？",
       onConfirm: () async {
         await deleteM3u8Task(task);
         if (delFile) {
@@ -52,26 +74,27 @@ class DownManagerController extends GetxController
           deleteDir(tsPath);
         }
         await _taskCtrl.updateTaskList();
-        Get.back();
+        Navigator.of(Get.context!).pop();
       },
       onCancel: () {
-        Get.back();
+        Navigator.of(Get.context!).pop();
       },
     );
   }
 
-  deleteAllTask() {}
-
-  getTaskLength() {
-    print(_taskCtrl.taskList.length);
-    return _taskCtrl.taskList.length;
-  }
-
-  getTask(index) {
-    return _taskCtrl.taskList[index];
-  }
-
-  getTaskStatus(index) {
-    return _taskCtrl.taskList[index].status;
+  deleteAllTask() {
+    showConfirmDialog(
+      context: Get.context!,
+      content: "确定要删除所有任务以及本地文件吗？",
+      onConfirm: () async {
+        await _taskManager.resetTask(_taskCtrl.taskList);
+        await clearM3u8Task();
+        _taskCtrl.updateTaskList();
+        Navigator.of(Get.context!).pop();
+      },
+      onCancel: () {
+        Navigator.of(Get.context!).pop();
+      },
+    );
   }
 }

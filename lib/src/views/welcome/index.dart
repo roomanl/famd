@@ -9,35 +9,31 @@ class WelcomPage extends GetView<WelcomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<WelcomeController>(
-      builder: (_) {
-        return const Scaffold(
-          body: BackgroundWidget(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: AppTileWidget(),
-                    ),
-                  ),
-                  Expanded(
-                    child: StartBtnWidget(),
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: AppVersion(),
-                    ),
-                  ),
-                ],
+    return const Scaffold(
+      body: BackgroundWidget(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: AppTileWidget(),
+                ),
               ),
-            ),
+              Expanded(
+                child: StartBtnWidget(),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AppVersion(),
+                ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

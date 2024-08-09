@@ -17,7 +17,9 @@ class WifiIconWidget extends GetView<HomeController> {
             : Image.asset('lib/resources/images/offline.png',
                 width: 25, height: 25),
       ),
-      onPressed: () => controller.startAria2(),
+      onPressed: () => {
+        controller.startAria2(),
+      },
     );
   }
 }
