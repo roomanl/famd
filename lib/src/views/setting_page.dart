@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/models/sys_conf.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  final _themeCtrl = Get.put(CustomThemeController());
+  final _themeCtrl = Get.find<ThemeController>();
 
   final settingConf = {};
 

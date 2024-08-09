@@ -1,3 +1,4 @@
+import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _SearchVodResultPageState extends State<SearchVodResultPage>
   int? _vodId;
   late String downPath;
   var m3u8Res = [];
-  final _themeCtrl = Get.put(CustomThemeController());
+  final _themeCtrl = Get.find<ThemeController>();
   final _taskCtrl = Get.put(TaskController2());
   late TabController _tabController;
 

@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:famd/src/controller/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
@@ -89,7 +90,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   final _appCtrl = Get.put(AppController2());
-  final _themeCtrl = Get.put(CustomThemeController());
+  final _themeCtrl = Get.find<ThemeController>();
   late int count = 0;
   late bool isStartServer = false;
   String startBtnText = '启动Aria2服务';

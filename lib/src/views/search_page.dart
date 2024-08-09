@@ -1,3 +1,4 @@
+import 'package:famd/src/controller/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -81,7 +82,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  final _themeCtrl = Get.put(CustomThemeController());
+  final _themeCtrl = Get.find<ThemeController>();
   final _serachController = SearchController();
   var voidDataList = [];
   String msgText = '请输入关键字进行搜索';

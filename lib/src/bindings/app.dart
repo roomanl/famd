@@ -6,6 +6,6 @@ class AppBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AppController>(() => AppController());
-    Get.lazyPut<ThemeController>(() => ThemeController());
+    // Get.lazyPut<ThemeController>(() => ThemeController());
   }
 }

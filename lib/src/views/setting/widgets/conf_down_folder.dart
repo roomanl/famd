@@ -1,4 +1,3 @@
-import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/views/setting/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,6 @@ class ConfDownFolderWidget extends GetView<SettingController> {
 
   @override
   Widget build(BuildContext context) {
-    final appCtrl = Get.find<AppController>();
     return GetBuilder<SettingController>(
       builder: (_) {
         return Row(

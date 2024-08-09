@@ -11,11 +11,17 @@ class BackgroundWidget extends GetView<ThemeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: controller.mainColor.value,
-      child: child,
+    return GetBuilder<ThemeController>(
+      builder: (_) {
+        return Obx(
+          () => Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: controller.mainColor.value,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/views/about/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -222,7 +223,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
       MyPageView.PageController(initialPage: 1);
   final _appCtrl2 = Get.put(AppController2());
   final _appCtrl = Get.find<AppController>();
-  final _themeCtrl = Get.put(CustomThemeController());
+  final _themeCtrl = Get.find<ThemeController>();
   late bool isStartServer = false;
   late int startCount = 0;
   static const Color textColor = Color(0xffcfd1d7);

@@ -19,6 +19,8 @@ class SettingPage extends GetView<SettingController> {
           ConfDownFolderWidget(),
           Divider(thickness: 1, height: 1),
           SizedBox(height: 10),
+          ConfThemeColorWidget(),
+          Divider(thickness: 1, height: 1),
         ],
       ),
     );

@@ -1,16 +1,9 @@
-import 'package:famd/src/common/color.dart';
-import 'package:famd/src/controller/theme.dart';
-import 'package:famd/src/utils/db/DBHelper.dart';
-import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/utils/common_utils.dart';
-import 'package:window_manager/window_manager.dart';
 
 class AppController extends GetxController with WidgetsBindingObserver {
-  final _themeCtrl = Get.find<ThemeController>();
-  RxString appVersion = '1.0'.obs;
+  RxString appVersion = ''.obs;
   RxBool aria2Online = false.obs;
   RxInt aria2Speed = 0.obs;
   RxBool showNavigationDrawer = false.obs;
@@ -24,35 +17,7 @@ class AppController extends GetxController with WidgetsBindingObserver {
     updateAppVersion();
   }
 
-  _init() async {
-    DBHelper.getInstance().database;
-    CustomThemeColor themeColor = await getThemeColor();
-    _themeCtrl.updateMainColor(themeColor.color);
-    if (GetPlatform.isWindows || GetPlatform.isLinux) {
-      WidgetsFlutterBinding.ensureInitialized();
-      await windowManager.ensureInitialized();
-      WindowOptions windowOptions = WindowOptions(
-        size: const Size(800, 600),
-        minimumSize: const Size(400, 600),
-        center: true,
-        backgroundColor: themeColor.color,
-        skipTaskbar: false,
-        titleBarStyle: TitleBarStyle.normal,
-      );
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
-        await windowManager.show();
-        await windowManager.focus();
-      });
-    } else if (GetPlatform.isAndroid) {
-      SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
-          statusBarColor: themeColor.color,
-          statusBarIconBrightness: Brightness.dark);
-      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    }
-    FlutterError.onError = (FlutterErrorDetails details) {
-      writeCrashLog(details.toString());
-    };
-  }
+  _init() async {}
 
   updateAppVersion() {
     appVersion.update((val) async {

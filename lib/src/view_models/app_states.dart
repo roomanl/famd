@@ -8,16 +8,6 @@ import '../models/m3u8_task.dart';
 import '../models/task_info.dart';
 import '../utils/task/task_utils.dart';
 
-class CustomThemeController extends GetxController {
-  Rx<Color> mainColor = themeColors[0].color.obs;
-  String? mainFont = 'FangYuan2';
-  updateMainColor(color) {
-    mainColor.update((val) {
-      mainColor.value = color;
-    });
-  }
-}
-
 class AppController2 extends GetxController {
   RxInt pageIndex = 1.obs;
   RxBool aria2Online = false.obs;
