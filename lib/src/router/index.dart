@@ -1,8 +1,9 @@
-import 'package:famd/src/views/addtask/binding.dart';
-import 'package:famd/src/views/addtask/index.dart';
 import 'package:famd/src/views/home/binding.dart';
 import 'package:famd/src/views/home/index.dart';
-import 'package:famd/src/views/search_page.dart';
+import 'package:famd/src/views/searchvod/result_binding.dart';
+import 'package:famd/src/views/searchvod/result_page.dart';
+import 'package:famd/src/views/searchvod/search_binding.dart';
+import 'package:famd/src/views/searchvod/search_page.dart';
 import 'package:famd/src/views/welcome/binding.dart';
 import 'package:famd/src/views/welcome/index.dart';
 import 'package:get/get.dart';
@@ -13,17 +14,22 @@ class RoutePages {
     GetPage(
       name: "/",
       page: () => const WelcomPage(),
-      // binding: WelcomeBinding(),
-      bindings: [WelcomeBinding()],
+      binding: WelcomeBinding(),
     ),
     GetPage(
       name: "/home",
       page: () => const HomePage(),
-      bindings: [HomeBinding()],
+      binding: HomeBinding(),
     ),
     GetPage(
-      name: "/search",
-      page: () => const SearchPage(),
+      name: "/search/vod",
+      page: () => const SearchVodPage(),
+      binding: SearchVodBinding(),
+    ),
+    GetPage(
+      name: "/search/vod/result",
+      page: () => const ResultVodPage(),
+      binding: ResultVodBinding(),
     ),
   ];
 }

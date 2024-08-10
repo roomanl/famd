@@ -11,7 +11,7 @@ class AppVersion extends GetView<AppController> {
   Widget build(BuildContext context) {
     return Obx(
       () => Text(
-        'V ${controller.appVersion}',
+        '${controller.appVersion}',
         style: const TextStyle(
             color: Color.fromRGBO(255, 255, 255, 0.3), fontSize: 18),
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:famd/src/bindings/app.dart';
 import 'package:famd/src/controller/theme.dart';
+import 'package:famd/src/locale/messages.dart';
 import 'package:famd/src/router/index.dart';
 import 'package:famd/src/utils/db/DBHelper.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,8 @@ void main() async {
       initialRoute: '/',
       initialBinding: AppBinding(),
       getPages: RoutePages.list,
+      translations: Messages(),
+      locale: const Locale('zh', 'CN'),
       builder: EasyLoading.init(),
     ));
   }, (Object obj, StackTrace stack) {

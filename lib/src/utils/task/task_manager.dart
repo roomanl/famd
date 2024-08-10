@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/controller/task.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -8,7 +10,6 @@ import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
 import '../../models/m3u8_task.dart';
 import '../../models/task_info.dart';
-import '../../view_models/app_states.dart';
 import '../m3u8/ase_util.dart';
 import '../aria2/aria2_manager.dart';
 import '../setting_conf_utils.dart';
@@ -34,8 +35,8 @@ class TaskManager {
 
   ///记录下载回调时间
   late int notificationsTime = 0;
-  final _taskCtrl = Get.put(TaskController2());
-  final _appCtrl = Get.put(AppController2());
+  final _taskCtrl = Get.find<TaskController>();
+  final _appCtrl = Get.find<AppController>();
 
   TaskManager() {
     _taskCtrl.aria2Notifications.listen((data) {
@@ -74,6 +75,8 @@ class TaskManager {
   }
 
   startAria2Task({M3u8Task? task}) async {
+    // _taskCtrl.updateDownStatusInfo("正在开始任务...");
+    // return;
     if (_isDowning) return;
     _isRestStart = false;
     _isParseM3u8ing = true;
@@ -116,7 +119,7 @@ class TaskManager {
     String saveDir = getTsSaveDir(_tasking, _downPath);
 
     _taskInfo.tsTotal = tsList.length;
-
+    _taskCtrl.updateTaskInfo(_taskInfo);
     _taskInfo.tsTaskList = [];
     _tsGidIndex = {};
     await cleanAria2();
@@ -140,11 +143,10 @@ class TaskManager {
     }
 
     await updateM3u8Task(_tasking);
+    _isParseM3u8ing = false;
     _updataTaskInfo();
     _taskCtrl.updateTaskInfo(_taskInfo);
     _taskCtrl.updateDownStatusInfo("下载中...");
-    _isParseM3u8ing = false;
-    // EasyLoading.showSuccess('任务启动成功');
   }
 
   _restStartAria2Task() async {
@@ -189,12 +191,18 @@ class TaskManager {
         tsTotal == 0 ? '0%' : '${(progress * 100).toStringAsFixed(2)}%';
     // _updateSpeed();
     //不在解析中，才执行
+    // print(tsSuccess + tsFail == tsTotal);
+    // print(!_isParseM3u8ing);
     if (tsSuccess + tsFail == tsTotal && !_isParseM3u8ing) {
+      print(0);
       if (tsFail > 0) {
+        print(11);
         _restStartAria2Task();
       } else if (tsSuccess > 0) {
+        print(22);
         await _decryptTs();
       } else {
+        print(33);
         errDownFinish('下载失败');
       }
     }

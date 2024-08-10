@@ -26,16 +26,16 @@ checkAppUpdate(context, openDialog) async {
 
 /// 版本更新
 checkAppVsersion(vJson, context, openDialog) async {
-  final oldVersion = await getAppVersion();
-  final newVsersion = vJson['version'];
-  if (oldVersion != newVsersion) {
+  final currentVersion = await getAppVersion();
+  final serverVersion = vJson['version'];
+  if (shouldUpdate(currentVersion, serverVersion)) {
     if (!openDialog) {
       EasyLoading.showToast('有新版本');
       return;
     }
     String updateMsg = "";
-    updateMsg += "当前版本：v$oldVersion\n";
-    updateMsg += "最  新 版：v$newVsersion\n";
+    updateMsg += "当前版本：v$currentVersion\n";
+    updateMsg += "最  新 版：v$serverVersion\n";
     updateMsg += "更新内容：\n";
     updateMsg += vJson['contents'].join('\n');
 
@@ -72,4 +72,20 @@ checkAppVsersion(vJson, context, openDialog) async {
 /// 最新版本提示
 latestVersionToast() {
   EasyLoading.showToast('已经是最新版本');
+}
+
+bool shouldUpdate(String currentVersion, String serverVersion) {
+  List<int> currentParts = currentVersion.split('.').map(int.parse).toList();
+  List<int> serverParts = serverVersion.split('.').map(int.parse).toList();
+  for (int i = 0; i < currentParts.length && i < serverParts.length; i++) {
+    if (currentParts[i] < serverParts[i]) {
+      return true;
+    } else if (currentParts[i] > serverParts[i]) {
+      return false;
+    }
+  }
+  if (currentParts.length < serverParts.length) {
+    return true;
+  }
+  return false;
 }

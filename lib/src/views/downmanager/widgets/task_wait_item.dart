@@ -7,9 +7,9 @@ import 'package:famd/src/views/downmanager/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ItemWaitDownload extends GetView<DownManagerController> {
+class TaskWaitItem extends GetView<DownManagerController> {
   final M3u8Task task;
-  const ItemWaitDownload({
+  const TaskWaitItem({
     Key? key,
     required this.task,
   }) : super(key: key);

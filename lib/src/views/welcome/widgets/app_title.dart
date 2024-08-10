@@ -1,23 +1,26 @@
+import 'package:famd/src/locale/locale.dart';
+import 'package:famd/src/views/welcome/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class AppTileWidget extends StatelessWidget {
-  const AppTileWidget({Key? key}) : super(key: key);
+class AppTileWidget extends GetView<WelcomeController> {
+  const AppTileWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          'Famd M3u8下载器',
-          style: TextStyle(
+          FamdLocale.appName.tr,
+          style: const TextStyle(
               color: Color.fromRGBO(255, 255, 255, 0.8),
               fontWeight: FontWeight.bold,
               fontSize: 36),
         ),
         Text(
-          '免费版',
-          style: TextStyle(
+          FamdLocale.channelName.tr,
+          style: const TextStyle(
               color: Color.fromRGBO(255, 255, 255, 0.8),
               fontWeight: FontWeight.bold,
               fontSize: 36),

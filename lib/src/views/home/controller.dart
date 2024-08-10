@@ -5,14 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/components/page_view.dart' as HomePageView;
-import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
 import 'model.dart';
 
 class HomeController extends GetxController
     with WidgetsBindingObserver, WindowListener {
   final _appCtrl = Get.find<AppController>();
-  final Logger _logger = Logger();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final HomePageView.PageController pageController =
       HomePageView.PageController(initialPage: 1);
@@ -114,7 +112,7 @@ class HomeController extends GetxController
   }
 
   openM3u8ResourcePage() {
-    Get.toNamed('/search');
+    Get.toNamed('/search/vod');
   }
 
   openEndDrawer() {

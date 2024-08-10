@@ -1,10 +1,10 @@
 import 'package:famd/src/components/dialog/confirm_dialog.dart';
 import 'package:famd/src/controller/task.dart';
 import 'package:famd/src/models/m3u8_task.dart';
-import 'package:famd/src/models/task_info.dart';
 import 'package:famd/src/utils/file/file_utils.dart';
 import 'package:famd/src/utils/task/task_manager.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
+import 'package:famd/src/utils/common_utils.dart' as common;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,9 +13,6 @@ class DownManagerController extends GetxController
   final _taskCtrl = Get.find<TaskController>();
   late final TabController tabController;
   final TaskManager _taskManager = TaskManager();
-  TaskInfo taskInfo = TaskInfo();
-  RxString downStatusInfo = "".obs;
-  RxString aria2Notifications = "".obs;
 
   @override
   void onInit() {
@@ -36,7 +33,10 @@ class DownManagerController extends GetxController
     await _taskManager.resetTask(_taskCtrl.taskList);
   }
 
-  startTask() {}
+  startTask() {
+    _taskManager.startAria2Task();
+  }
+
   resetTask() async {
     _taskManager.downFinish();
     await _taskManager.resetTask(_taskCtrl.taskList);
@@ -44,21 +44,13 @@ class DownManagerController extends GetxController
     startTask();
   }
 
-  updateTaskInfo(info) {
-    taskInfo = info;
-    update();
+  resetFailTask(id) {
+    _taskManager.resetFailTask(id);
   }
 
-  updateDownStatusInfo(String info) {
-    downStatusInfo.update((val) {
-      downStatusInfo.value = info;
-    });
-  }
-
-  updateAria2Notifications(String info) {
-    aria2Notifications.update((val) {
-      aria2Notifications.value = info;
-    });
+  playerVideo(M3u8Task task) {
+    String mp4Path = getMp4Path(task, task.downdir);
+    common.playerVideo(mp4Path);
   }
 
   deleteTask(M3u8Task task, bool delFile) {

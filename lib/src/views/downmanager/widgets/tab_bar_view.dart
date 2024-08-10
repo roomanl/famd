@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'task_list.dart';
+import 'task_list_finish.dart';
 
 class TabBarViewWidget extends GetView<DownManagerController> {
   const TabBarViewWidget({Key? key}) : super(key: key);
@@ -14,6 +15,9 @@ class TabBarViewWidget extends GetView<DownManagerController> {
       children: const <Widget>[
         Center(
           child: TaskListWidget(),
+        ),
+        Center(
+          child: TaskListFinishWidget(),
         ),
       ],
     );

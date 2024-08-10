@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/controller/task.dart';
 import 'package:get/instance_manager.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
-import '../../view_models/app_states.dart';
 import 'aria2_conf_util.dart' as Aria2Conf;
 import 'ariar2_http_utils.dart' as Aria2Http;
 import '../common_utils.dart';
@@ -15,8 +15,7 @@ class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();
   factory Aria2Manager() => _instance;
 
-  final _appCtrl2 = Get.put(AppController2());
-  final _taskCtrl = Get.put(TaskController2());
+  final _taskCtrl = Get.find<TaskController>();
   final _appCtrl = Get.find<AppController>();
   WebSocketChannel? webSocketChannel;
   json_rpc.Client? jsonRpcClient;
@@ -56,7 +55,6 @@ class Aria2Manager {
   getSpeed() async {
     if (!online) return;
     downSpeed = await Aria2Http.getSpeed();
-    _appCtrl2.updateAria2Speed(downSpeed);
     _appCtrl.updateAria2Speed(downSpeed);
   }
 
@@ -72,7 +70,7 @@ class Aria2Manager {
 
   /// 连接aria2
   void connection() async {
-    var version = await Aria2Http.getVersion();
+    var version = await Aria2Http.getAria2Version();
     if (version != '0') {
       online = true;
       if (webSocketChannel == null) {
@@ -89,7 +87,6 @@ class Aria2Manager {
       jsonRpcClient = null;
       webSocketChannel = null;
     }
-    _appCtrl2.updateAria2Online(online);
     _appCtrl.updateAria2Online(online);
   }
 

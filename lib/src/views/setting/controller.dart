@@ -4,7 +4,6 @@ import 'package:famd/src/models/setting_conf.dart';
 import 'package:famd/src/utils/permission_util.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 

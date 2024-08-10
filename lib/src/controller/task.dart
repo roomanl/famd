@@ -8,7 +8,7 @@ class TaskController extends GetxController {
   RxList<M3u8Task> finishTaskList = RxList();
   RxString downStatusInfo = "".obs;
   RxString aria2Notifications = "".obs;
-  TaskInfo taskInfo = TaskInfo();
+  Rx<TaskInfo> taskInfo = TaskInfo().obs;
   @override
   void onReady() {
     super.onReady();
@@ -31,12 +31,15 @@ class TaskController extends GetxController {
   }
 
   updateTaskInfo(info) {
-    taskInfo = info;
-    update();
+    taskInfo.update((val) {
+      taskInfo.value = info;
+    });
+    // update();
   }
 
   updateDownStatusInfo(String info) {
     downStatusInfo.update((val) {
+      print(info);
       downStatusInfo.value = info;
     });
   }

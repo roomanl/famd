@@ -1,3 +1,4 @@
+import 'package:famd/src/utils/aria2/aria2_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/utils/common_utils.dart';
@@ -12,16 +13,15 @@ class AppController extends GetxController with WidgetsBindingObserver {
   void onReady() {
     super.onReady();
     print("AppController onReady");
-    _init();
     changWinSize();
     updateAppVersion();
+    Aria2Manager();
   }
-
-  _init() async {}
 
   updateAppVersion() {
     appVersion.update((val) async {
-      appVersion.value = await getAppVersion();
+      String version = await getAppVersion();
+      appVersion.value = 'V $version';
     });
   }
 

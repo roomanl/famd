@@ -2,21 +2,17 @@ import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 
 class M3u8Util {
   late M3u8Task _task;
   late String _m3u8url;
   late Uri _parsuri;
-  late Logger _logger;
   String? iv;
   String? keyUrl;
   String? keyValue;
   List<TsInfo> tsList = [];
 
-  M3u8Util() {
-    _logger = Logger();
-  }
+  M3u8Util() {}
 
   _parse() async {
     tsList = [];
@@ -75,10 +71,10 @@ class M3u8Util {
         (task.iv ?? "").isEmpty ||
         (task.keyvalue ?? "").isEmpty) {
       deleteTsByPid(task.id!);
-      _logger.i('开始解析M3U8！');
+      print('开始解析M3U8！');
       return _parse();
     }
-    _logger.i('已经解析过M3U8，跳过解析！');
+    print('已经解析过M3U8，跳过解析！');
     this.tsList = tsList;
     iv = task.iv!;
     keyUrl = task.keyurl!;

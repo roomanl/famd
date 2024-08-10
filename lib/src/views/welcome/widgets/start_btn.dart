@@ -8,7 +8,7 @@ class StartBtnWidget extends GetView<WelcomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final themeCtrl = Get.put(ThemeController());
+    final themeCtrl = Get.find<ThemeController>();
     return Obx(
       () => ElevatedButton(
         style: ButtonStyle(

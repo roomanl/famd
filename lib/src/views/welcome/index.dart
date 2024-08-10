@@ -5,7 +5,7 @@ import 'controller.dart';
 import 'widgets/widgets.dart';
 
 class WelcomPage extends GetView<WelcomeController> {
-  const WelcomPage({Key? key}) : super(key: key);
+  const WelcomPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -24,7 +24,7 @@ Future<String?> addUrl(params) async {
   return null;
 }
 
-getVersion() async {
+getAria2Version() async {
   String aria2Version = '0';
   String aria2url = await _aria2url;
   try {
