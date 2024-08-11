@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // 自定义Text组件
 class TextDanger extends StatelessWidget {
@@ -11,7 +12,7 @@ class TextDanger extends StatelessWidget {
   final FontWeight fontWeight; // 字体粗细
 
   const TextDanger({
-    Key? key,
+    super.key,
     required this.text,
     this.fontSize = 12.0,
     this.color = const Color.fromRGBO(237, 85, 106, 1),
@@ -19,7 +20,7 @@ class TextDanger extends StatelessWidget {
     this.overflow = TextOverflow.clip,
     this.decoration = TextDecoration.none,
     this.fontWeight = FontWeight.normal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'vod_item.dart';
 
 class VodListWidget extends GetView<SearchVodController> {
-  const VodListWidget({Key? key}) : super(key: key);
+  const VodListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

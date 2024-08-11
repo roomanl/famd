@@ -2,8 +2,10 @@ import 'package:famd/src/utils/aria2/aria2_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/utils/common_utils.dart';
+import 'package:logger/logger.dart';
 
 class AppController extends GetxController with WidgetsBindingObserver {
+  var logger = Logger();
   RxString appVersion = ''.obs;
   RxBool aria2Online = false.obs;
   RxInt aria2Speed = 0.obs;
@@ -12,10 +14,9 @@ class AppController extends GetxController with WidgetsBindingObserver {
   @override
   void onReady() {
     super.onReady();
-    print("AppController onReady");
+    debugPrint("AppController onReady");
     changWinSize();
     updateAppVersion();
-    Aria2Manager();
   }
 
   updateAppVersion() {
@@ -63,6 +64,6 @@ class AppController extends GetxController with WidgetsBindingObserver {
   void didChangeMetrics() {
     super.didChangeMetrics();
     changWinSize();
-    // print("didChangeMetrics");
+    // debugPrint("didChangeMetrics");
   }
 }

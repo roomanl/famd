@@ -1,11 +1,12 @@
 import 'package:famd/src/controller/theme.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'result_controller.dart';
 
 class ResultVodPage extends GetView<ResultVodController> {
-  const ResultVodPage({Key? key}) : super(key: key);
+  const ResultVodPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class ResultVodPage extends GetView<ResultVodController> {
   List<Widget> _buildTabsTitle() {
     List<Widget> tabs = [];
     for (int i = 0; controller.m3u8Res.length > i; i++) {
-      tabs.add(Tab(text: '资源${i + 1}'));
+      tabs.add(Tab(text: '${FamdLocale.source.tr}${i + 1}'));
     }
     return tabs;
   }

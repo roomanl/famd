@@ -1,4 +1,5 @@
 import 'package:famd/src/controller/theme.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/widgets/wifi_icon.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,9 @@ buildTopBar() {
   final controller = Get.find<HomeController>();
   return AppBar(
     backgroundColor: themeCtrl.mainColor.value,
-    title: const Text(
-      'Famd',
-      style: TextStyle(
+    title: Text(
+      FamdLocale.appNameAs.tr,
+      style: const TextStyle(
         color: Color.fromRGBO(255, 255, 255, 1),
       ),
     ),

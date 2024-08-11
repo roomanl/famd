@@ -1,18 +1,19 @@
 import 'dart:convert';
 
+import 'package:famd/src/common/config.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
-import '../common/const.dart';
 import 'common_utils.dart';
 
 /// 检查更新
 checkAppUpdate(context, openDialog) async {
   if (openDialog) {
-    EasyLoading.show(status: '正在检查更新...');
+    EasyLoading.show(status: '${FamdLocale.checkingUpdate.tr}...');
   }
-  var res = await http.get(Uri.parse(APP_CHECK_VERSION_URL));
+  var res = await http.get(Uri.parse(FamdConfig.appCheckVersionUrl));
   if (openDialog) {
     EasyLoading.dismiss();
   }
@@ -30,13 +31,13 @@ checkAppVsersion(vJson, context, openDialog) async {
   final serverVersion = vJson['version'];
   if (shouldUpdate(currentVersion, serverVersion)) {
     if (!openDialog) {
-      EasyLoading.showToast('有新版本');
+      EasyLoading.showToast(FamdLocale.hasNewVersion.tr);
       return;
     }
     String updateMsg = "";
-    updateMsg += "当前版本：v$currentVersion\n";
-    updateMsg += "最  新 版：v$serverVersion\n";
-    updateMsg += "更新内容：\n";
+    updateMsg += "${FamdLocale.currentVersion.tr}：v$currentVersion\n";
+    updateMsg += "${FamdLocale.latestVersion.tr}：v$serverVersion\n";
+    updateMsg += "${FamdLocale.updateContent.tr}：\n";
     updateMsg += vJson['contents'].join('\n');
 
     // updateMsg += "更新时间：${vJson['date']}";
@@ -44,17 +45,17 @@ checkAppVsersion(vJson, context, openDialog) async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('有更新'),
+          title: Text(FamdLocale.hasUpdate.tr),
           content: Text(updateMsg),
           actions: <Widget>[
             TextButton(
-              child: const Text('取消'),
+              child: Text(FamdLocale.cancel.tr),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('更新'),
+              child: Text(FamdLocale.update.tr),
               onPressed: () {
                 openWebUrl(vJson['url']);
                 Navigator.of(context).pop();

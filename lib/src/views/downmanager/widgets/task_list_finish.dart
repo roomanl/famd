@@ -3,6 +3,7 @@ import 'package:famd/src/components/text/text_danger.dart';
 import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_success.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:famd/src/views/downmanager/controller.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TaskListFinishWidget extends GetView<DownManagerController> {
-  const TaskListFinishWidget({Key? key}) : super(key: key);
+  const TaskListFinishWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class TaskListFinishWidget extends GetView<DownManagerController> {
                       IconButton(
                         icon: const Icon(
                           Icons.delete,
-                          color: SHANCHAHONG,
+                          color: FamdColor.colorSCH,
                         ),
                         onPressed: () {
                           controller.deleteTask(task, true);
@@ -84,7 +85,7 @@ class TaskListFinishWidget extends GetView<DownManagerController> {
         ? IconButton(
             icon: const Icon(
               Icons.play_circle_outline,
-              color: FENLV,
+              color: FamdColor.colorFLV,
             ),
             onPressed: () {
               controller.playerVideo(task);
@@ -93,7 +94,7 @@ class TaskListFinishWidget extends GetView<DownManagerController> {
         : IconButton(
             icon: const Icon(
               Icons.restart_alt_outlined,
-              color: SHANCHAHONG,
+              color: FamdColor.colorSCH,
             ),
             onPressed: () async {
               controller.resetFailTask(task.id!);
@@ -103,7 +104,7 @@ class TaskListFinishWidget extends GetView<DownManagerController> {
 
   _buildTextInfo(M3u8Task task) {
     return task.status == 3
-        ? const TextSuccess(text: '下载成功')
-        : TextDanger(text: task.remarks ?? '下载失败');
+        ? TextSuccess(text: FamdLocale.downSuccess.tr)
+        : TextDanger(text: task.remarks ?? FamdLocale.downFail.tr);
   }
 }

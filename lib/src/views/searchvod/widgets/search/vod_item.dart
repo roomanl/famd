@@ -1,4 +1,5 @@
 import 'package:famd/src/components/text/text_info.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/searchvod/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,9 +7,9 @@ import 'package:get/get.dart';
 class VodItem extends GetView<SearchVodController> {
   final Map vod;
   const VodItem({
-    Key? key,
+    super.key,
     required this.vod,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class VodItem extends GetView<SearchVodController> {
             Row(
               children: <Widget>[
                 _buildTag(vod['type_name']),
-                _buildTag(vod['vod_year'] + '年'),
+                _buildTag(vod['vod_year'] + FamdLocale.year.tr),
                 _buildTag(vod['vod_remarks']),
                 // _buildTag(vod['vod_time']),
               ],

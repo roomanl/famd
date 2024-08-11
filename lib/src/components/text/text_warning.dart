@@ -11,7 +11,7 @@ class TextWarning extends StatelessWidget {
   final FontWeight fontWeight; // 字体粗细
 
   const TextWarning({
-    Key? key,
+    super.key,
     required this.text,
     this.fontSize = 12.0,
     this.color = const Color.fromRGBO(230, 162, 60, 1),
@@ -19,7 +19,7 @@ class TextWarning extends StatelessWidget {
     this.overflow = TextOverflow.clip,
     this.decoration = TextDecoration.none,
     this.fontWeight = FontWeight.normal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

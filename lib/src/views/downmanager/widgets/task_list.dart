@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'task_wait_item.dart';
 
 class TaskListWidget extends GetView<TaskController> {
-  const TaskListWidget({Key? key}) : super(key: key);
+  const TaskListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:famd/src/controller/theme.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/searchvod/widgets/search/vod_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,7 @@ import 'package:get/get.dart';
 import 'search_controller.dart';
 
 class SearchVodPage extends GetView<SearchVodController> {
-  const SearchVodPage({Key? key}) : super(key: key);
+  const SearchVodPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class SearchVodPage extends GetView<SearchVodController> {
           height: 45,
           child: SearchBar(
             controller: controller.serachController,
-            hintText: '请输入关键字',
+            hintText: FamdLocale.searchIputHint.tr,
             elevation: WidgetStateProperty.all(0),
             onSubmitted: (value) {
               controller.searchVodList();
@@ -51,9 +52,9 @@ class SearchVodPage extends GetView<SearchVodController> {
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: controller.searchVodList,
-              child: const Text(
-                '搜索',
-                style: TextStyle(
+              child: Text(
+                FamdLocale.search.tr,
+                style: const TextStyle(
                   color: Color.fromRGBO(255, 255, 255, 1),
                   fontSize: 13,
                   fontWeight: FontWeight.bold,

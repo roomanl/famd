@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'file/file_utils.dart';
@@ -37,7 +39,7 @@ playerVideo(String path) {
   } else if (Platform.isAndroid) {
     playerAndroidVideo(path);
   } else {
-    EasyLoading.showToast('功能未实现');
+    EasyLoading.showToast(FamdLocale.developing.tr);
   }
 }
 

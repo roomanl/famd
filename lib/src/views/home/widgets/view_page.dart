@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeViewPageWidget extends GetView<HomeController> {
-  const HomeViewPageWidget({Key? key}) : super(key: key);
+  const HomeViewPageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

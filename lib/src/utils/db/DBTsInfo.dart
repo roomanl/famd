@@ -1,11 +1,11 @@
-import 'package:famd/src/common/const.dart';
+import 'package:famd/src/common/keys.dart';
 import 'package:famd/src/utils/db/DBHelper.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBTsInfo {
   late Future<Database> _db;
-  late String tableName = DB_TABLE_NAME['tsinfo']!;
+  late String tableName = FamdDbTableName.tsinfo;
   DBTsInfo() {
     _db = DBHelper.getInstance().database;
   }

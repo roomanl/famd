@@ -1,7 +1,8 @@
+import 'package:famd/src/common/keys.dart';
 import 'package:famd/src/utils/file/file_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../common/const.dart';
 
 class DBHelper {
   static DBHelper? _dbHelper;
@@ -30,7 +31,7 @@ class DBHelper {
     //2、获取databaseFactoryFfi对象
     //print("2、获取databaseFactoryFfi对象");
     var databaseFactory = databaseFactoryFfi;
-    print(path.join(await getDBFilePath(), "famd_m3u8.db"));
+    debugPrint(path.join(await getDBFilePath(), "famd_m3u8.db"));
     //3、创建数据库
     return await databaseFactory.openDatabase(
       //数据库路径
@@ -42,9 +43,9 @@ class DBHelper {
         version: 1,
         //创建时操作
         onCreate: (db, version) async {
-          print("创建数据库");
+          debugPrint("创建数据库");
           await db.execute('''
-                  CREATE TABLE ${DB_TABLE_NAME['m3u8task']} (
+                  CREATE TABLE ${FamdDbTableName.m3u8task} (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   m3u8name STRING,
                   subname STRING,
@@ -59,21 +60,21 @@ class DBHelper {
                   createtime STRING)
                 ''');
           await db.execute('''
-                  CREATE TABLE ${DB_TABLE_NAME['tsinfo']} (
+                  CREATE TABLE ${FamdDbTableName.tsinfo} (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   pid STRING,
                   tsurl STRING,
                   filename STRING)
                 ''');
           await db.execute('''
-                  CREATE TABLE ${DB_TABLE_NAME['sysconf']} (
+                  CREATE TABLE ${FamdDbTableName.sysconf} (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   name STRING,
                   value STRING)
                 ''');
         },
         onDowngrade: (Database db, int oldVersion, int newVersion) async {
-          print("数据库修改,oldVersion:$oldVersion,newVersion:$newVersion");
+          debugPrint("数据库修改,oldVersion:$oldVersion,newVersion:$newVersion");
           if (oldVersion < newVersion) {}
         },
       ),

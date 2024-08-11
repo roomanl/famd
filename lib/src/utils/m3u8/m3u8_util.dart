@@ -1,6 +1,7 @@
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class M3u8Util {
@@ -71,10 +72,10 @@ class M3u8Util {
         (task.iv ?? "").isEmpty ||
         (task.keyvalue ?? "").isEmpty) {
       deleteTsByPid(task.id!);
-      print('开始解析M3U8！');
+      debugPrint('开始解析M3U8！');
       return _parse();
     }
-    print('已经解析过M3U8，跳过解析！');
+    debugPrint('已经解析过M3U8，跳过解析！');
     this.tsList = tsList;
     iv = task.iv!;
     keyUrl = task.keyurl!;

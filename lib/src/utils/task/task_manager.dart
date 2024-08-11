@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/date/date_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
@@ -77,24 +79,29 @@ class TaskManager {
   startAria2Task({M3u8Task? task}) async {
     // _taskCtrl.updateDownStatusInfo("正在开始任务...");
     // return;
-    if (_isDowning) return;
+    if (_isDowning) {
+      EasyLoading.showInfo(FamdLocale.alreadyDownloading.tr);
+      _isParseM3u8ing = false;
+      return;
+    }
     _isRestStart = false;
     _isParseM3u8ing = true;
     _taskInfo = TaskInfo();
     if (task == null) {
       if (_taskCtrl.taskList.isEmpty) {
-        EasyLoading.showInfo('列表中没有任务');
+        EasyLoading.showInfo(FamdLocale.listNoTask.tr);
         _isParseM3u8ing = false;
         return;
       }
       bool downing = _taskCtrl.taskList.any((task) => task.status == 2);
+      debugPrint(downing.toString());
       if (downing) {
-        EasyLoading.showInfo('已经在下载中');
+        EasyLoading.showInfo(FamdLocale.alreadyDownloading.tr);
         _isParseM3u8ing = false;
         return;
       }
       _taskCtrl.updateTaskInfo(_taskInfo);
-      _taskCtrl.updateDownStatusInfo("正在开始任务...");
+      _taskCtrl.updateDownStatusInfo(FamdLocale.startingTask.tr);
     }
     _isDowning = true;
     _tasking = task ?? _taskCtrl.taskList[0];
@@ -106,7 +113,7 @@ class TaskManager {
     _m3u8util = M3u8Util();
     bool success = await _m3u8util.parseByTask(_tasking);
     if (!success) {
-      errDownFinish('解析失败');
+      errDownFinish(FamdLocale.parseFail.tr);
       return;
     }
     _tasking.iv = _m3u8util.iv;
@@ -146,7 +153,7 @@ class TaskManager {
     _isParseM3u8ing = false;
     _updataTaskInfo();
     _taskCtrl.updateTaskInfo(_taskInfo);
-    _taskCtrl.updateDownStatusInfo("下载中...");
+    _taskCtrl.updateDownStatusInfo("${FamdLocale.downloading.tr}...");
   }
 
   _restStartAria2Task() async {
@@ -164,7 +171,7 @@ class TaskManager {
     _isDowning = false;
     _tasking.status = 1;
     _restCount = _restCount + 1;
-    _taskCtrl.updateDownStatusInfo("重试$_restCount");
+    _taskCtrl.updateDownStatusInfo("${FamdLocale.tryAgain.tr}$_restCount");
     //print("重试$_restCount");
     _isRestStart = false;
     startAria2Task(task: _tasking);
@@ -194,16 +201,12 @@ class TaskManager {
     // print(tsSuccess + tsFail == tsTotal);
     // print(!_isParseM3u8ing);
     if (tsSuccess + tsFail == tsTotal && !_isParseM3u8ing) {
-      print(0);
       if (tsFail > 0) {
-        print(11);
         _restStartAria2Task();
       } else if (tsSuccess > 0) {
-        print(22);
         await _decryptTs();
       } else {
-        print(33);
-        errDownFinish('下载失败');
+        errDownFinish(FamdLocale.downFail.tr);
       }
     }
   }
@@ -216,8 +219,8 @@ class TaskManager {
     if (!_isDowning || _isDecryptTsing || _isMergeTsing) return;
     _isDecryptTsing = true;
     // EasyLoading.showInfo('开始解密ts文件');
-    _taskCtrl.updateDownStatusInfo("解密中...");
-    _taskInfo.tsDecrty = '解密中...';
+    _taskCtrl.updateDownStatusInfo("${FamdLocale.decrypting.tr}...");
+    _taskInfo.tsDecrty = '${FamdLocale.decrypting.tr}...';
     List<String> decryptTsList = [];
     if ((_tasking.keyurl ?? "").isNotEmpty) {
       String? keystr = _tasking.keyvalue;
@@ -225,7 +228,7 @@ class TaskManager {
         keystr = await _m3u8util.keyValueStr(_tasking.keyurl);
       }
       if ((keystr ?? "").isEmpty) {
-        errDownFinish('解密失败');
+        errDownFinish(FamdLocale.decrypFail.tr);
         return;
       }
       for (var index = 0; index < _taskInfo.tsTaskList!.length; index++) {
@@ -264,26 +267,26 @@ class TaskManager {
       String fileListPath = getTsListTxtPath(_tasking, _downPath);
       File(fileListPath)
           .writeAsStringSync(decryptTsList.join('\n'), flush: true);
-      _taskInfo.tsDecrty = '解密完成';
-      _taskCtrl.updateDownStatusInfo("解密完成");
+      _taskInfo.tsDecrty = FamdLocale.decrypFinish.tr;
+      _taskCtrl.updateDownStatusInfo(FamdLocale.decrypFinish.tr);
       mergeTs(fileListPath);
     } else {
-      _taskInfo.tsDecrty = '解密失败';
-      _taskCtrl.updateDownStatusInfo("解密失败");
-      errDownFinish('解密失败');
+      _taskInfo.tsDecrty = FamdLocale.decrypFail.tr;
+      _taskCtrl.updateDownStatusInfo(FamdLocale.decrypFail.tr);
+      errDownFinish(FamdLocale.decrypFail.tr);
     }
   }
 
   mergeTs(fileListPath) async {
     _isMergeTsing = true;
-    _taskCtrl.updateDownStatusInfo("合并中...");
-    _taskInfo.mergeStatus = '合并中...';
+    _taskCtrl.updateDownStatusInfo("${FamdLocale.mergeing.tr}...");
+    _taskInfo.mergeStatus = '${FamdLocale.mergeing.tr}...';
     _taskCtrl.updateTaskInfo(_taskInfo);
     String mp4Path = getMp4Path(_tasking, _downPath);
     bool success = await tsMergeTs(fileListPath, mp4Path);
     if (success) {
-      _taskCtrl.updateDownStatusInfo("合并完成");
-      _taskInfo.mergeStatus = '合并完成';
+      _taskCtrl.updateDownStatusInfo(FamdLocale.mergeFinish.tr);
+      _taskInfo.mergeStatus = FamdLocale.mergeFinish.tr;
       _tasking.status = 3;
       _tasking.filesize = getFileSize(mp4Path);
       await updateM3u8Task(_tasking);
@@ -294,12 +297,13 @@ class TaskManager {
       await _taskCtrl.updateTaskList();
       startAria2Task();
     } else {
-      errDownFinish('合并失败');
+      errDownFinish(FamdLocale.mergeFail.tr);
     }
   }
 
   errDownFinish(String? remarks) async {
-    EasyLoading.showError('${_tasking.m3u8name}-${_tasking.subname}下载失败');
+    EasyLoading.showError(
+        '${_tasking.m3u8name}-${_tasking.subname}${FamdLocale.downFail.tr}');
     _tasking.status = 4;
     _tasking.remarks = remarks;
     await updateM3u8Task(_tasking);

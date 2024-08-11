@@ -1,17 +1,18 @@
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
 
 class AddTaskPage extends GetView<AddTaskController> {
-  const AddTaskPage({Key? key}) : super(key: key);
+  const AddTaskPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('添加任务'),
+        title: Text(FamdLocale.addTask.tr),
       ),
       body: ListView(children: [
         Padding(
@@ -21,18 +22,17 @@ class AddTaskPage extends GetView<AddTaskController> {
               TextField(
                 controller: controller.urlTextController,
                 maxLines: 5,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText:
-                      '请输入视频链接，格式为：xxx\$http://abc.m3u8,多个链接时，请确保每行只有一个链接。(xxx可以是第01集、第12期、高清版、1080P等)',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: FamdLocale.addTaskInputUrlHint.tr,
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: controller.nameTextController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '请输入具体视频名称，例如：西游记',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: FamdLocale.addTaskInptNameHint.tr,
                 ),
               ),
               const SizedBox(height: 10),
@@ -44,7 +44,7 @@ class AddTaskPage extends GetView<AddTaskController> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: controller.addTask,
-                        child: const Text('添加'),
+                        child: Text(FamdLocale.add.tr),
                       ),
                     ),
                   ),

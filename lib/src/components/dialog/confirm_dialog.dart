@@ -1,4 +1,6 @@
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ConfirmDialog extends StatelessWidget {
   final String title;
@@ -7,12 +9,12 @@ class ConfirmDialog extends StatelessWidget {
   final VoidCallback onCancel;
 
   const ConfirmDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     required this.onConfirm,
     required this.onCancel,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -21,11 +23,11 @@ class ConfirmDialog extends StatelessWidget {
       actions: <Widget>[
         TextButton(
           onPressed: onCancel,
-          child: const Text('取消'),
+          child: Text(FamdLocale.cancel.tr),
         ),
         TextButton(
           onPressed: onConfirm,
-          child: const Text('确定'),
+          child: Text(FamdLocale.confirm.tr),
         ),
       ],
     );
@@ -42,8 +44,8 @@ showConfirmDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmDialog(
-          title: title ?? "提示",
-          content: content ?? "确定",
+          title: title ?? FamdLocale.tip.tr,
+          content: content ?? FamdLocale.confirm.tr,
           onConfirm: onConfirm,
           onCancel: onCancel,
         );

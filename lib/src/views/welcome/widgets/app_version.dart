@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 
 class AppVersion extends GetView<AppController> {
   const AppVersion({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

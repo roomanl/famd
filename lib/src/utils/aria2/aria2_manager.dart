@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
@@ -15,21 +16,32 @@ class Aria2Manager {
   static final Aria2Manager _instance = Aria2Manager._internal();
   factory Aria2Manager() => _instance;
 
-  final _taskCtrl = Get.find<TaskController>();
-  final _appCtrl = Get.find<AppController>();
+  late final TaskController _taskCtrl;
+  late final AppController _appCtrl;
   WebSocketChannel? webSocketChannel;
-  json_rpc.Client? jsonRpcClient;
-  late Logger logger = Logger();
+  late json_rpc.Client? jsonRpcClient;
+  late final Logger logger;
   late Timer timer;
-  late bool online = false;
-  late final Future<String> _aria2url = Aria2Conf.getAria2UrlConf();
-  late int downSpeed = 0;
-  late String aria2Version = '0';
+  late bool online;
+  late final Future<String> _aria2url;
+  late int downSpeed;
+  late String aria2Version;
   late Future<Process> cmdProcess;
-  late int processPid = 0;
-  late int timerCount = 0;
+  late int processPid;
+  late int timerCount;
 
   Aria2Manager._internal() {
+    _taskCtrl = Get.find<TaskController>();
+    _appCtrl = Get.find<AppController>();
+    _aria2url = Aria2Conf.getAria2UrlConf();
+    logger = Logger();
+    online = false;
+    downSpeed = 0;
+    aria2Version = '0';
+    processPid = 0;
+    timerCount = 0;
+  }
+  init() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       connection();
       getSpeed();
@@ -38,6 +50,7 @@ class Aria2Manager {
       /// 每10S通知一次任务管理检查下载状态，是否卡住
       if (online && timerCount % 10 == 0) {
         _taskCtrl.updateAria2Notifications('check-down-status');
+        timerCount = 0;
       }
     });
   }
@@ -82,7 +95,7 @@ class Aria2Manager {
         listenWebSocket();
       }
     } else {
-      print('aria2连接失败');
+      debugPrint('aria2连接失败');
       online = false;
       jsonRpcClient = null;
       webSocketChannel = null;
@@ -109,20 +122,20 @@ class Aria2Manager {
   void startServer() async {
     closeServer();
     var exe = await Aria2Conf.getAria2ExePath();
-    // print(exe);
+    // debugPrint(exe);
     var conf = await Aria2Conf.getAria2ConfPath();
-    // print(conf);
-    // print(File(conf).existsSync());
+    // debugPrint(conf);
+    // debugPrint(File(conf).existsSync());
     if (Platform.isLinux) {
       permission777(exe);
       permission777(conf);
     }
-    print('开始启动服务');
+    debugPrint('开始启动服务');
     cmdProcess = Process.start(exe, ['--conf-path=$conf']);
     cmdProcess.then((processResult) {
-      print(processResult.pid);
+      debugPrint(processResult.pid.toString());
       processPid = processResult.pid;
-      processResult.exitCode.then((value) => print(value));
+      processResult.exitCode.then((value) => debugPrint(value.toString()));
       processResult.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter())
@@ -154,7 +167,7 @@ class Aria2Manager {
 
   /// 关闭aria2服务
   closeServer() {
-    print('开始关闭服务');
+    debugPrint('开始关闭服务');
     bool killSuccess = false;
     try {
       if (Platform.isWindows) {
@@ -168,6 +181,6 @@ class Aria2Manager {
     } catch (e) {
       logger.e(e);
     }
-    print('关闭服务:' + killSuccess.toString());
+    debugPrint('关闭服务:$killSuccess');
   }
 }

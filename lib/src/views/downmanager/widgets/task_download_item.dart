@@ -3,6 +3,7 @@ import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_primary.dart';
 import 'package:famd/src/components/text/text_success.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,9 @@ import 'package:get/get.dart';
 class TaskDownloadItem extends GetView<TaskController> {
   final M3u8Task task;
   const TaskDownloadItem({
-    Key? key,
+    super.key,
     required this.task,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,15 +56,18 @@ class TaskDownloadItem extends GetView<TaskController> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextInfo(
-                        text: '速      度：${controller.taskInfo.value.speed}/S',
+                        text:
+                            '${FamdLocale.downSpeed.tr}：${controller.taskInfo.value.speed}/S',
                         opacity: 0.4,
                       ),
                       TextInfo(
-                        text: '分 片  数：${controller.taskInfo.value.tsTotal}',
+                        text:
+                            '${FamdLocale.tsNum.tr}：${controller.taskInfo.value.tsTotal}',
                         opacity: 0.4,
                       ),
                       TextInfo(
-                        text: '解密状态：${controller.taskInfo.value.tsDecrty}',
+                        text:
+                            '${FamdLocale.decrtyStatus.tr}：${controller.taskInfo.value.tsDecrty}',
                         opacity: 0.4,
                       ),
                     ],
@@ -75,13 +79,14 @@ class TaskDownloadItem extends GetView<TaskController> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextInfo(
-                        text: '下 载 进 度：${controller.taskInfo.value.progress}',
+                        text:
+                            '${FamdLocale.downProgress.tr}：${controller.taskInfo.value.progress}',
                         opacity: 0.4,
                       ),
                       Row(
                         children: <Widget>[
-                          const TextInfo(
-                            text: '分片下载数：',
+                          TextInfo(
+                            text: '${FamdLocale.downTsNum.tr}：',
                             opacity: 0.4,
                           ),
                           TextSuccess(
@@ -98,7 +103,7 @@ class TaskDownloadItem extends GetView<TaskController> {
                       ),
                       TextInfo(
                         text:
-                            '合 并 状 态：${controller.taskInfo.value.mergeStatus}',
+                            '${FamdLocale.mergeStatus.tr}：${controller.taskInfo.value.mergeStatus}',
                         opacity: 0.4,
                       ),
                     ],

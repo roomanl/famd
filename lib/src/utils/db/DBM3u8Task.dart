@@ -1,11 +1,11 @@
-import 'package:famd/src/common/const.dart';
+import 'package:famd/src/common/keys.dart';
 import 'package:famd/src/utils/db/DBHelper.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBM3u8Task {
   late Future<Database> _db;
-  late String tableName = DB_TABLE_NAME['m3u8task']!;
+  late String tableName = FamdDbTableName.m3u8task;
   DBM3u8Task() {
     _db = DBHelper.getInstance().database;
   }

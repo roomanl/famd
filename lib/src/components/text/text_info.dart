@@ -1,7 +1,9 @@
+import 'package:famd/src/controller/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // 自定义Text组件
-class TextInfo extends StatelessWidget {
+class TextInfo extends GetView<ThemeController> {
   final String text; // 文本内容
   final double fontSize; // 字体大小
   final Color? color; // 文本颜色
@@ -13,7 +15,7 @@ class TextInfo extends StatelessWidget {
   final double letterSpacing;
 
   const TextInfo({
-    Key? key,
+    super.key,
     required this.text,
     this.fontSize = 12.0,
     this.color,
@@ -23,21 +25,25 @@ class TextInfo extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.opacity = 0.7,
     this.letterSpacing = 0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: fontSize,
-        color: color ?? Color.fromRGBO(0, 0, 0, opacity),
-        decoration: decoration,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
+    return Obx(
+      () => Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: controller.isDarkMode.value
+              ? const Color.fromRGBO(255, 255, 255, 0.5)
+              : color ?? Color.fromRGBO(0, 0, 0, opacity),
+          decoration: decoration,
+          fontWeight: fontWeight,
+          letterSpacing: letterSpacing,
+        ),
+        textAlign: textAlign,
+        overflow: overflow,
       ),
-      textAlign: textAlign,
-      overflow: overflow,
     );
   }
 }

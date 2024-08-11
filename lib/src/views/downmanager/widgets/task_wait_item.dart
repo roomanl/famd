@@ -1,6 +1,7 @@
 import 'package:famd/src/common/color.dart';
 import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_warning.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
 import 'package:famd/src/views/downmanager/controller.dart';
@@ -10,9 +11,9 @@ import 'package:get/get.dart';
 class TaskWaitItem extends GetView<DownManagerController> {
   final M3u8Task task;
   const TaskWaitItem({
-    Key? key,
+    super.key,
     required this.task,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +33,12 @@ class TaskWaitItem extends GetView<DownManagerController> {
               ),
               const Icon(
                 Icons.query_builder_rounded,
-                color: KONGQUELAN,
+                color: FamdColor.colorKQL,
               ),
               IconButton(
                 icon: const Icon(
                   Icons.delete,
-                  color: SHANCHAHONG,
+                  color: FamdColor.colorSCH,
                 ),
                 onPressed: () => {controller.deleteTask(task, false)},
               ),
@@ -45,8 +46,8 @@ class TaskWaitItem extends GetView<DownManagerController> {
           ),
           Row(
             children: <Widget>[
-              const TextWarning(
-                text: '等待下载',
+              TextWarning(
+                text: FamdLocale.waitDown.tr,
               ),
               const TextInfo(
                 text: '  |  ',

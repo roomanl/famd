@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:famd/src/common/const.dart';
+import 'package:famd/src/common/config.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:famd/src/utils/http/http.dart';
@@ -40,10 +41,11 @@ class ResultVodController extends GetxController
 
   getVodDetail() async {
     EasyLoading.show();
-    var res = await sslClient().get(Uri.parse(M3U8_DETAIL_SEARCH_API + vodId));
+    var res = await sslClient()
+        .get(Uri.parse(FamdConfig.m3u8DetailSearchApi + vodId));
     EasyLoading.dismiss();
     if (res.statusCode != 200) {
-      EasyLoading.showError('服务器错误！');
+      EasyLoading.showError(FamdLocale.serverError.tr);
       return;
     }
     var dataJson = jsonDecode(utf8.decode(res.bodyBytes)) as Map;
@@ -78,7 +80,7 @@ class ResultVodController extends GetxController
   addTask(episode) async {
     String episodeUrl = episode["url"];
     if (episodeUrl.toString().isEmpty || !episodeUrl.startsWith('http')) {
-      EasyLoading.showInfo('${episode.label}m3u8地址失效！');
+      EasyLoading.showInfo('${episode.label}${FamdLocale.urlInvalid.tr}');
       return;
     }
     String episodeName = episode["label"].replaceAll(" ", "");
@@ -86,7 +88,7 @@ class ResultVodController extends GetxController
     String m3u8Name = '$vodName-$episodeName';
     bool has = await hasM3u8Name(vodName.value, episodeName);
     if (has) {
-      EasyLoading.showInfo('$m3u8Name,已在列表中！');
+      EasyLoading.showInfo('$m3u8Name,${FamdLocale.alreadyInList.tr}');
       return;
     }
     M3u8Task task = M3u8Task(
@@ -98,7 +100,7 @@ class ResultVodController extends GetxController
         createtime: now());
     await insertM3u8Task(task);
     await _taskCtrl.updateTaskList();
-    EasyLoading.showToast('$m3u8Name加入任务列表！');
+    EasyLoading.showToast('$m3u8Name${FamdLocale.addTaskList.tr}');
   }
 
   updateArguments(arguments) {

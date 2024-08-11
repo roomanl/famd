@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'wifi_icon.dart';
 
 class HomeLeftBarWidget extends GetView<HomeController> {
-  const HomeLeftBarWidget({Key? key}) : super(key: key);
+  const HomeLeftBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

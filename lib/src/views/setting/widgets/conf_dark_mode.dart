@@ -1,11 +1,11 @@
 import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/setting/controller.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-class ConfDownFolderWidget extends GetView<SettingController> {
-  const ConfDownFolderWidget({Key? key}) : super(key: key);
+class ConfDarkMode extends GetView<SettingController> {
+  const ConfDarkMode({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +19,27 @@ class ConfDownFolderWidget extends GetView<SettingController> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    FamdLocale.downDir.tr,
+                    FamdLocale.darkMode.tr,
                     style: const TextStyle(fontSize: 18),
                   ),
                   Obx(
                     () => TextInfo(
-                      text: controller.settingConf.value.downPath.value,
+                      text: controller.isDarkMode.value
+                          ? FamdLocale.on.tr
+                          : FamdLocale.off.tr,
                     ),
                   ),
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                controller.selectedDirectory();
-              },
-              child: Text(FamdLocale.change.tr),
+            Obx(
+              () => CupertinoSwitch(
+                value: controller.isDarkMode.value,
+                activeColor: CupertinoColors.activeGreen,
+                onChanged: (bool? value) {
+                  controller.changeDarkMode(value ?? false);
+                },
+              ),
             ),
           ],
         );

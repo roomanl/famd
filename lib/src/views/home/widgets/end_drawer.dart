@@ -1,10 +1,11 @@
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeEndDrawerWidget extends GetView<HomeController> {
-  const HomeEndDrawerWidget({Key? key}) : super(key: key);
+  const HomeEndDrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class HomeEndDrawerWidget extends GetView<HomeController> {
                     width: 40, height: 40),
               ),
               Text(
-                'Famd M3U8下载器免费版',
+                FamdLocale.appName.tr + FamdLocale.channelName.tr,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
@@ -36,9 +37,9 @@ class HomeEndDrawerWidget extends GetView<HomeController> {
             );
           },
         ),
-        const NavigationDrawerDestination(
-          label: Text('检查更新'),
-          icon: Icon(Icons.update_rounded),
+        NavigationDrawerDestination(
+          label: Text(FamdLocale.checkUpdate.tr),
+          icon: const Icon(Icons.update_rounded),
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(28, 16, 28, 10),

@@ -1,3 +1,4 @@
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'widgets/widgets.dart';
@@ -11,7 +12,7 @@ class SettingPage extends GetView<SettingController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('设置'),
+        title: Text(FamdLocale.setting.tr),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
@@ -20,6 +21,9 @@ class SettingPage extends GetView<SettingController> {
           Divider(thickness: 1, height: 1),
           SizedBox(height: 10),
           ConfThemeColorWidget(),
+          Divider(thickness: 1, height: 1),
+          SizedBox(height: 10),
+          ConfDarkMode(),
           Divider(thickness: 1, height: 1),
         ],
       ),

@@ -1,10 +1,12 @@
 import 'package:famd/src/common/color.dart';
+import 'package:famd/src/components/text/text_info.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/setting/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ConfThemeColorWidget extends GetView<SettingController> {
-  const ConfThemeColorWidget({Key? key}) : super(key: key);
+  const ConfThemeColorWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +19,13 @@ class ConfThemeColorWidget extends GetView<SettingController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Text(
-                    '主题色',
-                    style: TextStyle(fontSize: 18),
+                  Text(
+                    FamdLocale.themeColor.tr,
+                    style: const TextStyle(fontSize: 18),
                   ),
                   Obx(
-                    () => Text(
-                      controller.settingConf.value.themeColor.value,
-                      style: const TextStyle(
-                          fontSize: 12, color: Color.fromARGB(100, 0, 0, 0)),
+                    () => TextInfo(
+                      text: controller.settingConf.value.themeColor.value.tr,
                     ),
                   ),
                 ],
@@ -35,7 +35,7 @@ class ConfThemeColorWidget extends GetView<SettingController> {
               onPressed: () {
                 selectThemeColor();
               },
-              child: const Text('更改'),
+              child: Text(FamdLocale.change.tr),
             ),
           ],
         );
@@ -48,16 +48,16 @@ class ConfThemeColorWidget extends GetView<SettingController> {
         context: Get.context!,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("选择主题色"),
+            title: Text(FamdLocale.selectThemeColor.tr),
             children: [
-              ...themeColors.map((CustomThemeColor themeColor) {
+              ...FamdColor.themeColors.map((FamdThemeColor themeColor) {
                 return SimpleDialogOption(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Expanded(
-                        child: Text(themeColor.label),
+                        child: Text(themeColor.label.tr),
                       ),
                       Container(
                         width: 20,

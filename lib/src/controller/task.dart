@@ -1,6 +1,8 @@
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/task_info.dart';
+import 'package:famd/src/utils/aria2/aria2_manager.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TaskController extends GetxController {
@@ -12,7 +14,8 @@ class TaskController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    print("TaskController onReady");
+    debugPrint("TaskController onReady");
+    Aria2Manager().init();
     updateTaskList();
   }
 
@@ -39,7 +42,7 @@ class TaskController extends GetxController {
 
   updateDownStatusInfo(String info) {
     downStatusInfo.update((val) {
-      print(info);
+      debugPrint(info);
       downStatusInfo.value = info;
     });
   }

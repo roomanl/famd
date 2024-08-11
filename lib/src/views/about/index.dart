@@ -1,5 +1,5 @@
 import 'package:famd/src/common/color.dart';
-import 'package:famd/src/common/const.dart';
+import 'package:famd/src/common/config.dart';
 import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_primary.dart';
 import 'package:famd/src/controller/app.dart';
@@ -70,12 +70,12 @@ class AboutPage extends GetView<AboutController> {
                   Text('${FamdLocale.gitUrl.tr}：'),
                   InkWell(
                     onTap: () {
-                      openWebUrl(FAMD_GITHUB_URL);
+                      openWebUrl(FamdConfig.famdGithub);
                     },
                     child: const Text(
-                      FAMD_GITHUB_URL,
+                      FamdConfig.famdGithub,
                       style: TextStyle(
-                        color: KONGQUELAN,
+                        color: FamdColor.colorKQL,
                       ),
                     ),
                   ),
@@ -89,12 +89,12 @@ class AboutPage extends GetView<AboutController> {
                   Text('${FamdLocale.homePage.tr}：'),
                   InkWell(
                     onTap: () {
-                      openWebUrl(HOME_PAGE);
+                      openWebUrl(FamdConfig.homePage);
                     },
                     child: const Text(
-                      HOME_PAGE,
+                      FamdConfig.homePage,
                       style: TextStyle(
-                        color: KONGQUELAN,
+                        color: FamdColor.colorKQL,
                       ),
                     ),
                   ),

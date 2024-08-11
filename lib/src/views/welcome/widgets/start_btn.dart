@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class StartBtnWidget extends GetView<WelcomeController> {
-  const StartBtnWidget({Key? key}) : super(key: key);
+  const StartBtnWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

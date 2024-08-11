@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class WifiIconWidget extends GetView<HomeController> {
-  const WifiIconWidget({Key? key}) : super(key: key);
+  const WifiIconWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

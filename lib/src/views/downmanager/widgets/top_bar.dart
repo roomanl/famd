@@ -1,3 +1,4 @@
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/downmanager/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ buildTopBarActions() {
       width: 60,
       child: IconButton(
         icon: const Icon(Icons.play_arrow),
-        tooltip: '开始下载',
+        tooltip: FamdLocale.startDown.tr,
         onPressed: downCtrl.startTask,
       ),
     ),
@@ -18,7 +19,7 @@ buildTopBarActions() {
       width: 60,
       child: IconButton(
         icon: const Icon(Icons.refresh),
-        tooltip: '重新下载',
+        tooltip: FamdLocale.reStartDown.tr,
         onPressed: downCtrl.resetTask,
       ),
     ),
@@ -26,7 +27,7 @@ buildTopBarActions() {
       width: 60,
       child: IconButton(
         icon: const Icon(Icons.delete_forever),
-        tooltip: '清空任务',
+        tooltip: FamdLocale.cleanTask.tr,
         onPressed: downCtrl.deleteAllTask,
       ),
     ),
@@ -36,9 +37,9 @@ buildTopBarActions() {
 buildTopBarBottom() {
   return TabBar(
     controller: downCtrl.tabController,
-    tabs: const <Widget>[
-      Tab(text: '下载中'),
-      Tab(text: '下载完成'),
+    tabs: <Widget>[
+      Tab(text: FamdLocale.downloading.tr),
+      Tab(text: FamdLocale.downFinish.tr),
     ],
   );
 }

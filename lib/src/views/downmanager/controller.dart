@@ -1,5 +1,6 @@
 import 'package:famd/src/components/dialog/confirm_dialog.dart';
 import 'package:famd/src/controller/task.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/file/file_utils.dart';
 import 'package:famd/src/utils/task/task_manager.dart';
@@ -17,14 +18,14 @@ class DownManagerController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    print("DownManagerController onInit");
+    debugPrint("DownManagerController onInit");
     tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void onReady() {
     super.onReady();
-    print("DownManagerController onReady");
+    debugPrint("DownManagerController onReady");
     _init();
   }
 
@@ -56,7 +57,7 @@ class DownManagerController extends GetxController
   deleteTask(M3u8Task task, bool delFile) {
     showConfirmDialog(
       context: Get.context!,
-      content: "确定要删除此任务以及本地文件吗？",
+      content: FamdLocale.deleTaskTip.tr,
       onConfirm: () async {
         await deleteM3u8Task(task);
         if (delFile) {
@@ -77,7 +78,7 @@ class DownManagerController extends GetxController
   deleteAllTask() {
     showConfirmDialog(
       context: Get.context!,
-      content: "确定要删除所有任务以及本地文件吗？",
+      content: FamdLocale.deleAllTaskTip.tr,
       onConfirm: () async {
         await _taskManager.resetTask(_taskCtrl.taskList);
         await clearM3u8Task();

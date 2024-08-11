@@ -6,7 +6,7 @@ import 'task_list.dart';
 import 'task_list_finish.dart';
 
 class TabBarViewWidget extends GetView<DownManagerController> {
-  const TabBarViewWidget({Key? key}) : super(key: key);
+  const TabBarViewWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 class BackgroundWidget extends GetView<ThemeController> {
   final Widget? child;
   const BackgroundWidget({
-    Key? key,
+    super.key,
     this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

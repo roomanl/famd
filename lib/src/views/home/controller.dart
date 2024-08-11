@@ -1,4 +1,5 @@
 import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/utils/app_update.dart';
 import 'package:famd/src/utils/aria2/aria2_manager.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +22,13 @@ class HomeController extends GetxController
   bool _isAria2StartServer = false;
   int _startCount = 0;
 
-  List<NavDestination> destinations = const <NavDestination>[
-    NavDestination('添加任务', Icon(Icons.add_circle_outline_rounded)),
-    NavDestination('任务管理', Icon(Icons.home_rounded)),
-    NavDestination('设置', Icon(Icons.settings)),
-    NavDestination('关于', Icon(Icons.info)),
-    NavDestination('探索', Icon(Icons.explore_rounded))
+  List<NavDestination> destinations = <NavDestination>[
+    NavDestination(
+        FamdLocale.addTask.tr, const Icon(Icons.add_circle_outline_rounded)),
+    NavDestination(FamdLocale.taskManager.tr, const Icon(Icons.home_rounded)),
+    NavDestination(FamdLocale.setting.tr, const Icon(Icons.settings)),
+    NavDestination(FamdLocale.about.tr, const Icon(Icons.info)),
+    NavDestination(FamdLocale.find.tr, const Icon(Icons.explore_rounded))
   ];
 
   @override
@@ -90,7 +92,7 @@ class HomeController extends GetxController
       return;
     }
     if (_appCtrl.aria2Online.isFalse) {
-      EasyLoading.show(status: '启动中...');
+      EasyLoading.show(status: FamdLocale.ariaStarting.tr);
       _isAria2StartServer = true;
       _startCount = 0;
       Aria2Manager().startServer();
@@ -103,10 +105,10 @@ class HomeController extends GetxController
         _startCount++;
       }
       if (_isAria2StartServer && _startCount > 10) {
-        EasyLoading.showError("启动失败");
+        EasyLoading.showError(FamdLocale.ariaStartFail.tr);
       } else if (_isAria2StartServer && online) {
         _isAria2StartServer = false;
-        EasyLoading.showSuccess("启动成功");
+        EasyLoading.showSuccess(FamdLocale.ariaStartSuccess.tr);
       }
     });
   }

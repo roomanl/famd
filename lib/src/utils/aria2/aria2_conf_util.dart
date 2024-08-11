@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:famd/src/common/config.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../../common/const.dart';
 import '../file/file_utils.dart';
 import '../native_channel_utils.dart';
 import 'package:http/http.dart' as http;
@@ -35,13 +35,13 @@ Future<String> getAria2ConfPath() async {
 
 Future<String> getAria2UrlConf() async {
   String port = await getAria2Port();
-  return ARIA2_URL_VALUE.replaceAll('{port}', port);
+  return FamdConfig.aria2RpcUrl.replaceAll('{port}', port);
 }
 
 initAria2Conf() async {
   String? trackerList;
   try {
-    var res = await http.get(Uri.parse(ARIA2_Tracker_List));
+    var res = await http.get(Uri.parse(FamdConfig.aria2TrackerList));
     if (res.statusCode == 200) {
       trackerList = res.body;
     }

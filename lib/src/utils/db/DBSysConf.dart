@@ -1,11 +1,11 @@
-import 'package:famd/src/common/const.dart';
+import 'package:famd/src/common/keys.dart';
 import 'package:famd/src/utils/db/DBHelper.dart';
 import 'package:famd/src/models/sys_conf.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBSysConf {
   late Future<Database> _db;
-  late String tableName = DB_TABLE_NAME['sysconf']!;
+  late String tableName = FamdDbTableName.sysconf;
   DBSysConf() {
     //print("DBSysConf");
     _db = DBHelper.getInstance().database;

@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:famd/src/common/keys.dart';
 import 'package:famd/src/utils/db/DBSysConf.dart';
 import 'package:famd/src/models/sys_conf.dart';
 import '../common/color.dart';
-import '../common/const.dart';
 import 'file/file_utils.dart';
 
 final DBSysConf dbSysConf = DBSysConf();
@@ -27,7 +27,7 @@ Future<bool> setConf(String key, String data) async {
 }
 
 Future<String> getDownPath() async {
-  SysConf? conf = await dbSysConf.queryFirstByName(SYS_CONF_KEY['downPath']!);
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.downPath);
   if (conf == null) {
     return await getAria2DefDownPath();
   }
@@ -35,7 +35,7 @@ Future<String> getDownPath() async {
 }
 
 Future<bool> setDownPath(data) async {
-  return await setConf(SYS_CONF_KEY['downPath']!, data);
+  return await setConf(FamdConfKey.downPath, data);
 }
 
 getAria2DefDownPath() async {
@@ -44,14 +44,23 @@ getAria2DefDownPath() async {
   return downloadsDir;
 }
 
-Future<CustomThemeColor> getThemeColor() async {
-  SysConf? conf = await dbSysConf.queryFirstByName(SYS_CONF_KEY['themeColor']!);
+Future<FamdThemeColor> getThemeColor() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.themeColor);
   if (conf == null) {
-    return themeColors[0];
+    return FamdColor.themeColors[0];
   }
-  int index = themeColors.indexWhere((element) => element.label == conf.value);
+  int index = FamdColor.themeColors
+      .indexWhere((element) => element.label == conf.value);
   if (index < 0) {
-    return themeColors[0];
+    return FamdColor.themeColors[0];
   }
-  return themeColors[index];
+  return FamdColor.themeColors[index];
+}
+
+Future<String> getDarkMode() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.darkMode);
+  if (conf == null) {
+    return '0';
+  }
+  return conf.value;
 }
