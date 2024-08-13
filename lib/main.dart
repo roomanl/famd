@@ -24,7 +24,7 @@ void main() async {
       center: true,
       backgroundColor: themeCtrl.mainColor.value,
       skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
+      titleBarStyle: TitleBarStyle.hidden,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
@@ -41,6 +41,7 @@ void main() async {
   };
   runZonedGuarded(() {
     runApp(GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: themeCtrl.mainFont.value,

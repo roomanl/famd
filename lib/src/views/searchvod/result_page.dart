@@ -1,3 +1,4 @@
+import 'package:famd/src/components/bar/title_bar.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
@@ -13,29 +14,33 @@ class ResultVodPage extends GetView<ResultVodController> {
     final themeCtrl = Get.find<ThemeController>();
     return GetBuilder<ResultVodController>(
       builder: (_) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: themeCtrl.mainColor.value,
-            leadingWidth: 40,
-            leading: IconButton(
-              color: const Color.fromRGBO(255, 255, 255, 1),
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.back();
-              },
+        return WinTitleBar(
+          useThemeColor: true,
+          autoHide: false,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: themeCtrl.mainColor.value,
+              leadingWidth: 40,
+              leading: IconButton(
+                color: const Color.fromRGBO(255, 255, 255, 1),
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              title: Text(
+                controller.vodName.value,
+                style: const TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+              ),
+              bottom: TabBar(
+                controller: controller.tabController,
+                tabs: _buildTabsTitle(),
+              ),
             ),
-            title: Text(
-              controller.vodName.value,
-              style: const TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-            ),
-            bottom: TabBar(
+            body: TabBarView(
               controller: controller.tabController,
-              tabs: _buildTabsTitle(),
+              children: _buildTabView(),
             ),
-          ),
-          body: TabBarView(
-            controller: controller.tabController,
-            children: _buildTabView(),
           ),
         );
       },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 // 自定义Text组件
 class TextDanger extends StatelessWidget {

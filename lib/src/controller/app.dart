@@ -1,4 +1,3 @@
-import 'package:famd/src/utils/aria2/aria2_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:famd/src/utils/common_utils.dart';
@@ -55,15 +54,14 @@ class AppController extends GetxController with WidgetsBindingObserver {
   }
 
   @override
-  void onClose() {
-    super.onClose();
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
-  @override
   void didChangeMetrics() {
     super.didChangeMetrics();
     changWinSize();
-    // debugPrint("didChangeMetrics");
+  }
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.onClose();
   }
 }

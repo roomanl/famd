@@ -13,7 +13,7 @@ class StartBtnWidget extends GetView<WelcomeController> {
       () => ElevatedButton(
         style: ButtonStyle(
             padding: WidgetStateProperty.all(
-              const EdgeInsets.all(50.0),
+              const EdgeInsets.all(30.0),
             ),
             backgroundColor: WidgetStateProperty.all(themeCtrl.mainColor.value),
             foregroundColor: WidgetStateProperty.all(Colors.white),

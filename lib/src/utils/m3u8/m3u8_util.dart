@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/ts_info.dart';
 import 'package:famd/src/utils/task/task_utils.dart';
@@ -85,11 +87,17 @@ class M3u8Util {
 
   _getKey(String line) {
     List<String> lines = line.split(',');
+    for (String item in lines) {
+      if (item.startsWith('URI')) {
+        String keyPath = item.split('=')[1].replaceAll('"', '');
+        keyUrl = _getRealUrl(keyPath);
+      } else if (item.startsWith('IV')) {
+        iv = lines[1].split('=')[1];
+      }
+    }
     if (lines.length > 2) {
       iv = lines[2].split('=')[1];
     }
-    String keyPath = lines[1].split('=')[1].replaceAll('"', '');
-    keyUrl = _getRealUrl(keyPath);
     // logger.i(IV);
     // logger.i(keyUrl);
   }
@@ -116,5 +124,35 @@ class M3u8Util {
       }
     } catch (e) {}
     return keyValue;
+  }
+
+  parseTsUrl(String url) {
+    if (url.contains('&ip=')) {
+      return _replaceIPInString(url);
+    }
+    return url;
+  }
+
+  String _replaceIPInString(String originalString) {
+    RegExp regex = RegExp(r'&ip=(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(&|$)');
+    RegExpMatch? match = regex.firstMatch(originalString);
+    if (match != null) {
+      String newIP = _generateRandomIP();
+      return originalString.replaceFirst(
+          regex, "&ip=$newIP${match.group(2) ?? ''}");
+    } else {
+      return originalString;
+    }
+  }
+
+  String _generateRandomIP() {
+    Random random = Random();
+    // 生成四组数字，每组表示IP地址的一部分
+    int part1 = random.nextInt(256);
+    int part2 = random.nextInt(256);
+    int part3 = random.nextInt(256);
+    int part4 = random.nextInt(256);
+    // 将这四部分组合成一个IP地址字符串
+    return "$part1.$part2.$part3.$part4";
   }
 }

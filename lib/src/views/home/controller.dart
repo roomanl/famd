@@ -1,4 +1,5 @@
 import 'package:famd/src/controller/app.dart';
+import 'package:famd/src/controller/input_focus.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/utils/app_update.dart';
 import 'package:famd/src/utils/aria2/aria2_manager.dart';
@@ -12,6 +13,7 @@ import 'model.dart';
 class HomeController extends GetxController
     with WidgetsBindingObserver, WindowListener {
   final _appCtrl = Get.find<AppController>();
+  final _focusCtrl = Get.find<InputFocusController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final HomePageView.PageController pageController =
       HomePageView.PageController(initialPage: 1);
@@ -55,10 +57,11 @@ class HomeController extends GetxController
   }
 
   changePageView(int index) {
-    ///不知道为什么在android切换页面的时候，添加任务页面中的输入框老是会自动获取焦点
+    ///PageView子页面添加任务页面输入框弹起软键盘，如果不是手动关闭键盘，而是切换到其他页面关闭了键盘，
+    ///这时候点击任何按钮都会回到刚刚的页面自动获取焦点，弹出软键盘
     ///获取焦点后会自动跳转到添加任务页面，导致无法切换到其他页面
-    ///所在这里切换页面时去除所有输入框焦点
-    FocusScope.of(Get.context!).requestFocus(FocusNode());
+    ///所在这里切换页面时去除所有输入框焦点，收起软键盘
+    _focusCtrl.cleanAddTaskInputFocus();
 
     ///添加任务后需自动跳转到任务管理页，需要在别的页面更改页码，因此把页码交给状态管理
     updateViewPageIndex(index);
@@ -114,10 +117,12 @@ class HomeController extends GetxController
   }
 
   openM3u8ResourcePage() {
+    _focusCtrl.cleanAddTaskInputFocus();
     Get.toNamed('/search/vod');
   }
 
   openEndDrawer() {
+    _focusCtrl.cleanAddTaskInputFocus();
     scaffoldKey.currentState!.openEndDrawer();
   }
 

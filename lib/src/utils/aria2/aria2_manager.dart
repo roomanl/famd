@@ -81,6 +81,41 @@ class Aria2Manager {
     await Aria2Http.purgeDownloadResult();
   }
 
+  tellWaiting() async {
+    await Aria2Http.tellWaiting();
+  }
+
+  cleanAria2AllTask() async {
+    await Aria2Http.forcePauseAll();
+    await Aria2Http.purgeDownloadResult();
+    var wait = await Aria2Http.tellWaiting();
+    if (wait != null) {
+      var resJson = json.decode(wait);
+      var list = resJson['result'];
+      await forceRemove(list);
+    }
+    var stop = await Aria2Http.tellStopped();
+    if (stop != null) {
+      var resJson = json.decode(stop);
+      var list = resJson['result'];
+      await forceRemove(list);
+    }
+    var active = await Aria2Http.tellActive();
+    if (active != null) {
+      var resJson = json.decode(active);
+      var list = resJson['result'];
+      await forceRemove(list);
+    }
+    await clearSession();
+  }
+
+  forceRemove(list) async {
+    for (Map item in list) {
+      var gid = item['gid'];
+      await Aria2Http.forceRemove(gid);
+    }
+  }
+
   /// 连接aria2
   void connection() async {
     var version = await Aria2Http.getAria2Version();
@@ -161,8 +196,8 @@ class Aria2Manager {
   }
 
   /// 清空aria2配置
-  clearSession() {
-    Aria2Conf.clearSession();
+  clearSession() async {
+    await Aria2Conf.clearSession();
   }
 
   /// 关闭aria2服务

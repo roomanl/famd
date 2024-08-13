@@ -9,6 +9,10 @@ class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
   @override
   Widget build(BuildContext context) {
+    return _buildHomePage();
+  }
+
+  _buildHomePage() {
     return Obx(
       () => Scaffold(
         key: controller.scaffoldKey,
@@ -27,7 +31,7 @@ class HomePage extends GetView<HomeController> {
 
   _buildAppBar() {
     return Get.find<AppController>().showNavigationDrawer.isTrue
-        ? buildTopBar()
+        ? const TopBarWidget()
         : null;
   }
 

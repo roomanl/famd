@@ -73,9 +73,12 @@ class DBHelper {
                   value STRING)
                 ''');
         },
+        onUpgrade: (db, oldVersion, newVersion) async {
+          debugPrint("数据库升级,oldVersion:$oldVersion,newVersion:$newVersion");
+          if (oldVersion == 1) {}
+        },
         onDowngrade: (Database db, int oldVersion, int newVersion) async {
-          debugPrint("数据库修改,oldVersion:$oldVersion,newVersion:$newVersion");
-          if (oldVersion < newVersion) {}
+          debugPrint("数据库降级,oldVersion:$oldVersion,newVersion:$newVersion");
         },
       ),
     );

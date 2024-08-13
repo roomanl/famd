@@ -1,3 +1,4 @@
+import 'package:famd/src/controller/input_focus.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ class AddTaskPage extends GetView<AddTaskController> {
 
   @override
   Widget build(BuildContext context) {
+    final focusCtrl = Get.find<InputFocusController>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -22,6 +24,8 @@ class AddTaskPage extends GetView<AddTaskController> {
               TextField(
                 controller: controller.urlTextController,
                 maxLines: 5,
+                autofocus: false,
+                focusNode: focusCtrl.cleanAddTaskInputFocus(),
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: FamdLocale.addTaskInputUrlHint.tr,
@@ -30,6 +34,8 @@ class AddTaskPage extends GetView<AddTaskController> {
               const SizedBox(height: 10),
               TextField(
                 controller: controller.nameTextController,
+                autofocus: false,
+                focusNode: focusCtrl.cleanAddTaskInputFocus(),
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: FamdLocale.addTaskInptNameHint.tr,

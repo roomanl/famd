@@ -24,11 +24,11 @@ plugins {
 
 include ":app"
 
-gradle.beforeProject({ project->
-    if (project.hasProperty("target-platform") && !project.getProperty("target-platform").split(",").contains("android-arm")) {
-        project.setProperty("target-platform", "android-arm")
-    }
-})
+// gradle.beforeProject({ project->
+//     if (project.hasProperty("target-platform") && !project.getProperty("target-platform").split(",").contains("android-arm")) {
+//         project.setProperty("target-platform", "android-arm")
+//     }
+// })
 
 // gradle.beforeProject({ project->
 //     if (project.hasProperty("target-platform") && !project.getProperty("target-platform").split(",").contains("android-x86")) {

@@ -39,13 +39,6 @@ Future<String> getAria2UrlConf() async {
 }
 
 initAria2Conf() async {
-  String? trackerList;
-  try {
-    var res = await http.get(Uri.parse(FamdConfig.aria2TrackerList));
-    if (res.statusCode == 200) {
-      trackerList = res.body;
-    }
-  } catch (e) {}
   String rootPath = await getAria2rootPath();
   String confPath = await getAria2ConfPath();
   List<String> aria2ConfLines = await readDefAria2Conf();
@@ -64,9 +57,7 @@ initAria2Conf() async {
   confLines.add('input-file=$sessionFile');
   confLines.add('save-session=$sessionFile');
   for (String line in aria2ConfLines) {
-    if (line.startsWith('bt-tracker') && trackerList != null) {
-      confLines.add('bt-tracker=$trackerList');
-    } else if (!line.startsWith('dir=') &&
+    if (!line.startsWith('dir=') &&
         !line.startsWith('log=') &&
         !line.startsWith('input-file=') &&
         !line.startsWith('save-session=')) {

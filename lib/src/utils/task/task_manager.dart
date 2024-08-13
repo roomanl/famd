@@ -8,7 +8,6 @@ import 'package:famd/src/utils/date/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:logger/logger.dart';
 import '../../models/m3u8_task.dart';
 import '../../models/task_info.dart';
@@ -49,9 +48,11 @@ class TaskManager {
     });
   }
   cleanAria2() async {
-    await Aria2Manager().forcePauseAll();
-    await Aria2Manager().purgeDownloadResult();
-    Aria2Manager().clearSession();
+    // await Aria2Manager().forcePauseAll();
+    // await Aria2Manager().purgeDownloadResult();
+    // await Aria2Manager().tellWaiting();
+    await Aria2Manager().cleanAria2AllTask();
+    // await Aria2Manager().clearSession();
   }
 
   resetTask(List<M3u8Task> taskList) async {
@@ -137,6 +138,7 @@ class TaskManager {
       TsTask tsTask = TsTask(tsName: filename, tsUrl: url, savePath: saveDir);
       if (isResetDown(_tasking, _downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
+        debugPrint("gid==>:$gid");
         if ((gid ?? "").isNotEmpty) {
           tsTask.gid = gid;
           _tsGidIndex[gid] = i;
@@ -148,7 +150,6 @@ class TaskManager {
       }
       _taskInfo.tsTaskList?.add(tsTask);
     }
-
     await updateM3u8Task(_tasking);
     _isParseM3u8ing = false;
     _updataTaskInfo();
@@ -166,8 +167,7 @@ class TaskManager {
       return;
     }
     // EasyLoading.showInfo('第$restCount次重新下载失败文件');
-    await Aria2Manager().forcePauseAll();
-    await Aria2Manager().purgeDownloadResult();
+    await cleanAria2();
     _isDowning = false;
     _tasking.status = 1;
     _restCount = _restCount + 1;

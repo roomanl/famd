@@ -9,10 +9,15 @@ import 'controller.dart';
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<AboutController>(() => AboutController());
-    Get.lazyPut<AddTaskController>(() => AddTaskController());
-    Get.lazyPut<DownManagerController>(() => DownManagerController());
-    Get.lazyPut<SettingController>(() => SettingController());
+    // Get.lazyPut<HomeController>(() => HomeController());
+    // Get.lazyPut<AboutController>(() => AboutController());
+    // Get.lazyPut<AddTaskController>(() => AddTaskController());
+    // Get.lazyPut<DownManagerController>(() => DownManagerController());
+    // Get.lazyPut<SettingController>(() => SettingController());
+    Get.put(HomeController());
+    Get.put(AddTaskController());
+    Get.put(DownManagerController());
+    Get.put(SettingController());
+    Get.put(AboutController());
   }
 }
