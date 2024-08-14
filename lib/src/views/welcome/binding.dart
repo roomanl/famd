@@ -5,6 +5,7 @@ import 'controller.dart';
 class WelcomeBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<WelcomeController>(() => WelcomeController());
+    // Get.lazyPut<WelcomeController>(() => WelcomeController());
+    Get.put(WelcomeController());
   }
 }

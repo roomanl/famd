@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:famd/src/bindings/app.dart';
+import 'package:famd/src/common/color.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/locale/messages.dart';
 import 'package:famd/src/router/index.dart';
@@ -12,17 +13,17 @@ import 'package:window_manager/window_manager.dart';
 import 'src/utils/common_utils.dart';
 
 void main() async {
-  final themeCtrl = Get.put(ThemeController());
-  await DBHelper.getInstance().database;
-  await themeCtrl.init();
+  // final themeCtrl = Get.put(ThemeController());
+  // await DBHelper.getInstance().database;
+  // await themeCtrl.init();
   if (GetPlatform.isWindows || GetPlatform.isLinux) {
     WidgetsFlutterBinding.ensureInitialized();
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = WindowOptions(
-      size: const Size(800, 600),
-      minimumSize: const Size(400, 600),
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(800, 600),
+      minimumSize: Size(400, 600),
       center: true,
-      backgroundColor: themeCtrl.mainColor.value,
+      backgroundColor: FamdColor.colorJFZ,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.hidden,
     );
@@ -31,8 +32,8 @@ void main() async {
       await windowManager.focus();
     });
   } else if (GetPlatform.isAndroid) {
-    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
-        statusBarColor: themeCtrl.mainColor.value,
+    SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
@@ -44,8 +45,8 @@ void main() async {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: themeCtrl.mainFont.value,
-        colorSchemeSeed: themeCtrl.mainColor.value,
+        fontFamily: 'FangYuan2',
+        colorSchemeSeed: FamdColor.colorJFZ,
       ),
       // home: const StartPage(),
       initialRoute: '/',

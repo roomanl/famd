@@ -1,9 +1,9 @@
 import 'package:famd/src/locale/locale.dart';
-import 'package:famd/src/views/welcome/controller.dart';
+import 'package:famd/src/views/startaria/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AppTileWidget extends GetView<WelcomeController> {
+class AppTileWidget extends GetView<StartAriaController> {
   const AppTileWidget({super.key});
 
   @override

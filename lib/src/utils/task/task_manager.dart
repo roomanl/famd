@@ -138,7 +138,7 @@ class TaskManager {
       TsTask tsTask = TsTask(tsName: filename, tsUrl: url, savePath: saveDir);
       if (isResetDown(_tasking, _downPath, filename)) {
         String? gid = await Aria2Manager().addUrl(url, filename, saveDir);
-        debugPrint("gid==>:$gid");
+        // debugPrint("gid==>:$gid");
         if ((gid ?? "").isNotEmpty) {
           tsTask.gid = gid;
           _tsGidIndex[gid] = i;

@@ -9,7 +9,7 @@
 
     <uses-sdk tools:overrideLibrary="com.arthenica.ffmpegkit.flutter"/>
     <application
-        android:label="Famd M3U8下载器免费版"
+        android:label="Famd M3U8下载器"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher_round"
         tools:replace="android:networkSecurityConfig"

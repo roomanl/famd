@@ -1,9 +1,9 @@
 import 'package:famd/src/controller/theme.dart';
-import 'package:famd/src/views/welcome/controller.dart';
+import 'package:famd/src/views/startaria/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class StartBtnWidget extends GetView<WelcomeController> {
+class StartBtnWidget extends GetView<StartAriaController> {
   const StartBtnWidget({super.key});
 
   @override
@@ -13,7 +13,7 @@ class StartBtnWidget extends GetView<WelcomeController> {
       () => ElevatedButton(
         style: ButtonStyle(
             padding: WidgetStateProperty.all(
-              const EdgeInsets.all(30.0),
+              const EdgeInsets.all(20.0),
             ),
             backgroundColor: WidgetStateProperty.all(themeCtrl.mainColor.value),
             foregroundColor: WidgetStateProperty.all(Colors.white),

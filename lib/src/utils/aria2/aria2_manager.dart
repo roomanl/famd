@@ -216,6 +216,7 @@ class Aria2Manager {
     } catch (e) {
       logger.e(e);
     }
+    online = false;
     debugPrint('关闭服务:$killSuccess');
   }
 }

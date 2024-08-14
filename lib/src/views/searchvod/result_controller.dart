@@ -106,7 +106,7 @@ class ResultVodController extends GetxController
   updateArguments(arguments) {
     vodId = arguments['vodId'];
     vodName.update((val) {
-      vodName.value = arguments['vodName'];
+      vodName.value = arguments['vodName'].replaceAll(" ", "");
     });
   }
 }

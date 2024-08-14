@@ -4,6 +4,8 @@ import 'package:famd/src/views/searchvod/result_binding.dart';
 import 'package:famd/src/views/searchvod/result_page.dart';
 import 'package:famd/src/views/searchvod/search_binding.dart';
 import 'package:famd/src/views/searchvod/search_page.dart';
+import 'package:famd/src/views/startaria/binding.dart';
+import 'package:famd/src/views/startaria/index.dart';
 import 'package:famd/src/views/welcome/binding.dart';
 import 'package:famd/src/views/welcome/index.dart';
 import 'package:get/get.dart';
@@ -17,7 +19,14 @@ class RoutePages {
       binding: WelcomeBinding(),
     ),
     GetPage(
+      name: "/startaria",
+      transition: Transition.fadeIn,
+      page: () => const StartAriaPage(),
+      binding: StartAriaBinding(),
+    ),
+    GetPage(
       name: "/home",
+      transition: Transition.fadeIn,
       page: () => const HomePage(),
       binding: HomeBinding(),
     ),

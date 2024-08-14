@@ -8,12 +8,12 @@ import 'package:get/get.dart';
 class WinTitleBar extends GetView<WinTitleBarController> {
   final Widget child;
   final bool useThemeColor;
-  final bool? autoHide;
+  final bool autoHide;
 
   const WinTitleBar({
     super.key,
     required this.useThemeColor,
-    this.autoHide = true,
+    required this.autoHide,
     required this.child,
   });
 
@@ -22,14 +22,16 @@ class WinTitleBar extends GetView<WinTitleBarController> {
     if (GetPlatform.isAndroid || GetPlatform.isIOS) {
       return child;
     } else {
-      return Get.find<AppController>().showNavigationDrawer.isTrue && autoHide!
-          ? child
-          : Scaffold(
-              appBar: DargWinBar(
-                useThemeColor: useThemeColor,
+      return Obx(
+        () => Get.find<AppController>().showNavigationDrawer.isTrue && autoHide
+            ? child
+            : Scaffold(
+                appBar: DargWinBar(
+                  useThemeColor: useThemeColor,
+                ),
+                body: child,
               ),
-              body: child,
-            );
+      );
     }
   }
 }

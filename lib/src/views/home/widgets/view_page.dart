@@ -17,6 +17,7 @@ class HomeViewPageWidget extends GetView<HomeController> {
     /// 这里复制ageView源码，增加自定义缓存参数cacheExtentNum
     return WinTitleBar(
       useThemeColor: false,
+      autoHide: true,
       child: HomePageView.PageView(
         controller: controller.pageController,
         allowImplicitScrolling: true,
