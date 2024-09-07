@@ -9,6 +9,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import cn.rootvip.famd.util.AESUtil
 
 
 class MainActivity: FlutterActivity() {
@@ -24,11 +25,13 @@ class MainActivity: FlutterActivity() {
             }else if(call.method == "decryptTS"){
                 try {
                     val path: String? = call.argument("path")
-                    val key: String? = call.argument("key")
-                    val aes = Aes()
+                    var key = call.argument<ByteArray>("key")
+                    var iv = call.argument<ByteArray>("iv")
+//                    val key: String? = call.argument("key")
+//                    val iv: String? = call.argument("iv")
                     val file = File(path)
                     val tsbytes = file.readBytes()
-                    val decryptbytes = aes.decrypt(tsbytes, key?.toByteArray() ?: null)
+                    val decryptbytes = AESUtil.decrypt(tsbytes, key?: null, iv?: null)
                     result.success(decryptbytes?:intArrayOf())
                 }catch (e:Exception){
                     result.success(intArrayOf())

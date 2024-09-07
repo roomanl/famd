@@ -73,7 +73,7 @@ class TaskManager {
       task.createtime = now();
       await updateM3u8Task(task);
       _taskCtrl.updateTaskList();
-      EasyLoading.showInfo('任务已重新添加到下载中');
+      EasyLoading.showInfo(FamdLocale.reJoinDown.tr);
     }
   }
 
@@ -223,30 +223,26 @@ class TaskManager {
     _taskInfo.tsDecrty = '${FamdLocale.decrypting.tr}...';
     List<String> decryptTsList = [];
     if ((_tasking.keyurl ?? "").isNotEmpty) {
-      String? keystr = _tasking.keyvalue;
-      if ((keystr ?? "").isEmpty) {
-        keystr = await _m3u8util.keyValueStr(_tasking.keyurl);
-      }
-      if ((keystr ?? "").isEmpty) {
+      var byteKey = await _m3u8util.getKeyByte(_tasking.keyurl);
+      if (byteKey == null) {
         errDownFinish(FamdLocale.decrypFail.tr);
         return;
       }
+      String tsSaveDir = getDtsSaveDir(_tasking, _downPath);
+      deleteDir(tsSaveDir);
       for (var index = 0; index < _taskInfo.tsTaskList!.length; index++) {
         // _taskInfo.tsTaskList?.asMap().forEach((index, item) async {
         TsTask? tsTask = _taskInfo.tsTaskList?[index];
         String tsPath =
             '${getTsSaveDir(_tasking, _downPath)}/${tsTask!.tsName}';
-        String tsSavePath =
-            '${getDtsSaveDir(_tasking, _downPath)}/${tsTask.tsName}';
+        String tsSavePath = '$tsSaveDir/${tsTask.tsName}';
+
         bool decryptSuccess = false;
-        if (Platform.isWindows || Platform.isLinux) {
-          decryptSuccess = await aseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), _tasking.iv);
-        } else if (Platform.isAndroid) {
-          ///flutter解码方式在android特别慢，这里调用android原生来解码
-          decryptSuccess = await androidAseDecryptTs(
-              tsPath, tsSavePath, keystr.toString(), _tasking.iv);
-        }
+        decryptSuccess = await decryptTs(
+            tsPath: tsPath,
+            savePath: tsSavePath,
+            byteKey: byteKey,
+            ivstr: _tasking.iv);
         if (decryptSuccess) {
           // _taskInfo.tsDecrty++;
           decryptTsList.add('file \'$tsSavePath\'');

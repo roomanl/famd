@@ -7,8 +7,9 @@ Future<String> nativeLibraryDir() async {
   return await _channel.invokeMethod('nativeLibraryDir');
 }
 
-Future<List<int>> decryptTS(String path, String key) async {
-  return await _channel.invokeMethod('decryptTS', {'path': path, 'key': key});
+Future<List<int>> decryptTS(String path, Uint8List key, Uint8List iv) async {
+  return await _channel
+      .invokeMethod('decryptTS', {'path': path, 'key': key, 'iv': iv});
 }
 
 playerAndroidVideo(String path) async {

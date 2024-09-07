@@ -50,6 +50,7 @@ class FamdLocale {
   static const find = 'find';
   static const startDown = 'startDown';
   static const reStartDown = 'reStartDown';
+  static const reJoinDown = 'reJoinDown';
   static const cleanTask = 'cleanTask';
   static const waitDown = 'waitDown';
   static const downSuccess = 'downSuccess';

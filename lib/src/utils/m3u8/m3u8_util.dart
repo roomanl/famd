@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/models/ts_info.dart';
@@ -13,6 +15,7 @@ class M3u8Util {
   String? iv;
   String? keyUrl;
   String? keyValue;
+  Uint8List? byteKey;
   List<TsInfo> tsList = [];
 
   M3u8Util() {}
@@ -53,7 +56,7 @@ class M3u8Util {
         return _parse();
       }
     }
-    await keyValueStr(null);
+    await downloadKey(null);
     return true;
   }
 
@@ -116,43 +119,33 @@ class M3u8Util {
     return realUrl.trim();
   }
 
-  keyValueStr(String? url) async {
+  downloadKey(String? url) async {
     try {
       var keyres = await http.get(Uri.parse(url ?? keyUrl!));
       if (keyres.statusCode == 200) {
         keyValue = keyres.body;
+        byteKey = keyres.bodyBytes;
       }
-    } catch (e) {}
-    return keyValue;
-  }
-
-  parseTsUrl(String url) {
-    if (url.contains('&ip=')) {
-      return _replaceIPInString(url);
+      return keyres;
+    } catch (e) {
+      debugPrint(e.toString());
     }
-    return url;
+    return null;
   }
 
-  String _replaceIPInString(String originalString) {
-    RegExp regex = RegExp(r'&ip=(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(&|$)');
-    RegExpMatch? match = regex.firstMatch(originalString);
-    if (match != null) {
-      String newIP = _generateRandomIP();
-      return originalString.replaceFirst(
-          regex, "&ip=$newIP${match.group(2) ?? ''}");
-    } else {
-      return originalString;
+  getKeyStr(String? url) async {
+    var keyres = await downloadKey(url);
+    if (keyres != null) {
+      return keyres.body;
     }
+    return null;
   }
 
-  String _generateRandomIP() {
-    Random random = Random();
-    // 生成四组数字，每组表示IP地址的一部分
-    int part1 = random.nextInt(256);
-    int part2 = random.nextInt(256);
-    int part3 = random.nextInt(256);
-    int part4 = random.nextInt(256);
-    // 将这四部分组合成一个IP地址字符串
-    return "$part1.$part2.$part3.$part4";
+  getKeyByte(String? url) async {
+    var keyres = await downloadKey(url);
+    if (keyres != null) {
+      return keyres.bodyBytes;
+    }
+    return null;
   }
 }

@@ -8,8 +8,8 @@ import 'package:logger/logger.dart';
 var logger = Logger();
 
 tsMergeTs(dtslistpath, mp4path) async {
-  logger.i(dtslistpath);
-  logger.i(mp4path);
+  // logger.i(dtslistpath);
+  // logger.i(mp4path);
   File file = File(mp4path);
   if (file.existsSync()) {
     file.deleteSync();

@@ -1,10 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:famd/src/bindings/app.dart';
 import 'package:famd/src/common/color.dart';
-import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/locale/messages.dart';
 import 'package:famd/src/router/index.dart';
-import 'package:famd/src/utils/db/DBHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,7 @@ void main() async {
   // final themeCtrl = Get.put(ThemeController());
   // await DBHelper.getInstance().database;
   // await themeCtrl.init();
-  if (GetPlatform.isWindows || GetPlatform.isLinux) {
+  if (Platform.isWindows || Platform.isLinux) {
     WidgetsFlutterBinding.ensureInitialized();
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
@@ -31,7 +30,7 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
-  } else if (GetPlatform.isAndroid) {
+  } else if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark);

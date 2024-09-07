@@ -61,6 +61,7 @@ class Messages extends Translations {
           FamdLocale.find: '探索',
           FamdLocale.startDown: '开始下载',
           FamdLocale.reStartDown: '重新下载',
+          FamdLocale.reJoinDown: '任务已重新添加到下载中',
           FamdLocale.cleanTask: '清空任务',
           FamdLocale.waitDown: '等待下载',
           FamdLocale.downSuccess: '下载成功',
