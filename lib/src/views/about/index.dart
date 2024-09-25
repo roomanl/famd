@@ -4,7 +4,6 @@ import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/components/text/text_primary.dart';
 import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/locale/locale.dart';
-import 'package:famd/src/utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -70,7 +69,7 @@ class AboutPage extends GetView<AboutController> {
                   Text('${FamdLocale.gitUrl.tr}：'),
                   InkWell(
                     onTap: () {
-                      openWebUrl(FamdConfig.famdGithub);
+                      controller.openWeb(FamdConfig.famdGithub);
                     },
                     child: const Text(
                       FamdConfig.famdGithub,
@@ -89,7 +88,7 @@ class AboutPage extends GetView<AboutController> {
                   Text('${FamdLocale.homePage.tr}：'),
                   InkWell(
                     onTap: () {
-                      openWebUrl(FamdConfig.homePage);
+                      controller.openWeb(FamdConfig.homePage);
                     },
                     child: const Text(
                       FamdConfig.homePage,

@@ -32,6 +32,8 @@ class FamdLocale {
   static const linkErrorTip = 'linkErrorTip';
   static const alreadyInList = 'alreadyInList';
   static const setting = 'setting';
+  static const discussion = 'discussion';
+  static const m3u8Resource = 'm3u8Resource';
   static const noPermission = 'noPermission';
   static const downDir = 'downDir';
   static const change = 'change';

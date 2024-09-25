@@ -10,15 +10,15 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 class AddTaskController extends GetxController {
-  final taskCtrl = Get.find<TaskController>();
-  final homeCtrl = Get.find<HomeController>();
+  final _taskCtrl = Get.find<TaskController>();
+  final _homeCtrl = Get.find<HomeController>();
   final TextEditingController urlTextController = TextEditingController();
   final TextEditingController nameTextController = TextEditingController();
   late String downPath;
   @override
   void onReady() {
     super.onReady();
-    print("AddTaskController onReady");
+    // print("AddTaskController onReady");
     _init();
   }
 
@@ -62,8 +62,8 @@ class AddTaskController extends GetxController {
           createtime: now());
       await insertM3u8Task(task);
     }
-    await taskCtrl.updateTaskList();
-    homeCtrl.changePageView(1);
+    await _taskCtrl.updateTaskList();
+    _homeCtrl.changePageView(1);
     urlTextController.clear();
     nameTextController.clear();
     FocusScope.of(Get.context!).requestFocus(FocusNode());

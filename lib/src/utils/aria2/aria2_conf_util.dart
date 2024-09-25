@@ -3,7 +3,6 @@ import 'package:famd/src/common/config.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../file/file_utils.dart';
 import '../native_channel_utils.dart';
-import 'package:http/http.dart' as http;
 
 getAria2rootPath() async {
   return await getPlugAssetsDir('aria2');

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -9,7 +8,7 @@ class WinTitleBarController extends GetxController with WindowListener {
   RxBool isMaximized = false.obs;
   @override
   void onReady() {
-    debugPrint('WinTitleBarController onReady');
+    // debugPrint('WinTitleBarController onReady');
     windowManager.addListener(this);
     // _init();
   }

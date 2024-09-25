@@ -1,3 +1,4 @@
+import 'package:famd/src/common/color.dart';
 import 'package:famd/src/components/bar/title_bar.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/locale/locale.dart';
@@ -24,11 +25,11 @@ class TopBarWidget extends GetView<HomeController>
           title: Text(
             FamdLocale.appNameAs.tr,
             style: const TextStyle(
-              color: Color.fromRGBO(255, 255, 255, 1),
+              color: FamdColor.white,
             ),
           ),
           leading: IconButton(
-            color: const Color.fromRGBO(255, 255, 255, 1),
+            color: FamdColor.white,
             icon: const Icon(Icons.home_rounded),
             onPressed: () => controller.changePageView(1),
           ),
@@ -40,7 +41,7 @@ class TopBarWidget extends GetView<HomeController>
             SizedBox(
               width: 50,
               child: IconButton(
-                color: const Color.fromRGBO(255, 255, 255, 1),
+                color: FamdColor.white,
                 icon: const Icon(Icons.add_circle_outline_rounded),
                 onPressed: () => controller.changePageView(0),
               ),
@@ -48,15 +49,15 @@ class TopBarWidget extends GetView<HomeController>
             SizedBox(
               width: 50,
               child: IconButton(
-                color: const Color.fromRGBO(255, 255, 255, 1),
+                color: FamdColor.white,
                 icon: const Icon(Icons.explore_rounded),
-                onPressed: () => controller.openM3u8ResourcePage(),
+                onPressed: () => controller.changePageView(2),
               ),
             ),
             SizedBox(
               width: 50,
               child: IconButton(
-                color: const Color.fromRGBO(255, 255, 255, 1),
+                color: FamdColor.white,
                 icon: const Icon(Icons.tune_rounded),
                 onPressed: () => controller.openEndDrawer(),
               ),

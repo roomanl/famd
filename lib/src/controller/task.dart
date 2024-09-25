@@ -13,7 +13,7 @@ class TaskController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    debugPrint("TaskController onReady");
+    // debugPrint("TaskController onReady");
   }
 
   init() {

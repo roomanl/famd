@@ -170,7 +170,7 @@ class Aria2Manager {
     cmdProcess.then((processResult) {
       debugPrint(processResult.pid.toString());
       processPid = processResult.pid;
-      processResult.exitCode.then((value) => debugPrint(value.toString()));
+      processResult.exitCode.then((value) => debugPrint('exitCode:$value'));
       processResult.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter())

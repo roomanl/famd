@@ -1,6 +1,7 @@
 import 'package:famd/src/views/about/controller.dart';
 import 'package:famd/src/views/addtask/controller.dart';
 import 'package:famd/src/views/downmanager/controller.dart';
+import 'package:famd/src/views/m3u8web/controller.dart';
 import 'package:famd/src/views/setting/controller.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,7 @@ class HomeBinding implements Bindings {
     Get.put(HomeController());
     Get.put(AddTaskController());
     Get.put(DownManagerController());
+    Get.put(M3U8WebController());
     Get.put(SettingController());
     Get.put(AboutController());
   }

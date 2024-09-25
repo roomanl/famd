@@ -40,6 +40,8 @@ class Messages extends Translations {
           FamdLocale.linkErrorTip: '不是有效的m3u8地址（只支持http或https的M3U8地址）',
           FamdLocale.alreadyInList: '已在列表中',
           FamdLocale.setting: '设置',
+          FamdLocale.discussion: '讨论',
+          FamdLocale.m3u8Resource: 'M3U8资源',
           FamdLocale.noPermission: '没有权限',
           FamdLocale.downDir: '下载目录',
           FamdLocale.change: '更改',

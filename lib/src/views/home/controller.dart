@@ -3,6 +3,7 @@ import 'package:famd/src/controller/input_focus.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/utils/app_update.dart';
 import 'package:famd/src/utils/aria2/aria2_manager.dart';
+import 'package:famd/src/utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -23,15 +24,6 @@ class HomeController extends GetxController
   RxInt viewPageIndex = 1.obs;
   bool _isAria2StartServer = false;
   int _startCount = 0;
-
-  List<NavDestination> destinations = <NavDestination>[
-    NavDestination(
-        FamdLocale.addTask.tr, const Icon(Icons.add_circle_outline_rounded)),
-    NavDestination(FamdLocale.taskManager.tr, const Icon(Icons.home_rounded)),
-    NavDestination(FamdLocale.setting.tr, const Icon(Icons.settings)),
-    NavDestination(FamdLocale.about.tr, const Icon(Icons.info)),
-    NavDestination(FamdLocale.find.tr, const Icon(Icons.explore_rounded))
-  ];
 
   @override
   void onInit() {
@@ -69,6 +61,7 @@ class HomeController extends GetxController
   }
 
   updateViewPageIndex(int index) {
+    if (index >= HomeMenu.leftTopMenu.length) return;
     viewPageIndex.update((val) {
       viewPageIndex.value = index;
       // updateAria2Online(true);
@@ -76,14 +69,8 @@ class HomeController extends GetxController
   }
 
   handleScreenChanged(int selectedScreen) {
-    if (selectedScreen == 4) {
-      openM3u8ResourcePage();
-    } else if (selectedScreen == 5) {
-      checkAppUpdate(Get.context!, true);
-    } else {
-      changePageView(selectedScreen);
-      closeEndDrawer();
-    }
+    changePageView(selectedScreen);
+    closeEndDrawer();
   }
 
   closAria2() {
@@ -119,6 +106,25 @@ class HomeController extends GetxController
   openM3u8ResourcePage() {
     _focusCtrl.cleanAddTaskInputFocus();
     Get.toNamed('/search/vod');
+  }
+
+  onMoreMenuSelected(NavDestination item) {
+    _focusCtrl.cleanAddTaskInputFocus();
+    if (item.type == NavType.viewPage) {
+      pageController.jumpToPage(item.pageIndex!);
+    } else if (item.type == NavType.checkUpdate) {
+      checkAppUpdate(Get.context!, true);
+    } else if (item.type == NavType.outLink) {
+      openWebUrl(item.route!);
+    }
+    closeEndDrawer();
+  }
+
+  openPage(route) {
+    if (route != null) {
+      _focusCtrl.cleanAddTaskInputFocus();
+      Get.toNamed(route);
+    }
   }
 
   openEndDrawer() {

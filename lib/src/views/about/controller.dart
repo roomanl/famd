@@ -1,5 +1,6 @@
 import 'package:famd/src/utils/app_update.dart' as updateUtil;
 import 'package:famd/src/utils/aria2/ariar2_http_utils.dart' as aria2;
+import 'package:famd/src/utils/common_utils.dart';
 import 'package:get/get.dart';
 
 class AboutController extends GetxController {
@@ -12,6 +13,10 @@ class AboutController extends GetxController {
 
   checkAppUpdate() {
     updateUtil.checkAppUpdate(Get.context!, true);
+  }
+
+  openWeb(String url) {
+    openWebUrl(url);
   }
 
   getAria2Version() async {

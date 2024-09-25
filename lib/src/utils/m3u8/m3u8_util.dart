@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:famd/src/models/m3u8_task.dart';
@@ -41,6 +39,7 @@ class M3u8Util {
           line.endsWith('.image') ||
           line.endsWith('.png') ||
           line.endsWith('.jpg') ||
+          line.endsWith('.jpeg') ||
           line.contains('.ts?')) {
         tsCount++;
         String filename = '${tsCount.toString().padLeft(4, '0')}.ts';
@@ -56,7 +55,9 @@ class M3u8Util {
         return _parse();
       }
     }
-    await downloadKey(null);
+    if ((keyUrl ?? "").isNotEmpty) {
+      await downloadKey(keyUrl);
+    }
     return true;
   }
 
@@ -70,22 +71,22 @@ class M3u8Util {
 
   parseByTask(M3u8Task task) async {
     _task = task;
-    List<TsInfo> tsList = await getTsListByPid(task.id!);
     _m3u8url = task.m3u8url;
-    if (tsList.isEmpty ||
-        (task.keyurl ?? "").isEmpty ||
-        (task.iv ?? "").isEmpty ||
-        (task.keyvalue ?? "").isEmpty) {
-      deleteTsByPid(task.id!);
-      debugPrint('开始解析M3U8！');
-      return _parse();
-    }
-    debugPrint('已经解析过M3U8，跳过解析！');
-    this.tsList = tsList;
-    iv = task.iv!;
-    keyUrl = task.keyurl!;
-    keyValue = task.keyvalue!;
-    return true;
+    // List<TsInfo> tsList = await getTsListByPid(task.id!);
+    // if (tsList.isEmpty ||
+    //     (task.keyurl ?? "").isEmpty ||
+    //     (task.iv ?? "").isEmpty ||
+    //     (task.keyvalue ?? "").isEmpty) {
+    deleteTsByPid(task.id!);
+    debugPrint('开始解析M3U8！');
+    return _parse();
+    // }
+    // debugPrint('已经解析过M3U8，跳过解析！');
+    // this.tsList = tsList;
+    // iv = task.iv!;
+    // keyUrl = task.keyurl!;
+    // keyValue = task.keyvalue!;
+    // return true;
   }
 
   _getKey(String line) {

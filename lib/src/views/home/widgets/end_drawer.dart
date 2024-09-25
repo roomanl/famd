@@ -10,7 +10,7 @@ class HomeEndDrawerWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return NavigationDrawer(
-      onDestinationSelected: controller.handleScreenChanged,
+      // onDestinationSelected: controller.handleScreenChanged,
       selectedIndex: -1,
       children: <Widget>[
         Padding(
@@ -29,17 +29,21 @@ class HomeEndDrawerWidget extends GetView<HomeController> {
             ],
           ),
         ),
-        ...controller.destinations.map(
+        ...HomeMenu.leftMoreMenu.map(
           (NavDestination destination) {
-            return NavigationDrawerDestination(
-              label: Text(destination.label),
-              icon: destination.icon,
+            return Container(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: InkWell(
+                onTap: () {
+                  controller.onMoreMenuSelected(destination);
+                },
+                child: ListTile(
+                  leading: destination.icon,
+                  title: Text(destination.label),
+                ),
+              ),
             );
           },
-        ),
-        NavigationDrawerDestination(
-          label: Text(FamdLocale.checkUpdate.tr),
-          icon: const Icon(Icons.update_rounded),
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(28, 16, 28, 10),

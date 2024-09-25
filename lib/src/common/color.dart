@@ -4,6 +4,8 @@ import 'package:famd/src/locale/locale.dart';
 import 'package:get/get.dart';
 
 class FamdColor {
+  static const white = Color.fromRGBO(255, 255, 255, 1);
+
   static const colorJFZ = Color.fromRGBO(62, 56, 65, 1);
   static const colorJHZ = Color.fromRGBO(152, 54, 128, 1);
   static const colorYH = Color.fromRGBO(192, 72, 81, 1);

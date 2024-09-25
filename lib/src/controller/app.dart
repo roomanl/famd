@@ -4,10 +4,11 @@ import 'package:famd/src/utils/common_utils.dart';
 import 'package:logger/logger.dart';
 
 class AppController extends GetxController with WidgetsBindingObserver {
-  var logger = Logger();
+  final logger = Logger();
   RxString appVersion = ''.obs;
   RxBool aria2Online = false.obs;
   RxInt aria2Speed = 0.obs;
+  RxDouble winWidth = 0.0.obs;
   RxBool showNavigationDrawer = false.obs;
 
   @override
@@ -44,13 +45,37 @@ class AppController extends GetxController with WidgetsBindingObserver {
   }
 
   changWinSize() {
-    updateShowNavigationDrawer(MediaQuery.of(Get.context!).size.width <= 500);
+    winWidth.update((val) {
+      winWidth.value = MediaQuery.of(Get.context!).size.width;
+      updateShowNavigationDrawer(winWidth.value <= 500);
+    });
   }
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // switch (state) {
+    //   case AppLifecycleState.resumed:
+    //     debugPrint("AppLifecycleState.resumed");
+    //     break;
+    //   case AppLifecycleState.inactive:
+    //     debugPrint("AppLifecycleState.inactive");
+    //     break;
+    //   case AppLifecycleState.paused:
+    //     debugPrint("AppLifecycleState.paused");
+    //     break;
+    //   case AppLifecycleState.detached:
+    //     debugPrint("AppLifecycleState.detached");
+    //     break;
+    //   case AppLifecycleState.hidden:
+    //     debugPrint("AppLifecycleState.hidden");
+    //   // TODO: Handle this case.
+    // }
   }
 
   @override

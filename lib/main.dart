@@ -12,15 +12,12 @@ import 'package:window_manager/window_manager.dart';
 import 'src/utils/common_utils.dart';
 
 void main() async {
-  // final themeCtrl = Get.put(ThemeController());
-  // await DBHelper.getInstance().database;
-  // await themeCtrl.init();
   if (Platform.isWindows || Platform.isLinux) {
     WidgetsFlutterBinding.ensureInitialized();
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
       size: Size(800, 600),
-      minimumSize: Size(400, 600),
+      minimumSize: Size(450, 600),
       center: true,
       backgroundColor: FamdColor.colorJFZ,
       skipTaskbar: false,

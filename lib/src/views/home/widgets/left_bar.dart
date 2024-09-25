@@ -1,6 +1,7 @@
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/model.dart';
+import 'package:famd/src/views/home/widgets/left_more.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,7 @@ class HomeLeftBarWidget extends GetView<HomeController> {
         unselectedLabelTextStyle: controller.leftBarStyle.labelStyle,
         selectedLabelTextStyle: controller.leftBarStyle.labelStyle,
         onDestinationSelected: controller.handleScreenChanged,
-        destinations: controller.destinations.map(
+        destinations: HomeMenu.leftTopMenu.map(
           (NavDestination destination) {
             return NavigationRailDestination(
               label: Text(destination.label),
@@ -34,12 +35,20 @@ class HomeLeftBarWidget extends GetView<HomeController> {
         selectedIndex: controller.viewPageIndex.value,
         trailing: const Expanded(
           child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20.0),
-              child: WifiIconWidget(),
-            ),
-          ),
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10.0),
+                    child: LeftMoreWidget(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0),
+                    child: WifiIconWidget(),
+                  ),
+                ],
+              )),
         ),
       ),
     );

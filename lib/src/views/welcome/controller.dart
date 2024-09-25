@@ -12,7 +12,6 @@ class WelcomeController extends GetxController
   late Animation<double> scaleAnimation;
   late Animation<double> opacityAnimation;
   late AnimationController animationController;
-
   @override
   void onInit() {
     super.onInit();
