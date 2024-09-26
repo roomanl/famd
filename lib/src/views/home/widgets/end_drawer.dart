@@ -1,3 +1,5 @@
+import 'package:famd/src/common/asset.dart';
+import 'package:famd/src/common/config.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/model.dart';
@@ -18,9 +20,10 @@ class HomeEndDrawerWidget extends GetView<HomeController> {
           child: Row(
             children: <Widget>[
               IconButton(
-                onPressed: () {},
-                icon: Image.asset('lib/resources/images/logo.png',
-                    width: 40, height: 40),
+                onPressed: () {
+                  controller.openWeb(FamdConfig.famdGithub);
+                },
+                icon: Image.asset(FamdAsset.logo, width: 40, height: 40),
               ),
               Text(
                 FamdLocale.appName.tr + FamdLocale.channelName.tr,

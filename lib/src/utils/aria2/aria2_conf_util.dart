@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:famd/src/common/config.dart';
+import 'package:famd/src/utils/file/file_utils.dart';
+import 'package:famd/src/utils/native_channel_utils.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../file/file_utils.dart';
-import '../native_channel_utils.dart';
+import 'package:famd/src/utils/setting_conf_utils.dart' as conf;
 
 getAria2rootPath() async {
   return await getPlugAssetsDir('aria2');
@@ -51,15 +52,23 @@ initAria2Conf() async {
   createDir(downloadsDir);
   createFile(logFile);
   createFile(sessionFile);
+  String maxDown = await conf.getMaxDownTsNum();
+  String maxThread = await conf.getMaxDownThread();
+
   confLines.add('dir=$downloadsDir');
   confLines.add('log=$logFile');
   confLines.add('input-file=$sessionFile');
   confLines.add('save-session=$sessionFile');
+  confLines.add('max-concurrent-downloads=$maxDown');
+  confLines.add('max-connection-per-server=$maxThread');
+  confLines.add('split=$maxThread');
   for (String line in aria2ConfLines) {
     if (!line.startsWith('dir=') &&
         !line.startsWith('log=') &&
         !line.startsWith('input-file=') &&
-        !line.startsWith('save-session=')) {
+        !line.startsWith('max-concurrent-downloads=') &&
+        !line.startsWith('max-connection-per-server=') &&
+        !line.startsWith('split=')) {
       confLines.add(line);
     }
   }

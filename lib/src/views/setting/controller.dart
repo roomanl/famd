@@ -68,4 +68,42 @@ class SettingController extends GetxController {
     setConf(settingConf.value.darkMode.name, darkMode ? '1' : '0');
     _themeCtrl.updateDarkMode(darkMode);
   }
+
+  changeRetryInterval(int num) {
+    int interval = int.parse(settingConf.value.retryInterval.value) + num;
+    interval = _checkMaxMiniValue(interval, 90, 15);
+    settingConf.update((val) {
+      settingConf.value.retryInterval.value = interval.toString();
+      setConf(settingConf.value.retryInterval.name, interval.toString());
+    });
+  }
+
+  changeMaxDownTsNum(int num) {
+    int maxNum = int.parse(settingConf.value.maxDownTsNum.value) + num;
+    maxNum = _checkMaxMiniValue(maxNum, 64, 8);
+    settingConf.update((val) {
+      settingConf.value.maxDownTsNum.value = maxNum.toString();
+      setConf(settingConf.value.maxDownTsNum.name, maxNum.toString());
+    });
+  }
+
+  changeMaxDownThread(int num) {
+    int maxNum = int.parse(settingConf.value.maxDownThread.value) + num;
+    maxNum = _checkMaxMiniValue(maxNum, 16, 4);
+    settingConf.update((val) {
+      settingConf.value.maxDownThread.value = maxNum.toString();
+      setConf(settingConf.value.maxDownThread.name, maxNum.toString());
+    });
+  }
+
+  int _checkMaxMiniValue(int val, int max, int mini) {
+    if (val < mini) {
+      val = mini;
+      EasyLoading.showToast(FamdLocale.isMinimize.tr);
+    } else if (val > max) {
+      val = max;
+      EasyLoading.showToast(FamdLocale.isMaximize.tr);
+    }
+    return val;
+  }
 }

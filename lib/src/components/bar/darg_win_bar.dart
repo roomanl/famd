@@ -1,5 +1,9 @@
+import 'package:famd/src/common/asset.dart';
+import 'package:famd/src/common/color.dart';
+import 'package:famd/src/components/text/text_info.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/controller/win_title_bar.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
@@ -20,28 +24,28 @@ class DargWinBar extends GetView<WinTitleBarController>
           automaticallyImplyLeading: false,
           backgroundColor: useThemeColor ? themeCtrl.mainColor.value : null,
           toolbarHeight: 30,
-          // title: DragToMoveArea(
-          //   child: Row(
-          //     children: <Widget>[
-          //       SizedBox(
-          //         width: 30,
-          //         height: 20,
-          //         child: Image.asset('lib/resources/images/logo.png',
-          //             width: 20, height: 20),
-          //       ),
-          //       Text(
-          //         FamdLocale.appName.tr + FamdLocale.channelName.tr,
-          //         style: const TextStyle(fontSize: 15),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          // title: useThemeColor
+          //     ? Row(
+          //         children: <Widget>[
+          //           SizedBox(
+          //             width: 30,
+          //             height: 20,
+          //             child:
+          //                 Image.asset(FamdAsset.logo2, width: 20, height: 20),
+          //           ),
+          //           TextInfo(
+          //             text: FamdLocale.appName.tr + FamdLocale.channelName.tr,
+          //             color: FamdColor.white,
+          //           ),
+          //         ],
+          //       )
+          //     : null,
           actions: <Widget>[
             SizedBox(
               width: 50,
               height: 30,
               child: IconButton(
-                icon: const Icon(Icons.remove, size: 15),
+                icon: _buildIcon(Icons.remove),
                 onPressed: () => controller.minimize(),
               ),
             ),
@@ -50,8 +54,8 @@ class DargWinBar extends GetView<WinTitleBarController>
               height: 30,
               child: IconButton(
                 icon: controller.isMaximized.value
-                    ? const Icon(Icons.filter_none, size: 15)
-                    : const Icon(Icons.crop_free, size: 15),
+                    ? _buildIcon(Icons.filter_none)
+                    : _buildIcon(Icons.crop_free),
                 onPressed: () => controller.maximize(),
               ),
             ),
@@ -59,13 +63,21 @@ class DargWinBar extends GetView<WinTitleBarController>
               width: 50,
               height: 30,
               child: IconButton(
-                icon: const Icon(Icons.close, size: 15),
+                icon: _buildIcon(Icons.close),
                 onPressed: () => controller.close(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  _buildIcon(IconData? icon) {
+    return Icon(
+      icon,
+      size: 15,
+      color: useThemeColor ? FamdColor.white : FamdColor.colorHTH,
     );
   }
 

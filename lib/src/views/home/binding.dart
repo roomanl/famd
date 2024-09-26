@@ -19,7 +19,7 @@ class HomeBinding implements Bindings {
     Get.put(AddTaskController());
     Get.put(DownManagerController());
     Get.put(M3U8WebController());
-    Get.put(SettingController());
-    Get.put(AboutController());
+    // Get.put(SettingController());
+    // Get.put(AboutController());
   }
 }

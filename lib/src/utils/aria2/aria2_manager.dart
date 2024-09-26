@@ -8,8 +8,8 @@ import 'package:get/instance_manager.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import "package:json_rpc_2/json_rpc_2.dart" as json_rpc;
 import 'package:logger/logger.dart';
-import 'aria2_conf_util.dart' as Aria2Conf;
-import 'ariar2_http_utils.dart' as Aria2Http;
+import 'aria2_conf_util.dart' as aria2_conf;
+import 'ariar2_http_utils.dart' as aria2_http;
 import '../common_utils.dart';
 
 class Aria2Manager {
@@ -33,7 +33,7 @@ class Aria2Manager {
   Aria2Manager._internal() {
     _taskCtrl = Get.find<TaskController>();
     _appCtrl = Get.find<AppController>();
-    _aria2url = Aria2Conf.getAria2UrlConf();
+    _aria2url = aria2_conf.getAria2UrlConf();
     logger = Logger();
     online = false;
     downSpeed = 0;
@@ -61,46 +61,46 @@ class Aria2Manager {
       [url],
       {'out': filename, 'dir': downPath}
     ];
-    return await Aria2Http.addUrl(params);
+    return await aria2_http.addUrl(params);
   }
 
   /// 获取下载速度
   getSpeed() async {
     if (!online) return;
-    downSpeed = await Aria2Http.getSpeed();
+    downSpeed = await aria2_http.getSpeed();
     _appCtrl.updateAria2Speed(downSpeed);
   }
 
   /// 强制暂停所有下载
   forcePauseAll() async {
-    await Aria2Http.forcePauseAll();
+    await aria2_http.forcePauseAll();
   }
 
   /// 清空下载结果
   purgeDownloadResult() async {
-    await Aria2Http.purgeDownloadResult();
+    await aria2_http.purgeDownloadResult();
   }
 
   tellWaiting() async {
-    await Aria2Http.tellWaiting();
+    await aria2_http.tellWaiting();
   }
 
   cleanAria2AllTask() async {
-    await Aria2Http.forcePauseAll();
-    await Aria2Http.purgeDownloadResult();
-    var wait = await Aria2Http.tellWaiting();
+    await aria2_http.forcePauseAll();
+    await aria2_http.purgeDownloadResult();
+    var wait = await aria2_http.tellWaiting();
     if (wait != null) {
       var resJson = json.decode(wait);
       var list = resJson['result'];
       await forceRemove(list);
     }
-    var stop = await Aria2Http.tellStopped();
+    var stop = await aria2_http.tellStopped();
     if (stop != null) {
       var resJson = json.decode(stop);
       var list = resJson['result'];
       await forceRemove(list);
     }
-    var active = await Aria2Http.tellActive();
+    var active = await aria2_http.tellActive();
     if (active != null) {
       var resJson = json.decode(active);
       var list = resJson['result'];
@@ -112,13 +112,13 @@ class Aria2Manager {
   forceRemove(list) async {
     for (Map item in list) {
       var gid = item['gid'];
-      await Aria2Http.forceRemove(gid);
+      await aria2_http.forceRemove(gid);
     }
   }
 
   /// 连接aria2
   void connection() async {
-    var version = await Aria2Http.getAria2Version();
+    var version = await aria2_http.getAria2Version();
     if (version != '0') {
       online = true;
       if (webSocketChannel == null) {
@@ -156,9 +156,9 @@ class Aria2Manager {
   /// 启动aria2服务
   void startServer() async {
     closeServer();
-    var exe = await Aria2Conf.getAria2ExePath();
+    var exe = await aria2_conf.getAria2ExePath();
     // debugPrint(exe);
-    var conf = await Aria2Conf.getAria2ConfPath();
+    var conf = await aria2_conf.getAria2ConfPath();
     // debugPrint(conf);
     // debugPrint(File(conf).existsSync());
     if (Platform.isLinux) {
@@ -192,12 +192,12 @@ class Aria2Manager {
 
   /// 初始化aria2配置
   initAria2Conf() async {
-    await Aria2Conf.initAria2Conf();
+    await aria2_conf.initAria2Conf();
   }
 
   /// 清空aria2配置
   clearSession() async {
-    await Aria2Conf.clearSession();
+    await aria2_conf.clearSession();
   }
 
   /// 关闭aria2服务

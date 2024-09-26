@@ -64,3 +64,27 @@ Future<String> getDarkMode() async {
   }
   return conf.value;
 }
+
+Future<String> getRetryInterval() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.retryInterval);
+  if (conf == null) {
+    return '30';
+  }
+  return conf.value;
+}
+
+Future<String> getMaxDownTsNum() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.maxDownTsNum);
+  if (conf == null) {
+    return '32';
+  }
+  return conf.value;
+}
+
+Future<String> getMaxDownThread() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.maxDownThread);
+  if (conf == null || int.parse(conf.value) > 16) {
+    return '16';
+  }
+  return conf.value;
+}

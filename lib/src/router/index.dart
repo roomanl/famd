@@ -1,9 +1,13 @@
+import 'package:famd/src/views/about/binding.dart';
+import 'package:famd/src/views/about/index.dart';
 import 'package:famd/src/views/home/binding.dart';
 import 'package:famd/src/views/home/index.dart';
 import 'package:famd/src/views/searchvod/result_binding.dart';
 import 'package:famd/src/views/searchvod/result_page.dart';
 import 'package:famd/src/views/searchvod/search_binding.dart';
 import 'package:famd/src/views/searchvod/search_page.dart';
+import 'package:famd/src/views/setting/binding.dart';
+import 'package:famd/src/views/setting/index.dart';
 import 'package:famd/src/views/startaria/binding.dart';
 import 'package:famd/src/views/startaria/index.dart';
 import 'package:famd/src/views/welcome/binding.dart';
@@ -15,6 +19,7 @@ class RouteNames {
   static const String startAria = '/startaria';
   static const String home = '/home';
   static const String setting = '/setting';
+  static const String about = '/about';
   static const String searchVod = '/search/vod';
   static const String searchVodResult = '/search/vod/result';
 }
@@ -48,6 +53,16 @@ class RoutePages {
       name: RouteNames.searchVodResult,
       page: () => const ResultVodPage(),
       binding: ResultVodBinding(),
+    ),
+    GetPage(
+      name: RouteNames.about,
+      page: () => const AboutPage(),
+      binding: AboutBinding(),
+    ),
+    GetPage(
+      name: RouteNames.setting,
+      page: () => const SettingPage(),
+      binding: SettingBinding(),
     ),
   ];
 }

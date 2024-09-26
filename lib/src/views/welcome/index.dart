@@ -33,7 +33,7 @@ class WelcomPage extends GetView<WelcomeController> {
                         child: Opacity(
                           opacity: controller.opacityAnimation.value,
                           child: Image.asset(
-                            'lib/resources/images/logo.png',
+                            'lib/resources/images/logo2.png',
                             width: 100,
                             height: 100,
                           ),

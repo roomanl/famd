@@ -57,18 +57,16 @@ class HomeMenu {
     NavDestination(
         label: FamdLocale.setting.tr,
         icon: const Icon(Icons.settings),
-        type: NavType.viewPage,
-        pageIndex: 3),
+        type: NavType.route,
+        route: RouteNames.setting),
     NavDestination(
         label: FamdLocale.about.tr,
         icon: const Icon(Icons.info),
-        route: RouteNames.setting,
-        type: NavType.viewPage,
-        pageIndex: 4),
+        route: RouteNames.about,
+        type: NavType.route),
     NavDestination(
         label: FamdLocale.checkUpdate.tr,
         icon: const Icon(Icons.update_rounded),
-        route: RouteNames.setting,
         type: NavType.checkUpdate),
   ];
 }

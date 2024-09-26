@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  flutter_udid
   screen_retriever
   sqlite3_flutter_libs
   url_launcher_windows

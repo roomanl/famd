@@ -104,18 +104,19 @@ class HomeController extends GetxController
   }
 
   openM3u8ResourcePage() {
-    _focusCtrl.cleanAddTaskInputFocus();
-    Get.toNamed('/search/vod');
+    openPage('/search/vod');
   }
 
   onMoreMenuSelected(NavDestination item) {
     _focusCtrl.cleanAddTaskInputFocus();
     if (item.type == NavType.viewPage) {
       pageController.jumpToPage(item.pageIndex!);
+    } else if (item.type == NavType.route) {
+      openPage(item.route);
     } else if (item.type == NavType.checkUpdate) {
       checkAppUpdate(Get.context!, true);
     } else if (item.type == NavType.outLink) {
-      openWebUrl(item.route!);
+      openWeb(item.route!);
     }
     closeEndDrawer();
   }
@@ -125,6 +126,10 @@ class HomeController extends GetxController
       _focusCtrl.cleanAddTaskInputFocus();
       Get.toNamed(route);
     }
+  }
+
+  openWeb(String url) {
+    openWebUrl(url);
   }
 
   openEndDrawer() {

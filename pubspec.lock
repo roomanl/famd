@@ -230,6 +230,11 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.0.0"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -251,6 +256,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_udid:
+    dependency: "direct main"
+    description:
+      name: flutter_udid
+      sha256: "63384bd96203aaefccfd7137fab642edda18afede12b0e9e1a2c96fe2589fd07"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

@@ -165,7 +165,7 @@ tellActive() async {
 forceRemove(gid) async {
   String aria2url = await _aria2url;
   try {
-    var res = await http.post(Uri.parse(aria2url),
+    await http.post(Uri.parse(aria2url),
         body: json.encode({
           "jsonrpc": "2.0",
           "method": "aria2.forceRemove",

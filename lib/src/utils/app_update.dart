@@ -72,7 +72,7 @@ checkAppVsersion(vJson, context, openDialog) async {
 
 /// 最新版本提示
 latestVersionToast() {
-  EasyLoading.showToast('已经是最新版本');
+  EasyLoading.showToast(FamdLocale.isMaxVersion.tr);
 }
 
 bool shouldUpdate(String currentVersion, String serverVersion) {

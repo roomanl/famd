@@ -26,6 +26,7 @@ class WinTitleBar extends GetView<WinTitleBarController> {
         () => Get.find<AppController>().showNavigationDrawer.isTrue && autoHide
             ? child
             : Scaffold(
+                extendBodyBehindAppBar: true,
                 appBar: DargWinBar(
                   useThemeColor: useThemeColor,
                 ),

@@ -87,6 +87,16 @@ class FamdLocale {
   static const darkModeThemeTip = 'darkModeThemeTip';
   static const on = 'on';
   static const off = 'off';
+  static const retryInterval = 'retryInterval';
+  static const retryIntervalTip = 'retryIntervalTip';
+  static const maxDownTsNum = 'maxDownTsNum';
+  static const maxDownTsNumTip = 'maxDownTsNumTip';
+  static const maxDownThread = 'maxDownThread';
+  static const maxDownThreadTip = 'maxDownThreadTip';
+  static const isMaximize = 'isMaximize';
+  static const isMinimize = 'isMinimize';
+  static const isMaxVersion = 'isMaxVersion';
+  static const more = 'more';
 
   static const colorJFZ = 'colorJFZ';
   static const colorJHZ = 'colorJHZ';

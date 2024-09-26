@@ -35,7 +35,8 @@ class TaskManager {
   var _tsGidIndex = {};
 
   ///记录下载回调时间
-  late int notificationsTime = 0;
+  late int _notificationsTime = 0;
+  late String _retryInterval = '30';
   final _taskCtrl = Get.find<TaskController>();
   final _appCtrl = Get.find<AppController>();
 
@@ -109,7 +110,10 @@ class TaskManager {
     _tasking.status = 2;
     await updateM3u8Task(_tasking);
     _taskCtrl.updateTaskList();
+    // 获取下载路径
     _downPath = await getDownPath();
+    // 获取重试间隔
+    _retryInterval = await getRetryInterval();
 
     _m3u8util = M3u8Util();
     bool success = await _m3u8util.parseByTask(_tasking);
@@ -313,16 +317,17 @@ class TaskManager {
     _isDecryptTsing = false;
     _isMergeTsing = false;
     _restCount = 0;
-    notificationsTime = 0;
+    _notificationsTime = 0;
   }
 
   listNotifications(String data) {
     if (data.contains('check-down-status')) {
       ///检查下载状态是否卡住
-      ///最后一次下载完回调的时间记录和当前时间相减，如果如果>30S判断为卡住
-      ///在下载中不在解密中并且notificationsTime有时间才重试
-      if (DateTime.now().millisecondsSinceEpoch - notificationsTime > 30000 &&
-          notificationsTime != 0 &&
+      ///最后一次下载完回调的时间记录和当前时间相减，如果如果>_retryIntervalS判断为卡住
+      ///在下载中不在解密中并且_notificationsTime有时间才重试
+      if (DateTime.now().millisecondsSinceEpoch - _notificationsTime >
+              (int.parse(_retryInterval) * 1000) &&
+          _notificationsTime != 0 &&
           !_isDecryptTsing &&
           !_isMergeTsing &&
           _isDowning) {
@@ -333,7 +338,7 @@ class TaskManager {
       }
     } else {
       ///每次下载完回调纪录一次时间
-      notificationsTime = DateTime.now().millisecondsSinceEpoch;
+      _notificationsTime = DateTime.now().millisecondsSinceEpoch;
       Map<String, dynamic> jsonData = jsonDecode(data);
       if (data.contains('aria2.onDown')) {
         String gid = jsonData['params'][0]['gid'];

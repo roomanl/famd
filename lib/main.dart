@@ -6,6 +6,7 @@ import 'package:famd/src/locale/messages.dart';
 import 'package:famd/src/router/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:window_manager/window_manager.dart';
@@ -51,6 +52,15 @@ void main() async {
       translations: Messages(),
       locale: const Locale('zh', 'CN'),
       builder: EasyLoading.init(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('zh', 'CN'),
+        Locale('en', 'US'),
+      ],
     ));
   }, (Object obj, StackTrace stack) {
     writeCrashLog(obj.toString());

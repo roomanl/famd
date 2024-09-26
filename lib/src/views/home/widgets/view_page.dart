@@ -29,7 +29,7 @@ class HomeViewPageWidget extends GetView<HomeController> {
           DownManagerPage(),
           M3U8WebPage(),
           SettingPage(),
-          AboutPage(),
+          // AboutPage(),
         ],
       ),
     );

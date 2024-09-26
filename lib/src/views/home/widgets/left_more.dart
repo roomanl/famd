@@ -1,4 +1,5 @@
 import 'package:famd/src/common/color.dart';
+import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/model.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class LeftMoreWidget extends GetView<HomeController> {
     return PopupMenuButton<NavDestination>(
       icon: const Icon(Icons.tune_rounded),
       iconColor: FamdColor.white,
-      tooltip: '',
+      tooltip: FamdLocale.more.tr,
       offset: const Offset(60, 0),
       onSelected: (NavDestination item) {
         controller.onMoreMenuSelected(item);

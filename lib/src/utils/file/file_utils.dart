@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:famd/src/common/asset.dart';
 import 'package:famd/src/models/m3u8_task.dart';
 import 'package:famd/src/utils/common_utils.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -64,7 +65,7 @@ List<String> readFile(String path) {
 }
 
 Future<List<String>> readDefAria2Conf() async {
-  String text = await rootBundle.loadString("lib/resources/aria2.conf");
+  String text = await rootBundle.loadString(FamdAsset.aria2Conf);
   return text.split('\n');
 }
 

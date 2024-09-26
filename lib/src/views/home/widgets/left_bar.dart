@@ -1,9 +1,12 @@
+import 'package:famd/src/common/asset.dart';
+import 'package:famd/src/common/config.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/views/home/controller.dart';
 import 'package:famd/src/views/home/model.dart';
 import 'package:famd/src/views/home/widgets/left_more.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'wifi_icon.dart';
 
@@ -33,22 +36,38 @@ class HomeLeftBarWidget extends GetView<HomeController> {
           },
         ).toList(),
         selectedIndex: controller.viewPageIndex.value,
+        leading: DragToMoveArea(
+          child: Container(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: IconButton(
+              onPressed: () {
+                controller.openWeb(FamdConfig.famdGithub);
+              },
+              icon: Image.asset(
+                FamdAsset.logo2,
+                width: 30,
+                height: 30,
+              ),
+            ),
+          ),
+        ),
         trailing: const Expanded(
           child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10.0),
-                    child: LeftMoreWidget(),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
-                    child: WifiIconWidget(),
-                  ),
-                ],
-              )),
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                  child: LeftMoreWidget(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: WifiIconWidget(),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:famd/src/locale/locale.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +24,10 @@ permission777(filePath) {
 getAppVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.version;
+}
+
+getAppDeviceId() async {
+  return await FlutterUdid.udid;
 }
 
 openWebUrl(String url) async {

@@ -19,10 +19,10 @@ class TaskListWidget extends GetView<TaskController> {
           itemBuilder: (BuildContext context, int index) {
             M3u8Task task = controller.taskList[index];
             // task.status = 2;
-            if (task.status == 1) {
-              return TaskWaitItem(task: task);
-            } else if (task.status == 2) {
+            if (task.status == 2) {
               return TaskDownloadItem(task: task);
+            } else {
+              return TaskWaitItem(task: task);
             }
           },
           separatorBuilder: (BuildContext context, int index) =>
