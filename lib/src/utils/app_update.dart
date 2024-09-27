@@ -29,8 +29,9 @@ checkAppUpdate(context, openDialog) async {
 checkAppVsersion(vJson, context, openDialog) async {
   final currentVersion = await getAppVersion();
   final serverVersion = vJson['version'];
+  final force = vJson['force'];
   if (shouldUpdate(currentVersion, serverVersion)) {
-    if (!openDialog) {
+    if (!openDialog && force == '0') {
       EasyLoading.showToast(FamdLocale.hasNewVersion.tr);
       return;
     }

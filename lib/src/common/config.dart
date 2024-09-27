@@ -2,7 +2,7 @@ class FamdConfig {
   static const String aria2RpcUrl = 'http://127.0.0.1:{port}/jsonrpc';
   static const String famdGithub = 'https://github.com/roomanl/famd';
   static const String discussionUrl =
-      'https://gitcode.com/rootvip/famd/discussion';
+      'https://gitcode.com/rootvip/famd.m3u8/discussion';
   static const String homePage = 'https://rootvip.cn';
   static const String appCheckVersionUrl =
       'https://oss.rootvip.cn/famd/app/version.json';
