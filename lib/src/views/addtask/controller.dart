@@ -31,32 +31,43 @@ class AddTaskController extends GetxController {
       EasyLoading.showInfo(FamdLocale.addTaskInputUrlCantEmpty.tr);
       return;
     }
-    List<String> urls = urlTextController.text.split('\n');
+    String inputName = nameTextController.text.replaceAll(" ", "");
+    String inputUrl = urlTextController.text.replaceAll(" ", "");
+    List<String> urls = inputUrl.split('\n');
+    int count = 0;
     for (String url in urls) {
-      List<String> info = url.split('\$');
-      if (info.length != 2) {
-        EasyLoading.showInfo('$url${FamdLocale.linkError.tr}！');
+      url =
+          url.replaceAll("\r\n", "").replaceAll("\r", "").replaceAll("\n", "");
+      count++;
+      String m3u8name = '';
+      String subName = '';
+      String tsUrl = '';
+      if (url.contains("\$")) {
+        List<String> info = url.split('\$');
+        if (info.length != 2) {
+          EasyLoading.showInfo('$url${FamdLocale.linkError.tr}！');
+          return;
+        }
+        subName = info[0];
+        tsUrl = info[1];
+      } else {
+        subName = count.toString();
+        tsUrl = url;
+      }
+      if (!tsUrl.startsWith('http')) {
+        EasyLoading.showInfo('$tsUrl${FamdLocale.linkErrorTip.tr}');
         return;
       }
-      if (!info[1].startsWith('http')) {
-        EasyLoading.showInfo('${info[1]}${FamdLocale.linkErrorTip.tr}');
-        return;
-      }
-      String m3u8name = '${nameTextController.text}-${info[0]}';
-      bool has = await hasM3u8Name(
-          nameTextController.text, info[0].replaceAll(" ", ""));
+      m3u8name = '$inputName-$subName';
+      bool has = await hasM3u8Name(inputName, subName);
       if (has) {
         EasyLoading.showInfo('$m3u8name,${FamdLocale.alreadyInList.tr}');
         return;
       }
       M3u8Task task = M3u8Task(
-          subname: info[0].replaceAll(" ", ""),
-          m3u8url: info[1]
-              .replaceAll(" ", "")
-              .replaceAll("\r\n", "")
-              .replaceAll("\r", "")
-              .replaceAll("\n", ""),
-          m3u8name: nameTextController.text.replaceAll(" ", ""),
+          subname: subName,
+          m3u8url: tsUrl,
+          m3u8name: inputName,
           downdir: downPath,
           status: 1,
           createtime: now());

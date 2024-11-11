@@ -33,7 +33,7 @@ class Messages extends Translations {
           FamdLocale.addTask: '添加任务',
           FamdLocale.taskManager: '任务管理',
           FamdLocale.addTaskInputUrlHint:
-              '请输入视频链接，格式为：xxx\$http://abc.m3u8,多个链接时，请确保每行只有一个链接。(xxx可以是第01集、第12期、高清版、1080P等)',
+              '请输入视频链接，格式1：http://abc.m3u8，格式2：xxx\$http://abc.m3u8,(xxx可以是第01集、第12期、高清版、1080P等)，多个链接时，请确保每行只有一个链接。',
           FamdLocale.addTaskInptNameHint: '请输入具体视频名称，例如：西游记',
           FamdLocale.addTaskInputUrlCantEmpty: 'URL或名称不能为空',
           FamdLocale.linkError: '链接格式不正确',

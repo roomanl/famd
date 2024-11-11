@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:famd/src/utils/db/DBM3u8Task.dart';
 import 'package:famd/src/utils/db/DBTsInfo.dart';
 import 'package:famd/src/models/m3u8_task.dart';
@@ -39,10 +41,16 @@ Future<bool> deleteM3u8Task(M3u8Task task) async {
 }
 
 Future<bool> clearM3u8Task() async {
+  List<M3u8Task> list = await getM3u8TaskList();
+  print(list.length);
+  String pathSeparator = Platform.pathSeparator;
+  for (M3u8Task task in list) {
+    String dir = task.downdir! + pathSeparator + task.m3u8name;
+    print(dir);
+    deleteDir(dir);
+  }
   await dbTsInfo.delete();
   int result = await dbm3u8task.delete();
-  String downPath = await getDownPath();
-  deleteDir(downPath);
   return result > 0;
 }
 
