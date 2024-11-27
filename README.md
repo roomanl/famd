@@ -41,3 +41,22 @@ flutter run -d linux
 3、android版的aria2文件也是因为太大一直提交失败,请到 https://github.com/devgianlu/aria2lib 找到src/main/jniLibs下的aria2文件放到本项目android目录下的src/main/jniLibs中即可。  
 4、IOS暂时不支持，手机版需要写一点原生代码，我不会IOS开发，因此目前本项目还没适配IOS。
 
+## 截图
+#### Android
+<img src="./screenshot/a1.jpg" width="200">
+<img src="./screenshot/a2.jpg" width="200">
+<img src="./screenshot/a3.jpg" width="200">
+<img src="./screenshot/a4.jpg" width="200">
+<img src="./screenshot/a5.jpg" width="200">
+
+#### Windows
+<img src="./screenshot/w1.png" width="400">
+<img src="./screenshot/w2.png" width="400">
+<img src="./screenshot/w3.png" width="400">
+<img src="./screenshot/w4.png" width="400">
+<img src="./screenshot/w5.png" width="400">
+
+## 支持
+FamdM3U8视频下载器源码已在GitHub上全部开源。您可在GitHub上免费下载源码以及安装包。  
+
+如果您想支持一下作者，您可以[前往B站工房](https://www.paypal.me/rootvip)请作者喝杯奶茶表示鼓励。
