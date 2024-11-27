@@ -59,4 +59,4 @@ flutter run -d linux
 ## 支持
 FamdM3U8视频下载器源码已在GitHub上全部开源。您可在GitHub上免费下载源码以及安装包。  
 
-如果您想支持一下作者，您可以[前往B站工房](https://www.paypal.me/rootvip)请作者喝杯奶茶表示鼓励。
+如果您想支持一下作者，您可以[前往B站工房](https://gf.bilibili.com/item/detail/1107456011)请作者喝杯奶茶表示鼓励。
