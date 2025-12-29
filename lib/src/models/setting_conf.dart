@@ -14,6 +14,7 @@ class SettingConf {
       SysConf(name: FamdConfKey.maxDownTsNum, value: '');
   final SysConf maxDownThread =
       SysConf(name: FamdConfKey.maxDownThread, value: '');
+  final SysConf aria2Port = SysConf(name: FamdConfKey.aria2Port, value: '');
 
   initValue() async {
     downPath.value = await conf.getDownPath();
@@ -23,5 +24,6 @@ class SettingConf {
     retryInterval.value = await conf.getRetryInterval();
     maxDownTsNum.value = await conf.getMaxDownTsNum();
     maxDownThread.value = await conf.getMaxDownThread();
+    aria2Port.value = await conf.getAria2Port();
   }
 }

@@ -1,9 +1,13 @@
 import 'dart:async';
-
+import 'package:famd/src/models/setting_conf.dart';
+import 'package:famd/src/router/index.dart';
+import 'package:famd/src/utils/setting_conf_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:famd/src/controller/app.dart';
 import 'package:famd/src/locale/locale.dart';
 import 'package:famd/src/utils/aria2/aria2_manager.dart';
+import 'package:famd/src/utils/setting_conf_utils.dart' as conf;
 import 'package:get/get.dart';
 
 class StartAriaController extends GetxController {
@@ -12,6 +16,7 @@ class StartAriaController extends GetxController {
   RxString startBtnText = FamdLocale.ariaStarting.tr.obs;
   bool _isStartServer = false;
   int _count = 0;
+  Rx<SettingConf> settingConf = SettingConf().obs;
 
   @override
   void onReady() {
@@ -29,6 +34,7 @@ class StartAriaController extends GetxController {
   }
 
   _init() async {
+    String aria2Port = await conf.getAria2Port();
     Aria2Manager().closeServer();
     if (!await _checkNetwork()) {
       return;
@@ -96,5 +102,9 @@ class StartAriaController extends GetxController {
     startBtnText.update((val) {
       startBtnText.value = text;
     });
+  }
+
+  openSettingPage() {
+    Get.toNamed(RouteNames.setting);
   }
 }

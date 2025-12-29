@@ -5,6 +5,7 @@ class FamdConfKey {
   static const retryInterval = 'retryInterval';
   static const maxDownTsNum = 'maxDownTsNum';
   static const maxDownThread = 'maxDownThread';
+  static const aria2Port = 'aria2Port';
 }
 
 class FamdDbTableName {

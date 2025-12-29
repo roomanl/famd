@@ -2,6 +2,7 @@ import 'package:famd/src/common/color.dart';
 import 'package:famd/src/components/bar/title_bar.dart';
 import 'package:famd/src/controller/theme.dart';
 import 'package:famd/src/locale/locale.dart';
+import 'package:famd/src/views/setting/widgets/conf_aria2port.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'widgets/widgets.dart';
@@ -60,6 +61,11 @@ class SettingPage extends GetView<SettingController> {
                 child: const Divider(thickness: 1, height: 1),
               ),
               const ConfMaxDownNum(),
+              Container(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: const Divider(thickness: 1, height: 1),
+              ),
+              const ConfAria2Port(),
               Container(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: const Divider(thickness: 1, height: 1),

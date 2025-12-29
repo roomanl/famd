@@ -23,7 +23,8 @@ class Aria2Manager {
   late final Logger logger;
   late Timer timer;
   late bool online;
-  late final Future<String> _aria2url;
+  // late Future<String> _aria2url;
+  late String _aria2url;
   late int downSpeed;
   late String aria2Version;
   late Future<Process> cmdProcess;
@@ -33,7 +34,8 @@ class Aria2Manager {
   Aria2Manager._internal() {
     _taskCtrl = Get.find<TaskController>();
     _appCtrl = Get.find<AppController>();
-    _aria2url = aria2_conf.getAria2UrlConf();
+    // _aria2url = aria2_conf.getAria2UrlConf();
+    _aria2url = '';
     logger = Logger();
     online = false;
     downSpeed = 0;
@@ -119,15 +121,16 @@ class Aria2Manager {
   /// 连接aria2
   void connection() async {
     var version = await aria2_http.getAria2Version();
+
     if (version != '0') {
-      online = true;
       if (webSocketChannel == null) {
-        String aria2url = await _aria2url;
+        String aria2url = _aria2url;
         String url = aria2url.replaceAll('http', 'ws');
         final wsUrl = Uri.parse(url);
         webSocketChannel = WebSocketChannel.connect(wsUrl);
         jsonRpcClient = json_rpc.Client(webSocketChannel!.cast<String>());
         listenWebSocket();
+        online = true;
       }
     } else {
       debugPrint('aria2连接失败');
@@ -144,6 +147,7 @@ class Aria2Manager {
       // logger.i(data);
       listNotifications(data);
     }, onError: (error) {
+      // webSocketChannel = null;
       logger.e(error);
     });
   }
@@ -156,6 +160,8 @@ class Aria2Manager {
   /// 启动aria2服务
   void startServer() async {
     closeServer();
+    await initAria2Conf();
+    _aria2url = await aria2_conf.getAria2UrlConf();
     var exe = await aria2_conf.getAria2ExePath();
     // debugPrint(exe);
     var conf = await aria2_conf.getAria2ConfPath();
@@ -213,6 +219,9 @@ class Aria2Manager {
         final processResult = Process.runSync('killall', ['m3u8aria2c']);
         killSuccess = processResult.exitCode == 0;
       }
+      online = false;
+      jsonRpcClient = null;
+      webSocketChannel = null;
     } catch (e) {
       logger.e(e);
     }

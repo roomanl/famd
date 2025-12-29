@@ -10,7 +10,7 @@ final logger = Logger();
 
 Future<String?> addUrl(params) async {
   try {
-    String aria2url = await _aria2url;
+    String aria2url = await aria2_conf.getAria2UrlConf();
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
           "jsonrpc": "2.0",
@@ -28,7 +28,7 @@ Future<String?> addUrl(params) async {
 
 getAria2Version() async {
   String aria2Version = '0';
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -51,7 +51,7 @@ getAria2Version() async {
 
 getSpeed() async {
   int downSpeed = 0;
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -70,7 +70,7 @@ getSpeed() async {
 }
 
 forcePauseAll() async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -83,7 +83,7 @@ forcePauseAll() async {
 }
 
 purgeDownloadResult() async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -100,7 +100,7 @@ purgeDownloadResult() async {
 }
 
 tellWaiting() async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -121,7 +121,7 @@ tellWaiting() async {
 }
 
 tellStopped() async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -142,7 +142,7 @@ tellStopped() async {
 }
 
 tellActive() async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     var res = await http.post(Uri.parse(aria2url),
         body: json.encode({
@@ -163,7 +163,7 @@ tellActive() async {
 }
 
 forceRemove(gid) async {
-  String aria2url = await _aria2url;
+  String aria2url = await aria2_conf.getAria2UrlConf();
   try {
     await http.post(Uri.parse(aria2url),
         body: json.encode({

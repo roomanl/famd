@@ -88,3 +88,11 @@ Future<String> getMaxDownThread() async {
   }
   return conf.value;
 }
+
+Future<String> getAria2Port() async {
+  SysConf? conf = await dbSysConf.queryFirstByName(FamdConfKey.aria2Port);
+  if (conf == null) {
+    return '46800';
+  }
+  return conf.value;
+}

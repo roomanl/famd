@@ -54,7 +54,9 @@ initAria2Conf() async {
   createFile(sessionFile);
   String maxDown = await conf.getMaxDownTsNum();
   String maxThread = await conf.getMaxDownThread();
+  String aria2Port = await conf.getAria2Port();
 
+  confLines.add('rpc-listen-port=$aria2Port');
   confLines.add('dir=$downloadsDir');
   confLines.add('log=$logFile');
   confLines.add('input-file=$sessionFile');
@@ -77,14 +79,16 @@ initAria2Conf() async {
 
 getAria2Port() async {
   String confPath = await getAria2ConfPath();
+  String aria2Port = await conf.getAria2Port();
   List<String> textLines = readFile(confPath);
-  String port = '46800';
+  String port = aria2Port;
   for (String line in textLines) {
     if (line.startsWith('rpc-listen-port=')) {
       port = line.replaceAll('rpc-listen-port=', '');
       break;
     }
   }
+  // print(port);
   return port;
 }
 

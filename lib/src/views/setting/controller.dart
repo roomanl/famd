@@ -5,6 +5,7 @@ import 'package:famd/src/models/setting_conf.dart';
 import 'package:famd/src/utils/permission_util.dart';
 import 'package:famd/src/utils/setting_conf_utils.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class SettingController extends GetxController {
   final _themeCtrl = Get.find<ThemeController>();
   Rx<SettingConf> settingConf = SettingConf().obs;
   RxBool isDarkMode = false.obs;
+  final TextEditingController aria2PortTextController = TextEditingController();
 
   @override
   void onInit() {
@@ -22,11 +24,16 @@ class SettingController extends GetxController {
   void onReady() {
     super.onReady();
     _init();
+    aria2PortTextController.addListener(() {
+      setConf(settingConf.value.aria2Port.name, aria2PortTextController.text);
+    });
   }
 
   _init() async {
     await settingConf.value.initValue();
     isDarkMode.value = settingConf.value.darkMode.value == '1';
+    String aria2Port = settingConf.value.aria2Port.value;
+    aria2PortTextController.text = aria2Port;
     update();
   }
 

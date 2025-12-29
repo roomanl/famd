@@ -92,7 +92,9 @@ class FamdLocale {
   static const maxDownTsNum = 'maxDownTsNum';
   static const maxDownTsNumTip = 'maxDownTsNumTip';
   static const maxDownThread = 'maxDownThread';
+  static const aria2Port = 'aria2Port';
   static const maxDownThreadTip = 'maxDownThreadTip';
+  static const restartToTakeEffect = 'restartToTakeEffect';
   static const isMaximize = 'isMaximize';
   static const isMinimize = 'isMinimize';
   static const isMaxVersion = 'isMaxVersion';

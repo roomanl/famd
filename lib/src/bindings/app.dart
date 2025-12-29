@@ -11,7 +11,8 @@ class AppBinding implements Bindings {
     Get.put(AppController());
     Get.put(ThemeController());
     Get.put(TaskController());
-    Get.lazyPut<WinTitleBarController>(() => WinTitleBarController());
+    Get.put(WinTitleBarController());
+    // Get.lazyPut<WinTitleBarController>(() => WinTitleBarController());
     Get.lazyPut<InputFocusController>(() => InputFocusController());
   }
 }
